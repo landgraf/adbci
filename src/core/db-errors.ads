@@ -31,6 +31,7 @@ package DB.Errors is
    OBJECT_READ_ONLY     : Exception;   --  object is write protected
    SQL_ERROR            : Exception;   --  SQL syntax error
    TOO_MANY_RESULTS     : Exception;   --  too many open results
+   TRANSACTION_ERROR    : Exception;   --  misuse of transactions
    TUPLE_NOT_FOUND      : Exception;   --  tuple (row) not found
    VALIDATION_ERROR     : Exception;   --  validation failed
 
