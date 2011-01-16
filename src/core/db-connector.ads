@@ -170,6 +170,18 @@ package DB.Connector is
    --  Goes back one tuple, or raises END_OF_RESULT_EXCEPTION if first tuple
    --  passed.  Requires the result set to be Random Access.
 
+   function Quote_Identifier
+     (This              : in Connection'Class;
+      Identifier        : in String) return DB.Types.SQL_String;
+   --  Quotes an SQL identifier.  The identifier is returned enclosed by
+   --  quotes.
+
+   function Quote_Value
+     (This              : in Connection'Class;
+      Value             : in String) return DB.Types.SQL_String;
+   --  Quotes a value for use in an SQL query.  The value returned WITHOUT
+   --  enclosing quotes.
+
 private
 
    type Connection is new Ada.Finalization.Limited_Controlled with record

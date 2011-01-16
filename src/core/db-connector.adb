@@ -498,5 +498,37 @@ package body DB.Connector is
       end if;
    end Previous_Tuple;
 
+   ----------------------
+   -- Quote_Identifier --
+   ----------------------
+
+   function Quote_Identifier
+     (This              : in Connection'Class;
+      Identifier        : in String) return DB.Types.SQL_String
+   is
+   begin
+      if This.Driver = Null then
+         raise DB.Errors.NOT_CONNECTED;
+      else
+         return This.Driver.Quote_Identifier (Identifier);
+      end if;
+   end Quote_Identifier;
+
+   -----------------
+   -- Quote_Value --
+   -----------------
+
+   function Quote_Value
+     (This              : in Connection'Class;
+      Value             : in String) return DB.Types.SQL_String
+   is
+   begin
+      if This.Driver = Null then
+         raise DB.Errors.NOT_CONNECTED;
+      else
+         return This.Driver.Quote_Value (Value);
+      end if;
+   end Quote_Value;
+
 end DB.Connector;
 
