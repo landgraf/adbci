@@ -1,0 +1,21 @@
+ADBCI README
+------------
+
+ADBCI is a simple library for accessing SQL databases using Ada 2005.  It also
+contains an experimental active record implementation.
+
+LICENCE
+-------
+
+LGPL 3, or (at your option) any later version.
+
+COMPILER SUPPORT
+----------------
+
+Known working with GCC-GNAT 4.5.1 or later.
+
+DATABASE SUPPORT
+----------------
+
+Currently only supports PostgreSQL 8.x or later.
+
