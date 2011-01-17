@@ -29,12 +29,12 @@ package body DB.Active_Record.Fields is
    procedure Clear (This : in out Id_Field) is
    begin
       This.Changed := True;
+      This.Value := 0;
 
       if This.Has_Default then
          This.Value := This.Default_Value;
          This.Is_Null := False;
       else
-         This.Value := 0;
          This.Is_Null := True;
       end if;
    end Clear;
@@ -42,12 +42,12 @@ package body DB.Active_Record.Fields is
    procedure Clear (This : in out Integer_Field) is
    begin
       This.Changed := True;
+      This.Value := 0;
 
       if This.Has_Default then
          This.Value := This.Default_Value;
          This.Is_Null := False;
       else
-         This.Value := 0;
          This.Is_Null := True;
       end if;
    end Clear;
