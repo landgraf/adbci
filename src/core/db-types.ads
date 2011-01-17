@@ -30,7 +30,6 @@ package DB.Types is
 
    subtype Object_Id is DB_Bigserial;
 
-   type DB_String is new String;
    type SQL_String is new String;
 
    type Field_Type is

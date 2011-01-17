@@ -391,7 +391,7 @@ package body DB.Connector is
      (This              : in Result_Set;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in String := "") return DB.Types.DB_String
+      Replacement       : in String := "") return String
    is
    begin
       if This.Results /= null and then This.Results.Data /= null then
@@ -406,7 +406,7 @@ package body DB.Connector is
      (This              : in Result_Set;
       Column            : in String;
       Replace_Null      : in Boolean := False;
-      Replacement       : in String := "") return DB.Types.DB_String
+      Replacement       : in String := "") return String
    is
    begin
       if This.Results /= null and then This.Results.Data /= null then

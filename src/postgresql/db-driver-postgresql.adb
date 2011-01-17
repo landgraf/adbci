@@ -479,7 +479,7 @@ package body DB.Driver.PostgreSQL is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in String := "") return DB.Types.DB_String
+      Replacement       : in String := "") return String
    is
       function PQ_Get_Value
         (Results	: in PG_Result;
@@ -494,7 +494,7 @@ package body DB.Driver.PostgreSQL is
       elsif Result.Results /= Null_Result then
          if PQ_Is_Null (Result.Results, Tuple - 1, Column - 1) /= 0 then
             if Replace_Null then
-               return DB_String (Replacement);
+               return Replacement;
             else
                raise DB.Errors.COLUMN_IS_NULL;
             end if;
@@ -509,7 +509,7 @@ package body DB.Driver.PostgreSQL is
                   declare
                      Result : constant String := Value (S);
                   begin
-                     return DB_String (Result);
+                     return Result;
                   end;
                end if;
             end;

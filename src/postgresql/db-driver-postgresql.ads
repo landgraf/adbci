@@ -108,7 +108,7 @@ package DB.Driver.PostgreSQL is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in String := "") return DB.Types.DB_String;
+      Replacement       : in String := "") return String;
 
    overriding function Get_Foreign_Key_SQL (This : in Driver_Type)
    return DB.Types.SQL_String;

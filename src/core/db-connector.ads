@@ -143,14 +143,14 @@ package DB.Connector is
      (This              : in Result_Set;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in String := "") return DB.Types.DB_String;
+      Replacement       : in String := "") return String;
    --  Gets String data at specified column, optionally replacing null values.
 
    function Get_String
      (This              : in Result_Set;
       Column            : in String;
       Replace_Null      : in Boolean := False;
-      Replacement       : in String := "") return DB.Types.DB_String;
+      Replacement       : in String := "") return String;
    --  Gets String data at specified column, optionally replacing null values.
 
    function Get_Tuple (This : in Result_Set) return Tuple_Index;

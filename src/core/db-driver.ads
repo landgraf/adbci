@@ -144,8 +144,7 @@ package DB.Driver is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in String := "") 
-   return DB.Types.DB_String is abstract;
+      Replacement       : in String := "") return String is abstract;
    --  Returns string (CHAR/TEXT/VARCHAR) data at specified tuple and column, 
    --  or raises an exception.
 
