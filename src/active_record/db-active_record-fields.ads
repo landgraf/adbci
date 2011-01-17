@@ -66,8 +66,11 @@ package DB.Active_Record.Fields is
    --  if not NULL, is enclosed by single quotes.
 
    type Id_Field is new Field with private;
+   type Integer_Field is new Field with private;
 
    overriding procedure Clear (This : in out Id_Field);
+
+   overriding procedure Clear (This : in out Integer_Field);
 
    function Configure
      (Name              : in String;
@@ -77,15 +80,35 @@ package DB.Active_Record.Fields is
       Has_Default       : in Boolean := True;
       Default_Value     : in DB.Types.Object_Id := 0) return Id_Field;
 
+   function Configure
+     (Name              : in String;
+      Display_Name      : in String := "";
+      Not_Null          : in Boolean := False;
+      Unique            : in Boolean := False;
+      Has_Default       : in Boolean := True;
+      Default_Value     : in DB.Types.DB_Integer := 0) return Integer_Field;
+
    overriding function Field_SQL
      (This              : in Id_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
+   overriding function Field_SQL
+     (This              : in Integer_Field;
+      Connector         : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
    function Get (This : in Id_Field) return DB.Types.Object_Id;
+
+   function Get (This : in Integer_Field) return DB.Types.DB_Integer;
 
    overriding procedure Load_From
      (This              : in out Id_Field;
+      Connection        : in     DB.Connector.Connection;
+      Results           : in     DB.Connector.Result_Set);
+
+   overriding procedure Load_From
+     (This              : in out Integer_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
 
@@ -93,8 +116,17 @@ package DB.Active_Record.Fields is
      (This              : in out Id_Field;
       Value             : in     DB.Types.Object_Id);
 
+   procedure Set
+     (This              : in out Integer_Field;
+      Value             : in     DB.Types.DB_Integer);
+
    overriding function To_SQL
      (This              : in Id_Field;
+      Connection        : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
+   overriding function To_SQL
+     (This              : in Integer_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
@@ -115,6 +147,11 @@ private
    type Id_Field is new Field with record
       Default_Value     : DB.Types.Object_Id;
       Value             : DB.Types.Object_Id;
+   end record;
+
+   type Integer_Field is new Field with record
+      Default_Value     : DB.Types.DB_Integer;
+      Value             : DB.Types.DB_Integer;
    end record;
 
    function Constraints_SQL (This : in Field'Class) return DB.Types.SQL_String;
