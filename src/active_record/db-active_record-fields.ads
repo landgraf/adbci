@@ -18,7 +18,7 @@
 
 with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
 with DB.Connector;                     use DB.Connector;
-with DB.Types;
+with DB.Types;                         use DB.Types;
 
 package DB.Active_Record.Fields is
 
@@ -47,6 +47,9 @@ package DB.Active_Record.Fields is
    function Is_Changed (This : in Field'Class) return Boolean;
    --  Returns the field change status flag.
 
+   function Is_Null (This : in Field'Class) return Boolean;
+   --  Returns true if field is NULL.
+
    procedure Load_From
      (This              : in out Field;
       Connection        : in     DB.Connector.Connection;
@@ -61,6 +64,39 @@ package DB.Active_Record.Fields is
      return DB.Types.SQL_String is abstract;
    --  Returns the SQL representation of the current field value.
 
+   type Id_Field is new Field with private;
+
+   overriding procedure Clear (This : in out Id_Field);
+
+   function Configure
+     (Name              : in String;
+      Display_Name      : in String := "";
+      Not_Null          : in Boolean := False;
+      Unique            : in Boolean := False;
+      Has_Default       : in Boolean := True;
+      Default_Value     : in DB.Types.Object_Id := 0) return Id_Field;
+
+   overriding function Field_SQL
+     (This              : in Id_Field;
+      Connector         : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
+   function Get (This : in Id_Field) return DB.Types.Object_Id;
+
+   overriding procedure Load_From
+     (This              : in out Id_Field;
+      Connection        : in     DB.Connector.Connection;
+      Results           : in     DB.Connector.Result_Set);
+
+   procedure Set
+     (This              : in out Id_Field;
+      Value             : in     DB.Types.Object_Id);
+
+   overriding function To_SQL
+     (This              : in Id_Field;
+      Connection        : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
 private
 
    type Field is abstract tagged record
@@ -74,6 +110,17 @@ private
       Primary_Key       : Boolean := False;     --  Is field PRIMARY KEY?
       Unique            : Boolean := False;     --  Is field UNIQUE?
    end record;
+
+   type Id_Field is new Field with record
+      Default_Value     : DB.Types.Object_Id;
+      Value             : DB.Types.Object_Id;
+   end record;
+
+   function Constraints_SQL (This : in Field'Class) return DB.Types.SQL_String;
+   --  Returns field constraints as SQL string.
+
+   function Validate_Field_Name (This : in String) return Boolean;
+   --  Validates field name - returns true if valid, false if invalid.
 
 end DB.Active_Record.Fields;
 
