@@ -39,6 +39,19 @@ package body DB.Active_Record.Fields is
       end if;
    end Clear;
 
+   procedure Clear (This : in out Boolean_Field) is
+   begin
+      This.Changed := True;
+      This.Value := False;
+
+      if This.Has_Default then
+         This.Value := This.Default_Value;
+         This.Is_Null := False;
+      else
+         This.Is_Null := True;
+      end if;
+   end Clear;
+
    procedure Clear (This : in out Id_Field) is
    begin
       This.Changed := True;
@@ -92,6 +105,35 @@ package body DB.Active_Record.Fields is
    is
       Lower_Name        : constant String := To_Lower (Name);
       Temp              : Bigint_Field;
+   begin
+      if not Validate_Field_Name (Lower_Name) then
+         raise CONSTRAINT_ERROR with "invalid field name";
+      else
+         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
+         if Display_Name /= "" then
+            Set_Unbounded_String (Temp.Display_Name, Display_Name);
+         else
+            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
+         end if;
+
+         Temp.Not_Null := Not_Null;
+         Temp.Unique := Unique;
+         Temp.Has_Default := Has_Default;
+         Temp.Default_Value := Default_Value;
+         return Temp;
+      end if;
+   end Configure;
+
+   function Configure
+     (Name              : in String;
+      Display_Name      : in String := "";
+      Not_Null          : in Boolean := False;
+      Unique            : in Boolean := False;
+      Has_Default       : in Boolean := True;
+      Default_Value     : in Boolean := False) return Boolean_Field
+   is
+      Lower_Name        : constant String := To_Lower (Name);
+      Temp              : Boolean_Field;
    begin
       if not Validate_Field_Name (Lower_Name) then
          raise CONSTRAINT_ERROR with "invalid field name";
@@ -241,6 +283,18 @@ package body DB.Active_Record.Fields is
    end Field_SQL;
 
    function Field_SQL
+     (This              : in Boolean_Field;
+      Connector         : in DB.Connector.Connection)
+     return DB.Types.SQL_String
+   is
+      Constraints       : constant DB.Types.SQL_String := 
+        Constraints_SQL (This);
+      Field_Name        : constant String := To_String (This.Field_Name);
+   begin
+      return DB.Types.SQL_String (Field_Name & " BOOLEAN") & Constraints;
+   end Field_SQL;
+
+   function Field_SQL
      (This              : in Id_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String
@@ -285,6 +339,11 @@ package body DB.Active_Record.Fields is
    ---------
 
    function Get (This : in Bigint_Field) return DB.Types.DB_Bigint is
+   begin
+      return This.Value;
+   end Get;
+
+   function Get (This : in Boolean_Field) return Boolean is
    begin
       return This.Value;
    end Get;
@@ -381,6 +440,28 @@ package body DB.Active_Record.Fields is
    end Load_From;
 
    procedure Load_From
+     (This              : in out Boolean_Field;
+      Connection        : in     DB.Connector.Connection;
+      Results           : in     DB.Connector.Result_Set)
+   is
+      Field_Name        : constant String := This.Get_Name;
+   begin
+      if Results.Get_Is_Null (Field_Name) then
+         if This.Has_Default then
+            This.Value := This.Default_Value;
+            This.Is_Null := False;
+         else
+            This.Value := False;
+            This.Is_Null := True;
+         end if;
+      else
+         This.Value := Results.Get_Boolean (This.Get_Name, False);
+         This.Is_Null := False;
+      end if;
+      This.Changed := False;
+   end Load_From;
+
+   procedure Load_From
      (This              : in out Id_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set)
@@ -462,6 +543,16 @@ package body DB.Active_Record.Fields is
    end Set;
 
    procedure Set
+     (This              : in out Boolean_Field;
+      Value             : in     Boolean)
+   is
+   begin
+      This.Value := Value;
+      This.Changed := True;
+      This.Is_Null := False;
+   end Set;
+
+   procedure Set
      (This              : in out Id_Field;
       Value             : in     DB.Types.Object_Id)
    is
@@ -528,6 +619,23 @@ package body DB.Active_Record.Fields is
          begin
             return Connection.Quote_Value (Value_Str);
          end;
+      end if;
+   end To_SQL;
+
+   function To_SQL
+     (This              : in Boolean_Field;
+      Connection        : in DB.Connector.Connection)
+     return DB.Types.SQL_String
+   is
+   begin
+      if This.Is_Null then
+         return "NULL";
+      else
+         if This.Value then
+            return "'true'";
+         else
+            return "'false'";
+         end if;
       end if;
    end To_SQL;
 

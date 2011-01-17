@@ -65,12 +65,15 @@ package DB.Active_Record.Fields is
    --  Returns the SQL representation of the current field value.  The value
    --  if not NULL, is enclosed by single quotes.
 
-   type Id_Field is new Field with private;
    type Bigint_Field is new Field with private;
+   type Boolean_Field is new Field with private;
+   type Id_Field is new Field with private;
    type Integer_Field is new Field with private;
    type String_Field is new Field with private;
 
    overriding procedure Clear (This : in out Bigint_Field);
+
+   overriding procedure Clear (This : in out Boolean_Field);
 
    overriding procedure Clear (This : in out Id_Field);
 
@@ -85,6 +88,14 @@ package DB.Active_Record.Fields is
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
       Default_Value     : in DB.Types.DB_Bigint := 0) return Bigint_Field;
+
+   function Configure
+     (Name              : in String;
+      Display_Name      : in String := "";
+      Not_Null          : in Boolean := False;
+      Unique            : in Boolean := False;
+      Has_Default       : in Boolean := True;
+      Default_Value     : in Boolean := False) return Boolean_Field;
 
    function Configure
      (Name              : in String;
@@ -117,6 +128,11 @@ package DB.Active_Record.Fields is
      return DB.Types.SQL_String;
 
    overriding function Field_SQL
+     (This              : in Boolean_Field;
+      Connector         : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
+   overriding function Field_SQL
      (This              : in Id_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
@@ -133,6 +149,8 @@ package DB.Active_Record.Fields is
 
    function Get (This : in Bigint_Field) return DB.Types.DB_Bigint;
 
+   function Get (This : in Boolean_Field) return Boolean;
+
    function Get (This : in Id_Field) return DB.Types.Object_Id;
 
    function Get (This : in Integer_Field) return DB.Types.DB_Integer;
@@ -143,6 +161,11 @@ package DB.Active_Record.Fields is
 
    overriding procedure Load_From
      (This              : in out Bigint_Field;
+      Connection        : in     DB.Connector.Connection;
+      Results           : in     DB.Connector.Result_Set);
+
+   overriding procedure Load_From
+     (This              : in out Boolean_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
 
@@ -166,6 +189,10 @@ package DB.Active_Record.Fields is
       Value             : in     DB.Types.DB_Bigint);
 
    procedure Set
+     (This              : in out Boolean_Field;
+      Value             : in     Boolean);
+
+   procedure Set
      (This              : in out Id_Field;
       Value             : in     DB.Types.Object_Id);
 
@@ -183,6 +210,11 @@ package DB.Active_Record.Fields is
 
    overriding function To_SQL
      (This              : in Bigint_Field;
+      Connection        : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
+   overriding function To_SQL
+     (This              : in Boolean_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
@@ -218,6 +250,11 @@ private
    type Bigint_Field is new Field with record
       Default_Value     : DB.Types.DB_Bigint;
       Value             : DB.Types.DB_Bigint;
+   end record;
+
+   type Boolean_Field is new Field with record
+      Default_Value     : Boolean;
+      Value             : Boolean;
    end record;
 
    type Id_Field is new Field with record
