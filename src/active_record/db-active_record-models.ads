@@ -122,7 +122,8 @@ private
       Changed           : Boolean := False;
       Field_Count       : Natural := 0;
       Id                : DB.Active_Record.Fields.Id_Field :=
-        DB.Active_Record.Fields.Configure ("id", Not_Null => True, Unique => True);
+        DB.Active_Record.Fields.Configure
+          ("id", Not_Null => True, Unique => True, Has_Default => False);
       Id_Name           : Unbounded_String;
       Initialized       : Boolean := False;
       Model_Name        : Unbounded_String;
