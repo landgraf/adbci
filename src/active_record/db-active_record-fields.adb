@@ -370,6 +370,7 @@ package body DB.Active_Record.Fields is
             This.Value := This.Default_Value;
             This.Is_Null := False;
          else
+            This.Value := 0;
             This.Is_Null := True;
          end if;
       else
@@ -391,6 +392,7 @@ package body DB.Active_Record.Fields is
             This.Value := This.Default_Value;
             This.Is_Null := False;
          else
+            This.Value := 0;
             This.Is_Null := True;
          end if;
       else
@@ -412,6 +414,7 @@ package body DB.Active_Record.Fields is
             This.Value := This.Default_Value;
             This.Is_Null := False;
          else
+            This.Value := 0;
             This.Is_Null := True;
          end if;
       else
@@ -433,6 +436,7 @@ package body DB.Active_Record.Fields is
             This.Value := This.Default_Value;
             This.Is_Null := False;
          else
+            Set_Unbounded_String (This.Value, "");
             This.Is_Null := True;
          end if;
       else
