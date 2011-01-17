@@ -139,6 +139,8 @@ package DB.Active_Record.Fields is
 
    function Get (This : in String_Field) return String;
 
+   function Get (This : in String_Field) return Unbounded_String;
+
    overriding procedure Load_From
      (This              : in out Bigint_Field;
       Connection        : in     DB.Connector.Connection;
@@ -174,6 +176,10 @@ package DB.Active_Record.Fields is
    procedure Set
      (This              : in out String_Field;
       Value             : in     String);
+
+   procedure Set
+     (This              : in out String_Field;
+      Value             : in     Unbounded_String);
 
    overriding function To_SQL
      (This              : in Bigint_Field;

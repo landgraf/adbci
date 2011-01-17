@@ -304,6 +304,11 @@ package body DB.Active_Record.Fields is
       return To_String (This.Value);
    end Get;
 
+   function Get (This : in String_Field) return Unbounded_String is
+   begin
+      return This.Value;
+   end Get;
+
    ----------------------
    -- Get_Display_Name --
    ----------------------
@@ -481,6 +486,20 @@ package body DB.Active_Record.Fields is
          raise CONSTRAINT_ERROR with "string too long";
       else
          Set_Unbounded_String (This.Value, Value);
+         This.Changed := True;
+         This.Is_Null := False;
+      end if;
+   end Set;
+
+   procedure Set
+     (This              : in out String_Field;
+      Value             : in     Unbounded_String)
+   is
+   begin
+      if Length (Value) > This.Maximum_Length then
+         raise CONSTRAINT_ERROR with "string too long";
+      else
+         This.Value := Value;
          This.Changed := True;
          This.Is_Null := False;
       end if;
