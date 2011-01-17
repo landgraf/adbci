@@ -363,7 +363,7 @@ package body DB.Driver.PostgreSQL is
         (String (Get_Data_String (Result, Tuple, Column, True, "")));
    begin
       if S /= "" then
-         return S = "TRUE";
+         return S = "TRUE" or else S = "T";
       else
          if Replace_Null then
             return Replacement;
