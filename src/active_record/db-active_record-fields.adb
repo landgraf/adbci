@@ -477,9 +477,13 @@ package body DB.Active_Record.Fields is
       Value             : in     String)
    is
    begin
-      Set_Unbounded_String (This.Value, Value);
-      This.Changed := True;
-      This.Is_Null := False;
+      if Value'Length > This.Maximum_Length then
+         raise CONSTRAINT_ERROR with "string too long";
+      else
+         Set_Unbounded_String (This.Value, Value);
+         This.Changed := True;
+         This.Is_Null := False;
+      end if;
    end Set;
 
    ------------
