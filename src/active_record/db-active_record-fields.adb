@@ -223,7 +223,7 @@ package body DB.Active_Record.Fields is
             Value_Str         : constant String :=
               Trim (DB.Types.Object_Id'Image (This.Value), Both);
          begin
-            return Connection.Quote_Value (Value_Str);
+            return "'" & Connection.Quote_Value (Value_Str) & "'";
          end;
       end if;
    end To_SQL;

@@ -62,7 +62,8 @@ package DB.Active_Record.Fields is
      (This              : in Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String is abstract;
-   --  Returns the SQL representation of the current field value.
+   --  Returns the SQL representation of the current field value.  The value
+   --  if not NULL, is enclosed by single quotes.
 
    type Id_Field is new Field with private;
 
