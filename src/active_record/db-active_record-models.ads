@@ -35,6 +35,11 @@ package DB.Active_Record.Models is
       Connection        : in out DB.Connector.Connection);
    --  Creates model table in database.
 
+   procedure Delete
+     (This              : in out Model'Class;
+      Connection        : in out DB.Connector.Connection);
+   --  Deletes the object from the database.
+
    procedure Drop
      (This              : in out Model'Class;
       Connection        : in out DB.Connector.Connection);

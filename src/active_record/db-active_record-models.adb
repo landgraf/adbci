@@ -98,6 +98,30 @@ package body DB.Active_Record.Models is
       return DB.Types.SQL_String (To_String (Generated_SQL));   
    end Create_SQL;
 
+   ------------
+   -- Delete --
+   ------------
+
+   procedure Delete
+     (This              : in out Model'Class;
+      Connection        : in out DB.Connector.Connection)
+   is
+   begin
+      if This.Store = STORE_UPDATE then
+         declare
+            Id_Name     : constant String := To_String (This.Id_Name);
+            Model_Name  : constant String := To_String (This.Model_Name);
+            SQL         : constant DB.Types.SQL_String :=
+              DB.Types.SQL_String ("DELETE FROM " & Model_Name & " WHERE " &
+                                   Id_Name & "=") & This.Id.To_SQL (Connection);
+            Result      : constant DB.Connector.Result_Set :=
+              Connection.Execute (SQL);
+         begin
+            This.Clear;
+         end;
+      end if;
+   end Delete;
+
    ----------
    -- Drop --
    ----------
