@@ -342,6 +342,49 @@ package body DB.Connector is
       end if;
    end Get_Object_Id;
 
+   ----------------------
+   -- Get_Object_Id_At --
+   ----------------------
+
+   function Get_Object_Id_At
+     (This              : in Result_Set;
+      Column            : in Column_Index;
+      Tuple             : in Tuple_Index;
+      Replace_Null      : in Boolean := False;
+      Replacement       : in DB.Types.Object_Id := 0)
+     return DB.Types.Object_Id
+   is
+   begin
+      if This.Results /= null and then This.Results.Data /= null then
+         return This.Results.Data.Get_Data_Object_Id
+           (Tuple, Column, Replace_Null, Replacement);
+      else
+         raise DB.Errors.END_OF_RESULT_SET;
+      end if;
+   end Get_Object_Id_At;
+
+   function Get_Object_Id_At
+     (This              : in Result_Set;
+      Column            : in String;
+      Tuple             : in Tuple_Index;
+      Replace_Null      : in Boolean := False;
+      Replacement       : in DB.Types.Object_Id := 0)
+     return DB.Types.Object_Id
+   is
+   begin
+      if This.Results /= null and then This.Results.Data /= null then
+         declare
+            Reqd_Column : constant Column_Index :=
+              This.Results.Data.Find_Column_By_Name (Column);
+         begin
+            return This.Results.Data.Get_Data_Object_Id
+              (Tuple, Reqd_Column, Replace_Null, Replacement);
+         end;
+      else
+         raise DB.Errors.END_OF_RESULT_SET;
+      end if;
+   end Get_Object_Id_At;
+
    ------------------
    -- Get_Smallint --
    ------------------

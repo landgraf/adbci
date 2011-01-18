@@ -115,6 +115,26 @@ package DB.Connector is
      return DB.Types.Object_Id;
    --  Gets Id data at specified column, optionally replacing null values.
 
+   function Get_Object_Id_At
+     (This              : in Result_Set;
+      Column            : in Column_Index;
+      Tuple             : in Tuple_Index;
+      Replace_Null      : in Boolean := False;
+      Replacement       : in DB.Types.Object_Id := 0)
+     return DB.Types.Object_Id;
+   --  Gets Id data at specified column and tuple, optionally replacing null
+   --  values.
+
+   function Get_Object_Id_At
+     (This              : in Result_Set;
+      Column            : in String;
+      Tuple             : in Tuple_Index;
+      Replace_Null      : in Boolean := False;
+      Replacement       : in DB.Types.Object_Id := 0)
+     return DB.Types.Object_Id;
+   --  Gets Id data at specified column and tuple, optionally replacing null
+   --  values.
+
    function Get_Object_Id
      (This              : in Result_Set;
       Column            : in String;
