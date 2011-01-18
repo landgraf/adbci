@@ -22,6 +22,274 @@ with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 
 package body DB.Active_Record.Fields is
 
+   procedure Set_Criteria
+     (This              : in out Field_Criteria;
+      Source_Field      : in     Field'Class;
+      Operator          : in     SQL_Operator;
+      Str               : in     String;
+      Requires_Quoting  : in     Boolean := False)
+   is
+   begin
+      This.Model_Name := Source_Field.Model_Name;
+      This.Field_Name := Source_Field.Field_Name;
+      This.Operator := Operator;
+      Set_Unbounded_String (This.SQL_Criteria, Trim (Str, Both));
+      This.Requires_Quoting := Requires_Quoting;
+   end Set_Criteria;
+   pragma Inline (Set_Criteria);
+
+   ---------
+   -- "=" --
+   ---------
+
+   function "="
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, EQUAL, DB.Types.DB_Bigint'Image (Right));
+      return Temp;
+   end "=";
+
+   function "="
+     (Left              : in Boolean_Field;
+      Right             : in Boolean) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      if Right then
+         Set_Criteria (Temp, Left, EQUAL, "true");
+      else
+         Set_Criteria (Temp, Left, EQUAL, "false");
+      end if;
+      return Temp;
+   end "=";
+
+   function "="
+     (Left              : in Id_Field;
+      Right             : in DB.Types.Object_Id) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, EQUAL, DB.Types.Object_Id'Image (Right));
+      return Temp;
+   end "=";
+
+   function "="
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, EQUAL, DB.Types.DB_Integer'Image (Right));
+      return Temp;
+   end "=";
+
+   function "="
+     (Left              : in Integer_Field;
+      Right             : in String) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, EQUAL, Right, True);
+      return Temp;
+   end "=";
+
+   ----------
+   -- "/=" --
+   ----------
+
+   function "/="
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.DB_Bigint'Image (Right));
+      return Temp;
+   end "/=";
+
+   function "/="
+     (Left              : in Boolean_Field;
+      Right             : in Boolean) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      if not Right then
+         Set_Criteria (Temp, Left, NOT_EQUAL, "true");
+      else
+         Set_Criteria (Temp, Left, NOT_EQUAL, "false");
+      end if;
+      return Temp;
+   end "/=";
+
+   function "/="
+     (Left              : in Id_Field;
+      Right             : in DB.Types.Object_Id) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.Object_Id'Image (Right));
+      return Temp;
+   end "/=";
+
+   function "/="
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.DB_Integer'Image (Right));
+      return Temp;
+   end "/=";
+
+   function "/="
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
+      return Temp;
+   end "/=";
+
+   ---------
+   -- "<" --
+   ---------
+
+   function "<"
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LESS_THAN, DB.Types.DB_Bigint'Image (Right));
+      return Temp;
+   end "<";
+
+   function "<"
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LESS_THAN, DB.Types.DB_Integer'Image (Right));
+      return Temp;
+   end "<";
+
+   function "<"
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LESS_THAN, Right, True);
+      return Temp;
+   end "<";
+
+   ----------
+   -- "<=" --
+   ----------
+
+   function "<="
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, DB.Types.DB_Bigint'Image (Right));
+      return Temp;
+   end "<=";
+
+   function "<="
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, DB.Types.DB_Integer'Image (Right));
+      return Temp;
+   end "<=";
+
+   function "<="
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right, True);
+      return Temp;
+   end "<=";
+
+   ----------
+   -- ">=" --
+   ----------
+
+   function ">="
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, DB.Types.DB_Bigint'Image (Right));
+      return Temp;
+   end ">=";
+
+   function ">="
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, DB.Types.DB_Integer'Image (Right));
+      return Temp;
+   end ">=";
+
+   function ">="
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right, True);
+      return Temp;
+   end ">=";
+
+   ---------
+   -- ">" --
+   ---------
+
+   function ">"
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, GREATER_THAN, DB.Types.DB_Bigint'Image (Right));
+      return Temp;
+   end ">";
+
+   function ">"
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, GREATER_THAN, DB.Types.DB_Integer'Image (Right));
+      return Temp;
+   end ">";
+
+   function ">"
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
+      return Temp;
+   end ">";
+
    -----------
    -- Clear --
    -----------
@@ -395,6 +663,20 @@ package body DB.Active_Record.Fields is
       return To_String (This.Field_Name);
    end Get_Name;
 
+   -----------
+   -- ILike --
+   -----------
+
+   function ILike
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, ILIKE, Right, True);
+      return Temp;
+   end ILike;
+
    ----------------
    -- Is_Changed --
    ----------------
@@ -412,6 +694,20 @@ package body DB.Active_Record.Fields is
    begin
       return This.Is_Null;
    end Is_Null;
+
+   ----------
+   -- Like --
+   ----------
+
+   function Like
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LIKE, Right, True);
+      return Temp;
+   end Like;
 
    ---------------
    -- Load_From --

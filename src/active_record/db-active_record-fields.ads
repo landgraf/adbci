@@ -24,6 +24,7 @@ package DB.Active_Record.Fields is
 
    type Field is abstract tagged private;
    type Field_Handler is not null access Procedure (This : in out Field'Class);
+   type Field_Criteria is private;
 
    procedure Clear (This : in out Field) is abstract;
    --  Clears the field - if the field has a default, sets the field to the
@@ -70,6 +71,94 @@ package DB.Active_Record.Fields is
    type Id_Field is new Field with private;
    type Integer_Field is new Field with private;
    type String_Field is new Field with private;
+
+   function "="
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function "="
+     (Left              : in Boolean_Field;
+      Right             : in Boolean) return Field_Criteria;
+
+   function "="
+     (Left              : in Id_Field;
+      Right             : in DB.Types.Object_Id) return Field_Criteria;
+
+   function "="
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria;
+
+   function "="
+     (Left              : in Integer_Field;
+      Right             : in String) return Field_Criteria;
+
+   function "/="
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function "/="
+     (Left              : in Boolean_Field;
+      Right             : in Boolean) return Field_Criteria;
+
+   function "/="
+     (Left              : in Id_Field;
+      Right             : in DB.Types.Object_Id) return Field_Criteria;
+
+   function "/="
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria;
+
+   function "/="
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria;
+
+   function "<"
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function "<"
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria;
+
+   function "<"
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria;
+
+   function "<="
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function "<="
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria;
+
+   function "<="
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria;
+
+   function ">="
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function ">="
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria;
+
+   function ">="
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria;
+
+   function ">"
+     (Left              : in Bigint_Field;
+      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function ">"
+     (Left              : in Integer_Field;
+      Right             : in DB.Types.DB_Integer) return Field_Criteria;
+
+   function ">"
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria;
 
    overriding procedure Clear (This : in out Bigint_Field);
 
@@ -158,6 +247,14 @@ package DB.Active_Record.Fields is
    function Get (This : in String_Field) return String;
 
    function Get (This : in String_Field) return Unbounded_String;
+
+   function ILike
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria;
+
+   function Like
+     (Left              : in String_Field;
+      Right             : in String) return Field_Criteria;
 
    overriding procedure Load_From
      (This              : in out Bigint_Field;
@@ -271,6 +368,24 @@ private
       Default_Value     : Unbounded_String;
       Maximum_Length    : Positive := 255;
       Value             : Unbounded_String;
+   end record;
+
+   type SQL_Operator is
+     (EQUAL,                                    --  =
+      NOT_EQUAL,                                --  <>
+      LESS_THAN,                                --  <
+      LESS_THAN_OR_EQUAL,                       --  <=
+      GREATER_THAN,                             --  >
+      GREATER_THAN_OR_EQUAL,                    --  >=
+      LIKE,                                     --  LIKE
+      ILIKE);                                   --  ILIKE
+
+   type Field_Criteria is record
+      Model_Name        : Unbounded_String;
+      Field_Name        : Unbounded_String;
+      Operator          : SQL_Operator;
+      Requires_Quoting  : Boolean := False;
+      SQL_Criteria      : Unbounded_String;
    end record;
 
    function Constraints_SQL (This : in Field'Class) return DB.Types.SQL_String;
