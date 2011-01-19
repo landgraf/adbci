@@ -81,9 +81,9 @@ begin
    declare
       Q     : Field_Criteria := Customer_1.Customer_Name.ILike ("%sausage%");
       R     : Customer_Finder.Query_Result;
-      Item  : Customer.Customer_Model;
    begin
       R := Customer_Finder.Find (Database, Q);
+      --  This should return 0 results...
       Put_Line ("Found:" & Natural'Image (Customer_Finder.Count (R)) & " Result(s).");
    end;
 
