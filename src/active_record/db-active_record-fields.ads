@@ -320,6 +320,14 @@ package DB.Active_Record.Fields is
      (This              : in out String_Field;
       Value             : in     Unbounded_String);
 
+   procedure To_Query
+     (This              : in     Field_Criteria;
+      Database          : in     DB.Connector.Connection;
+      Table_List        : in out Unbounded_String;
+      Where_Conditions  : in out Unbounded_String);
+   --  Converts criteria tree into table list and conditions ready for
+   --  use in a query.
+
    overriding function To_SQL
      (This              : in Bigint_Field;
       Connection        : in DB.Connector.Connection)

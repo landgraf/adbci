@@ -971,6 +971,83 @@ package body DB.Active_Record.Fields is
       end if;
    end Set;
 
+   ------------------------
+   -- To_Extracted_Query --
+   ------------------------
+
+   function To_Extracted_Query
+     (This              : in Field_Criteria;
+      Database          : in DB.Connector.Connection) return String
+   is
+      Value             : Unbounded_String;
+   begin
+      Value := This.Data.Model_Name;
+      Append (Value, '.');
+      Append (Value, This.Data.Field_Name);
+
+      case This.Data.Operator is
+         when EQUAL =>
+            Append (Value, " = ");
+         when NOT_EQUAL =>
+            Append (Value, " <> ");
+         when LESS_THAN =>
+            Append (Value, " < ");
+         when LESS_THAN_OR_EQUAL =>
+            Append (Value, " <= ");
+         when GREATER_THAN =>
+            Append (Value, " > ");
+         when GREATER_THAN_OR_EQUAL =>
+            Append (Value, " >= ");
+         when ILIKE =>
+            Append (Value, " ILIKE ");
+         when LIKE =>
+            Append (Value, " LIKE ");
+         when others =>
+            raise PROGRAM_ERROR with "incorrect usage";
+      end case;
+
+      if This.Data.Requires_Quoting then
+         Append (Value, "'" &
+           String (Database.Quote_Value (To_String (This.Data.SQL_Criteria)))
+           & "'");
+      else
+         Append (Value, This.Data.SQL_Criteria);
+      end if;
+
+      return To_String (Value);
+   end To_Extracted_Query;
+
+   --------------
+   -- To_Query --
+   --------------
+
+   procedure To_Query
+     (This              : in     Field_Criteria;
+      Database          : in     DB.Connector.Connection;
+      Table_List        : in out Unbounded_String;
+      Where_Conditions  : in out Unbounded_String)
+   is
+      function Traverse
+        (Root           : in     Field_Criteria;
+         Database       : in     DB.Connector.Connection) return String
+      is
+      begin
+         case Root.Data.Operator is
+            when SQL_AND =>
+               return "(" & Traverse (Root.Data.Left_Subtree, Database) & 
+                 ") AND (" & Traverse (Root.Data.Right_Subtree, Database) & ")";
+            when SQL_OR =>
+               return "(" & Traverse (Root.Data.Left_Subtree, Database) & 
+                 ") OR (" & Traverse (Root.Data.Right_Subtree, Database) & ")";
+            when others =>
+               return To_Extracted_Query (Root, Database);
+         end case;
+      end Traverse;
+   begin
+      Set_Unbounded_String (Table_List, "");
+      Set_Unbounded_String (Where_Conditions, Traverse (This, Database));
+   end To_Query;
+
    ------------
    -- To_SQL --
    ------------
