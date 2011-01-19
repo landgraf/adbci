@@ -29,6 +29,7 @@ package DB.Types is
    Invalid_Bigserial    : constant DB_Bigserial := 0;
 
    subtype Object_Id is DB_Bigserial;
+   Null_Object_Id       : constant Object_Id := 0;
 
    type SQL_String is new String;
 

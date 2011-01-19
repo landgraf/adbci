@@ -207,7 +207,8 @@ package DB.Active_Record.Fields is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in DB.Types.Object_Id := 0) return Id_Field;
+      Default_Value     : in DB.Types.Object_Id := DB.Types.Null_Object_Id)
+     return Id_Field;
 
    function Configure
      (Name              : in String;
@@ -368,23 +369,23 @@ private
    end record;
 
    type Bigint_Field is new Field with record
-      Default_Value     : DB.Types.DB_Bigint;
-      Value             : DB.Types.DB_Bigint;
+      Default_Value     : DB.Types.DB_Bigint := 0;
+      Value             : DB.Types.DB_Bigint := 0;
    end record;
 
    type Boolean_Field is new Field with record
-      Default_Value     : Boolean;
-      Value             : Boolean;
+      Default_Value     : Boolean := False;
+      Value             : Boolean := False;
    end record;
 
    type Id_Field is new Field with record
-      Default_Value     : DB.Types.Object_Id;
-      Value             : DB.Types.Object_Id;
+      Default_Value     : DB.Types.Object_Id := DB.Types.Null_Object_Id;
+      Value             : DB.Types.Object_Id := DB.Types.Null_Object_Id;
    end record;
 
    type Integer_Field is new Field with record
-      Default_Value     : DB.Types.DB_Integer;
-      Value             : DB.Types.DB_Integer;
+      Default_Value     : DB.Types.DB_Integer := 0;
+      Value             : DB.Types.DB_Integer := 0;
    end record;
 
    type String_Field is new Field with record

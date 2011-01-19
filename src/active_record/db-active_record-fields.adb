@@ -488,7 +488,8 @@ package body DB.Active_Record.Fields is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in DB.Types.Object_Id := 0) return Id_Field
+      Default_Value     : in DB.Types.Object_Id := DB.Types.Null_Object_Id)
+     return Id_Field
    is
       Lower_Name        : constant String := To_Lower (Name);
       Temp              : Id_Field;
