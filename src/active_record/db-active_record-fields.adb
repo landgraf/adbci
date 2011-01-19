@@ -22,6 +22,7 @@ with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 
 package body DB.Active_Record.Fields is
 
+   pragma Inline (Set_Criteria);
    procedure Set_Criteria
      (This              : in out Field_Criteria;
       Source_Field      : in     Field'Class;
@@ -36,7 +37,6 @@ package body DB.Active_Record.Fields is
       Set_Unbounded_String (This.SQL_Criteria, Trim (Str, Both));
       This.Requires_Quoting := Requires_Quoting;
    end Set_Criteria;
-   pragma Inline (Set_Criteria);
 
    ---------
    -- "=" --

@@ -391,6 +391,14 @@ private
    function Constraints_SQL (This : in Field'Class) return DB.Types.SQL_String;
    --  Returns field constraints as SQL string.
 
+   procedure Set_Criteria
+     (This              : in out Field_Criteria;
+      Source_Field      : in     Field'Class;
+      Operator          : in     SQL_Operator;
+      Str               : in     String;
+      Requires_Quoting  : in     Boolean := False);
+   pragma Inline (Set_Criteria);
+
    function Validate_Field_Name (This : in String) return Boolean;
    --  Validates field name - returns true if valid, false if invalid.
 

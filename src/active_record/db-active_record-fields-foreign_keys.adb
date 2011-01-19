@@ -20,6 +20,54 @@ with Ada.Characters.Handling;          use Ada.Characters.Handling;
 
 package body DB.Active_Record.Fields.Foreign_Keys is
 
+   ---------
+   -- "=" --
+   ---------
+
+   function "="
+     (Left              : in Foreign_Key_Field;
+      Right             : in DB.Types.Object_Id) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, EQUAL, DB.Types.Object_Id'Image (Right));
+      return Temp;
+   end "=";
+
+   function "="
+     (Left              : in Foreign_Key_Field;
+      Right             : in Model_Type) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, EQUAL, Right.Get_Id);
+      return Temp;
+   end "=";
+
+   ----------
+   -- "/=" --
+   ----------
+
+   function "/="
+     (Left              : in Foreign_Key_Field;
+      Right             : in DB.Types.Object_Id) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.Object_Id'Image (Right));
+      return Temp;
+   end "/=";
+
+   function "/="
+     (Left              : in Foreign_Key_Field;
+      Right             : in Model_Type) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, NOT_EQUAL, Right.Get_Id);
+      return Temp;   
+   end "/=";
+
    -----------
    -- Clear --
    -----------
