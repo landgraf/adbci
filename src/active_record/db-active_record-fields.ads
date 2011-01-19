@@ -17,6 +17,7 @@
 --
 
 with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
+with Ada.Finalization;
 with DB.Connector;                     use DB.Connector;
 with DB.Types;                         use DB.Types;
 
@@ -73,92 +74,106 @@ package DB.Active_Record.Fields is
    type String_Field is new Field with private;
 
    function "="
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
 
    function "="
-     (Left              : in Boolean_Field;
+     (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria;
 
    function "="
-     (Left              : in Id_Field;
+     (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
 
    function "="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function "="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in String) return Field_Criteria;
 
    function "/="
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
 
    function "/="
-     (Left              : in Boolean_Field;
+     (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria;
 
    function "/="
-     (Left              : in Id_Field;
+     (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
 
    function "/="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function "/="
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
    function "<"
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
 
    function "<"
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function "<"
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
    function "<="
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
 
    function "<="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function "<="
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
    function ">="
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
 
    function ">="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function ">="
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
    function ">"
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
 
    function ">"
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function ">"
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
+
+   function "and"
+     (Left              : in Field_Criteria;
+      Right             : in Field_Criteria) return Field_Criteria;
+
+   pragma Warnings (Off);
+   function "&"
+     (Left              : in Field_Criteria;
+      Right             : in Field_Criteria) return Field_Criteria renames "and";
+   pragma Warnings (On);
+
+   function "or"
+     (Left              : in Field_Criteria;
+      Right             : in Field_Criteria) return Field_Criteria;
 
    overriding procedure Clear (This : in out Bigint_Field);
 
@@ -249,11 +264,11 @@ package DB.Active_Record.Fields is
    function Get (This : in String_Field) return Unbounded_String;
 
    function ILike
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
    function Like
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
    overriding procedure Load_From
@@ -378,15 +393,34 @@ private
       GREATER_THAN,                             --  >
       GREATER_THAN_OR_EQUAL,                    --  >=
       LIKE,                                     --  LIKE
-      ILIKE);                                   --  ILIKE
+      ILIKE,                                    --  ILIKE
+      SQL_AND,                                  --  AND (requires subtrees)
+      SQL_OR);                                  --  OR (requires subtrees)
 
-   type Field_Criteria is record
+   type Field_Criteria_Data;
+   type Field_Criteria_Access is access all Field_Criteria_Data;
+
+   type Field_Criteria_Data is record
+      Reference_Count   : Natural := 1;
       Model_Name        : Unbounded_String;
       Field_Name        : Unbounded_String;
       Operator          : SQL_Operator;
       Requires_Quoting  : Boolean := False;
       SQL_Criteria      : Unbounded_String;
+      Left_Subtree      : Field_Criteria;
+      Right_Subtree     : Field_Criteria;
    end record;
+
+   type Field_Criteria is new Ada.Finalization.Controlled with record
+      Data              : Field_Criteria_Access := null;
+   end record;
+
+   procedure Alloc (This : in out Field_Criteria);
+   pragma Inline (Alloc);
+
+   overriding procedure Adjust (This : in out Field_Criteria);
+
+   overriding procedure Finalize (This : in out Field_Criteria);
 
    function Constraints_SQL (This : in Field'Class) return DB.Types.SQL_String;
    --  Returns field constraints as SQL string.

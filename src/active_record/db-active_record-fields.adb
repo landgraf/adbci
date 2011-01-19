@@ -19,6 +19,7 @@
 with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
+with Ada.Unchecked_Deallocation;
 
 package body DB.Active_Record.Fields is
 
@@ -31,11 +32,12 @@ package body DB.Active_Record.Fields is
       Requires_Quoting  : in     Boolean := False)
    is
    begin
-      This.Model_Name := Source_Field.Model_Name;
-      This.Field_Name := Source_Field.Field_Name;
-      This.Operator := Operator;
-      Set_Unbounded_String (This.SQL_Criteria, Trim (Str, Both));
-      This.Requires_Quoting := Requires_Quoting;
+      Alloc (This);
+      This.Data.Model_Name := Source_Field.Model_Name;
+      This.Data.Field_Name := Source_Field.Field_Name;
+      This.Data.Operator := Operator;
+      Set_Unbounded_String (This.Data.SQL_Criteria, Trim (Str, Both));
+      This.Data.Requires_Quoting := Requires_Quoting;
    end Set_Criteria;
 
    ---------
@@ -43,7 +45,7 @@ package body DB.Active_Record.Fields is
    ---------
 
    function "="
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -53,7 +55,7 @@ package body DB.Active_Record.Fields is
    end "=";
 
    function "="
-     (Left              : in Boolean_Field;
+     (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -67,7 +69,7 @@ package body DB.Active_Record.Fields is
    end "=";
 
    function "="
-     (Left              : in Id_Field;
+     (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -77,7 +79,7 @@ package body DB.Active_Record.Fields is
    end "=";
 
    function "="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -87,7 +89,7 @@ package body DB.Active_Record.Fields is
    end "=";
 
    function "="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -101,7 +103,7 @@ package body DB.Active_Record.Fields is
    ----------
 
    function "/="
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -111,7 +113,7 @@ package body DB.Active_Record.Fields is
    end "/=";
 
    function "/="
-     (Left              : in Boolean_Field;
+     (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -125,7 +127,7 @@ package body DB.Active_Record.Fields is
    end "/=";
 
    function "/="
-     (Left              : in Id_Field;
+     (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -135,7 +137,7 @@ package body DB.Active_Record.Fields is
    end "/=";
 
    function "/="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -145,7 +147,7 @@ package body DB.Active_Record.Fields is
    end "/=";
 
    function "/="
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -159,7 +161,7 @@ package body DB.Active_Record.Fields is
    ---------
 
    function "<"
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -169,7 +171,7 @@ package body DB.Active_Record.Fields is
    end "<";
 
    function "<"
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -179,7 +181,7 @@ package body DB.Active_Record.Fields is
    end "<";
 
    function "<"
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -193,7 +195,7 @@ package body DB.Active_Record.Fields is
    ----------
 
    function "<="
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -203,7 +205,7 @@ package body DB.Active_Record.Fields is
    end "<=";
 
    function "<="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -213,7 +215,7 @@ package body DB.Active_Record.Fields is
    end "<=";
 
    function "<="
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -227,7 +229,7 @@ package body DB.Active_Record.Fields is
    ----------
 
    function ">="
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -237,7 +239,7 @@ package body DB.Active_Record.Fields is
    end ">=";
 
    function ">="
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -247,7 +249,7 @@ package body DB.Active_Record.Fields is
    end ">=";
 
    function ">="
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -261,7 +263,7 @@ package body DB.Active_Record.Fields is
    ---------
 
    function ">"
-     (Left              : in Bigint_Field;
+     (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -271,7 +273,7 @@ package body DB.Active_Record.Fields is
    end ">";
 
    function ">"
-     (Left              : in Integer_Field;
+     (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -281,7 +283,7 @@ package body DB.Active_Record.Fields is
    end ">";
 
    function ">"
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -289,6 +291,63 @@ package body DB.Active_Record.Fields is
       Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
       return Temp;
    end ">";
+
+   -----------
+   -- "and" --
+   -----------
+
+   function "and"
+     (Left              : in Field_Criteria;
+      Right             : in Field_Criteria) return Field_Criteria
+   is
+      New_Tree          : Field_Criteria;
+   begin
+      Alloc (New_Tree);
+      New_Tree.Data.Operator := SQL_AND;
+      New_Tree.Data.Left_Subtree := Left;
+      New_Tree.Data.Right_Subtree := Right;
+      return New_Tree;
+   end "and";
+
+   ----------
+   -- "or" --
+   ----------
+
+   function "or"
+     (Left              : in Field_Criteria;
+      Right             : in Field_Criteria) return Field_Criteria
+   is
+      New_Tree          : Field_Criteria;
+   begin
+      Alloc (New_Tree);
+      New_Tree.Data.Operator := SQL_OR;
+      New_Tree.Data.Left_Subtree := Left;
+      New_Tree.Data.Right_Subtree := Right;
+      return New_Tree;
+   end "or";
+
+   ------------
+   -- Adjust --
+   ------------
+
+   procedure Adjust (This : in out Field_Criteria) is
+   begin
+      if This.Data /= null then
+         This.Data.Reference_Count := This.Data.Reference_Count + 1;
+      end if;
+   end Adjust;
+
+   -----------
+   -- Alloc --
+   -----------
+
+   procedure Alloc (This : in out Field_Criteria) is
+   begin
+      if This.Data = null then
+         This.Data := new Field_Criteria_Data;
+         This.Data.Reference_Count := 1;
+      end if;
+   end Alloc;
 
    -----------
    -- Clear --
@@ -602,6 +661,22 @@ package body DB.Active_Record.Fields is
         Length_Str & ")" & Constraints;
    end Field_SQL;
 
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (This : in out Field_Criteria) is
+      procedure Unchecked_Free is new Ada.Unchecked_Deallocation
+        (Field_Criteria_Data, Field_Criteria_Access);
+   begin
+      if This.Data /= null then
+         This.Data.Reference_Count := This.Data.Reference_Count - 1;
+         if This.Data.Reference_Count = 0 then
+            Unchecked_Free (This.Data);
+         end if;
+      end if;
+   end Finalize;
+
    ---------
    -- Get --
    ---------
@@ -668,7 +743,7 @@ package body DB.Active_Record.Fields is
    -----------
 
    function ILike
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -700,7 +775,7 @@ package body DB.Active_Record.Fields is
    ----------
 
    function Like
-     (Left              : in String_Field;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;
