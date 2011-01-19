@@ -33,7 +33,6 @@ package DB.Active_Record.Models.Queries is
      (Connection        : in DB.Connector.Connection;
       Criteria          : in DB.Active_Record.Fields.Field_Criteria;
       For_Update        : in Boolean := False;
-      Lazy_Fetch        : in Boolean := True;
       Read_Only         : in Boolean := False) return Query_Result;
    --  Searches for items using specified criteria.
 
