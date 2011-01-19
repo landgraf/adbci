@@ -24,6 +24,8 @@ generic
 
 package DB.Active_Record.Models.Queries is
 
+   Object               : Model_Type;
+
    type Query_Result is private;
 
    function Count (This : in Query_Result) return Natural;
