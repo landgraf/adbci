@@ -18,6 +18,8 @@
 
 with Ada.Text_IO;                      use Ada.Text_IO;
 with Customer;
+with DB.Active_Record.Fields;          use DB.Active_Record.Fields;
+with DB.Active_Record.Models.Queries;
 with DB.Connector;
 with DB.Driver;
 with DB.Driver.PostgreSQL;
@@ -27,6 +29,9 @@ procedure Active_Record is
      DB.Connector.Connect ("postgresql", "localhost", "adbci", "adbci", "adbci");
    Customer_1           : Customer.Customer_Model;
    Customer_2           : Customer.Customer_Model;
+
+   package Customer_Finder is new DB.Active_Record.Models.Queries
+     (Model_Type => Customer.Customer_Model);
 begin
    begin
       Customer_1.Drop (Database);      --  drop the customers table
@@ -58,6 +63,29 @@ begin
    --  Fetch again, and show the result...
    Customer_1.Get (Database, Customer_2.Get_Id);
    Put_Line ("Customer Name: " & Customer_1.Customer_Name.Get);
+
+   --  Try some queries...
+   declare
+      Q     : Field_Criteria := 
+        (Customer_1.Customer_Name.ILike ("%customer%") and
+         Customer_1.Address_1.ILike ("Address Line%"));
+      R     : Customer_Finder.Query_Result;
+      Item  : Customer.Customer_Model;
+   begin
+      R := Customer_Finder.Find (Database, Q);
+      Put_Line ("Found:" & Natural'Image (Customer_Finder.Count (R)) & " Result(s).");
+      Item := Customer_Finder.Item (R, Database, 1);
+      Put_Line ("Found Customer Name: " & Item.Customer_Name.Get);
+   end;
+
+   declare
+      Q     : Field_Criteria := Customer_1.Customer_Name.ILike ("%sausage%");
+      R     : Customer_Finder.Query_Result;
+      Item  : Customer.Customer_Model;
+   begin
+      R := Customer_Finder.Find (Database, Q);
+      Put_Line ("Found:" & Natural'Image (Customer_Finder.Count (R)) & " Result(s).");
+   end;
 
    --  Now delete the customer from the database...
    Customer_1.Delete (Database);

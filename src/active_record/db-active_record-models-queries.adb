@@ -20,6 +20,8 @@ with DB.Errors;
 
 package body DB.Active_Record.Models.Queries is
 
+   Model                : Model_Type;
+
    -----------
    -- Count --
    -----------
@@ -28,6 +30,45 @@ package body DB.Active_Record.Models.Queries is
    begin
       return This.Count;
    end Count;
+
+   ----------
+   -- Find --
+   ----------
+
+   function Find
+     (Connection        : in DB.Connector.Connection;
+      Criteria          : in DB.Active_Record.Fields.Field_Criteria;
+      For_Update        : in Boolean := False;
+      Lazy_Fetch        : in Boolean := True;
+      Read_Only         : in Boolean := False) return Query_Result
+   is
+      use DB.Active_Record.Fields;
+      Query_SQL         : Unbounded_String;
+      Tables            : Unbounded_String;
+      Where_Clause      : Unbounded_String;
+   begin
+      Set_Unbounded_String (Query_SQL, "SELECT ");
+      if Lazy_Fetch then
+         Append (Query_SQL, Model.Get_Name & "." & Model.Get_Id_Name);
+      else
+         Append (Query_SQL, Model.Get_Name & ".*");
+      end if;
+      if For_Update then
+         Append (Query_SQL, " FOR UPDATE");
+      end if;
+
+      Append (Query_SQL, " FROM ");
+      To_Query (Criteria, Connection, Tables, Where_Clause);
+      Append (Query_SQL, Tables);
+      Append (Query_SQL, " WHERE ");
+      Append (Query_SQL, Where_Clause);
+
+      return SQL_Query
+        (Connection, 
+         DB.Types.SQL_String (To_String (Query_SQL)), 
+         Lazy_Fetch, 
+         Read_Only);
+   end Find;
 
    ----------
    -- Item --

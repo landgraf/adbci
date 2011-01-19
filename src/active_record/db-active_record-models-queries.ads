@@ -16,6 +16,8 @@
 --    db-active_record-models-queries.ads   jvinters   17-January-2011
 --
 
+with DB.Active_Record.Fields;
+
 generic
 
    type Model_Type is new DB.Active_Record.Models.Model with private;
@@ -26,6 +28,14 @@ package DB.Active_Record.Models.Queries is
 
    function Count (This : in Query_Result) return Natural;
    --  Returns the number of items in the result set.
+
+   function Find
+     (Connection        : in DB.Connector.Connection;
+      Criteria          : in DB.Active_Record.Fields.Field_Criteria;
+      For_Update        : in Boolean := False;
+      Lazy_Fetch        : in Boolean := True;
+      Read_Only         : in Boolean := False) return Query_Result;
+   --  Searches for items using specified criteria.
 
    function Item
      (This              : in Query_Result;
