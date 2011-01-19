@@ -17,8 +17,10 @@
 --
 
 with Ada.Characters.Handling;          use Ada.Characters.Handling;
+with Ada.Containers.Hashed_Sets;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
+with Ada.Strings.Unbounded.Hash;
 with Ada.Unchecked_Deallocation;
 
 package body DB.Active_Record.Fields is
@@ -1017,6 +1019,12 @@ package body DB.Active_Record.Fields is
       return To_String (Value);
    end To_Extracted_Query;
 
+   package Table_Set is new Ada.Containers.Hashed_Sets
+     (Element_Type         => Unbounded_String,
+      Hash                 => Ada.Strings.Unbounded.Hash,
+      Equivalent_Elements  => "=",
+      "="                  => "=");
+
    --------------
    -- To_Query --
    --------------
@@ -1027,6 +1035,10 @@ package body DB.Active_Record.Fields is
       Table_List        : in out Unbounded_String;
       Where_Conditions  : in out Unbounded_String)
    is
+      use Table_Set;
+      Table_Cursor      : Table_Set.Cursor;
+      Included_Tables   : Table_Set.Set;
+
       function Traverse
         (Root           : in     Field_Criteria;
          Database       : in     DB.Connector.Connection) return String
@@ -1040,12 +1052,22 @@ package body DB.Active_Record.Fields is
                return "(" & Traverse (Root.Data.Left_Subtree, Database) & 
                  ") OR (" & Traverse (Root.Data.Right_Subtree, Database) & ")";
             when others =>
+               Included_Tables.Include (Root.Data.Model_Name);
                return To_Extracted_Query (Root, Database);
          end case;
       end Traverse;
    begin
-      Set_Unbounded_String (Table_List, "");
       Set_Unbounded_String (Where_Conditions, Traverse (This, Database));
+      Set_Unbounded_String (Table_List, "");
+
+      Table_Cursor := Included_Tables.First;
+      while Table_Cursor /= No_Element loop
+         if Length (Table_List) > 0 then
+            Append (Table_List, ", ");
+         end if;
+         Append (Table_List, Element (Table_Cursor));
+         Table_Cursor := Next (Table_Cursor);
+      end loop;
    end To_Query;
 
    ------------
