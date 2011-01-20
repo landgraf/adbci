@@ -102,7 +102,7 @@ package body DB.Active_Record.Fields is
    end "=";
 
    function "="
-     (Left              : in Integer_Field'Class;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria
    is
       Temp              : Field_Criteria;

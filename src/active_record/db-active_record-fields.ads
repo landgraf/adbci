@@ -103,7 +103,7 @@ package DB.Active_Record.Fields is
       Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function "="
-     (Left              : in Integer_Field'Class;
+     (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
    function "="
