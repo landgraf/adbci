@@ -157,7 +157,7 @@ package body DB.Driver.PostgreSQL is
 
       --  Set the connection to some sensible defaults.
       begin
-         Execute_SQL (Driver, Init_Result, "SET DATESTYLE TO ISO");
+         Execute_SQL (Driver, Init_Result, "SET DATESTYLE TO ISO, YMD");
          Execute_SQL (Driver, Init_Result, "SET CLIENT_ENCODING TO UTF8");
          Free_Result (Driver, Init_Result);
          PQ_Set_Notice_Processor
