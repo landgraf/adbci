@@ -25,8 +25,11 @@ generic
 
 package DB.Active_Record.Fields.Foreign_Keys is
 
+   type Options is private;
+
    type Foreign_Key_Field is new DB.Active_Record.Fields.Field with record
       FK                : Model_Type;
+      FK_Options        : Options;
    end record;
 
    function "="
@@ -51,7 +54,8 @@ package DB.Active_Record.Fields.Foreign_Keys is
      (Name              : in String;
       Display_Name      : in String := "";
       Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False) return Foreign_Key_Field;
+      Unique            : in Boolean := False;
+      Cascade_Delete    : in Boolean := False) return Foreign_Key_Field;
 
    overriding function Field_SQL
      (This              : in Foreign_Key_Field;
@@ -73,6 +77,12 @@ package DB.Active_Record.Fields.Foreign_Keys is
      (This              : in Foreign_Key_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
+
+private
+
+   type Options is record
+      Cascade_Delete    : Boolean := False;
+   end record;
 
 end DB.Active_Record.Fields.Foreign_Keys;
 

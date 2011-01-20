@@ -87,7 +87,8 @@ package body DB.Active_Record.Fields.Foreign_Keys is
      (Name              : in String;
       Display_Name      : in String := "";
       Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False) return Foreign_Key_Field
+      Unique            : in Boolean := False;
+      Cascade_Delete    : in Boolean := False) return Foreign_Key_Field
    is
       Lower_Name        : constant String := To_Lower (Name);
       Temp              : Foreign_Key_Field;
@@ -106,6 +107,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
          Temp.Unique := Unique;
          Temp.Has_Default := False;
          Temp.FK.Clear;
+         Temp.FK_Options.Cascade_Delete := Cascade_Delete;
          return Temp;
       end if;
    end Configure;
@@ -126,10 +128,16 @@ package body DB.Active_Record.Fields.Foreign_Keys is
         DB.Types.SQL_String (This.FK.Get_Name);
       Id_SQL            : constant DB.Types.SQL_String :=
         Connection.Get_Driver.Get_Id_SQL;
-   begin
-      return DB.Types.SQl_String (Field_Name & ' ') &
+      Result            : constant DB.Types.SQL_String :=
+        DB.Types.SQL_String (Field_Name & ' ') &
         Id_SQL & " REFERENCES " & Foreign_Model & "(" &
         DB.Types.SQL_String (This.FK.Get_Id_Name) & ")" & Constraints;
+   begin
+      if This.FK_Options.Cascade_Delete then
+         return Result & " ON DELETE CASCADE";
+      else
+         return Result;
+      end if;
    end Field_SQL;
 
    ---------
