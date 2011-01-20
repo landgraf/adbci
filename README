@@ -17,5 +17,14 @@ Known working with GCC-GNAT 4.5.1 or later.
 DATABASE SUPPORT
 ----------------
 
-Currently only supports PostgreSQL 8.x or later.
+Currently only supports PostgreSQL 8.0 or later (including 9.x series).
+
+CAVEATS
+-------
+
+No UTC/Offset handling in date/time fields yet.
+The Active Record implementation doesn't cache or track object ids, so it is
+possible to retreive the same record from the database multiple times without
+them referencing the same data in memory.
+The Active Record implementation requires that result sets be random access.
 

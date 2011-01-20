@@ -16,6 +16,8 @@
 --    db-types.ads   jvinters   15-January-2011
 --
 
+with Ada.Calendar;
+
 package DB.Types is
 
    type DB_Smallint is range -2**15 .. 2**15 - 1;
@@ -33,14 +35,19 @@ package DB.Types is
 
    type SQL_String is new String;
 
+   subtype DB_Date is Ada.Calendar.Time;           --  ignores time component
+   subtype DB_Timestamp is Ada.Calendar.Time;
+
    type Field_Type is
      (BIGINT,
       BIGSERIAL,
       BOOLEAN,
+      DATE,
       INTEGER,
       SERIAL,
       SMALLINT,
       TEXT,
+      TIMESTAMP,
       VARCHAR,
       UNKNOWN);
 

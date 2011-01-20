@@ -40,6 +40,8 @@ package Customer is
        (Name => "phone", Maximum_Length => 32, Has_Default => False);
      No_Marketing    : Boolean_Field := Configure
        (Name => "no_marketing", Default_Value => False);
+     Last_Updated    : Timestamp_Field := Configure
+       (Name => "last_updated", Auto_Now => True);
    end record;
 
    overriding procedure Iterate_Custom_Fields

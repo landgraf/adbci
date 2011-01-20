@@ -37,6 +37,7 @@ package body Customer is
       Handler.all (This.Country);
       Handler.all (This.Phone);
       Handler.all (This.No_Marketing);
+      Handler.all (This.Last_Updated);
    end Iterate_Custom_Fields;
 
 end Customer;

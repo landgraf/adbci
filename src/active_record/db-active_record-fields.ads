@@ -16,12 +16,19 @@
 --    db-active_record-fields.ads   jvinters   16-January-2011
 --
 
+with Ada.Calendar;
 with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
 with Ada.Finalization;
 with DB.Connector;                     use DB.Connector;
 with DB.Types;                         use DB.Types;
 
 package DB.Active_Record.Fields is
+
+   Null_Date            : constant Ada.Calendar.Time := 
+     Ada.Calendar.Time_Of (1970, 1, 1, 0.0);
+
+   Null_Timestamp       : constant Ada.Calendar.Time :=
+     Ada.Calendar.Time_Of (1970, 1, 1, 0.0);
 
    type Field is abstract tagged private;
    type Field_Handler is not null access Procedure (This : in out Field'Class);
@@ -69,9 +76,11 @@ package DB.Active_Record.Fields is
 
    type Bigint_Field is new Field with private;
    type Boolean_Field is new Field with private;
+   type Date_Field is new Field with private;
    type Id_Field is new Field with private;
    type Integer_Field is new Field with private;
    type String_Field is new Field with private;
+   type Timestamp_Field is new Field with private;
 
    function "="
      (Left              : in Bigint_Field'Class;
@@ -80,6 +89,10 @@ package DB.Active_Record.Fields is
    function "="
      (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria;
+
+   function "="
+     (Left              : in Date_Field'Class;
+      Right             : in DB.Types.DB_Date) return Field_Criteria;
 
    function "="
      (Left              : in Id_Field'Class;
@@ -93,6 +106,10 @@ package DB.Active_Record.Fields is
      (Left              : in Integer_Field'Class;
       Right             : in String) return Field_Criteria;
 
+   function "="
+     (Left              : in Timestamp_Field'Class;
+      Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
+
    function "/="
      (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
@@ -100,6 +117,10 @@ package DB.Active_Record.Fields is
    function "/="
      (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria;
+
+   function "/="
+     (Left              : in Date_Field'Class;
+      Right             : in DB.Types.DB_Date) return Field_Criteria;
 
    function "/="
      (Left              : in Id_Field'Class;
@@ -113,9 +134,17 @@ package DB.Active_Record.Fields is
      (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
+   function "/="
+     (Left              : in Timestamp_Field'Class;
+      Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
+
    function "<"
      (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function "<"
+     (Left              : in Date_Field'Class;
+      Right             : in DB.Types.DB_Date) return Field_Criteria;
 
    function "<"
      (Left              : in Integer_Field'Class;
@@ -124,12 +153,20 @@ package DB.Active_Record.Fields is
    function "<"
      (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
+
+   function "<"
+     (Left              : in Timestamp_Field'Class;
+      Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
    function "<="
      (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
 
    function "<="
+     (Left              : in Date_Field'Class;
+      Right             : in DB.Types.DB_Date) return Field_Criteria;
+
+   function "<="
      (Left              : in Integer_Field'Class;
       Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
@@ -137,9 +174,17 @@ package DB.Active_Record.Fields is
      (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
+   function "<="
+     (Left              : in Timestamp_Field'Class;
+      Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
+
    function ">="
      (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function ">="
+     (Left              : in Date_Field'Class;
+      Right             : in DB.Types.DB_Date) return Field_Criteria;
 
    function ">="
      (Left              : in Integer_Field'Class;
@@ -149,9 +194,17 @@ package DB.Active_Record.Fields is
      (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
+   function ">="
+     (Left              : in Timestamp_Field'Class;
+      Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
+
    function ">"
      (Left              : in Bigint_Field'Class;
       Right             : in DB.Types.DB_Bigint) return Field_Criteria;
+
+   function ">"
+     (Left              : in Date_Field'Class;
+      Right             : in DB.Types.DB_Date) return Field_Criteria;
 
    function ">"
      (Left              : in Integer_Field'Class;
@@ -160,6 +213,10 @@ package DB.Active_Record.Fields is
    function ">"
      (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
+
+   function ">"
+     (Left              : in Timestamp_Field'Class;
+      Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
    function "and"
      (Left              : in Field_Criteria;
@@ -179,11 +236,15 @@ package DB.Active_Record.Fields is
 
    overriding procedure Clear (This : in out Boolean_Field);
 
+   overriding procedure Clear (This : in out Date_Field);
+
    overriding procedure Clear (This : in out Id_Field);
 
    overriding procedure Clear (This : in out Integer_Field);
 
    overriding procedure Clear (This : in out String_Field);
+
+   overriding procedure Clear (This : in out Timestamp_Field);
 
    function Configure
      (Name              : in String;
@@ -200,6 +261,15 @@ package DB.Active_Record.Fields is
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
       Default_Value     : in Boolean := False) return Boolean_Field;
+
+   function Configure
+     (Name              : in String;
+      Display_Name      : in String := "";
+      Auto_Now          : in Boolean := False;
+      Not_Null          : in Boolean := False;
+      Unique            : in Boolean := False;
+      Has_Default       : in Boolean := True;
+      Default_Value     : in DB.Types.DB_Date := Null_Date) return Date_Field;
 
    function Configure
      (Name              : in String;
@@ -227,6 +297,16 @@ package DB.Active_Record.Fields is
       Has_Default       : in Boolean := True;
       Default_Value     : in String := "") return String_Field;
 
+   function Configure
+     (Name              : in String;
+      Display_Name      : in String := "";
+      Auto_Now          : in Boolean := False;
+      Not_Null          : in Boolean := False;
+      Unique            : in Boolean := False;
+      Has_Default       : in Boolean := True;
+      Default_Value     : in DB.Types.DB_Timestamp := Null_Timestamp)
+     return Timestamp_Field;
+
    overriding function Field_SQL
      (This              : in Bigint_Field;
       Connector         : in DB.Connector.Connection)
@@ -234,6 +314,11 @@ package DB.Active_Record.Fields is
 
    overriding function Field_SQL
      (This              : in Boolean_Field;
+      Connector         : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
+   overriding function Field_SQL
+     (This              : in Date_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
@@ -252,9 +337,19 @@ package DB.Active_Record.Fields is
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
+   overriding function Field_SQL
+     (This              : in Timestamp_Field;
+      Connector         : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
    function Get (This : in Bigint_Field) return DB.Types.DB_Bigint;
 
    function Get (This : in Boolean_Field) return Boolean;
+
+   function Get (This : in Date_Field) return Ada.Calendar.Time;
+
+   function Get (This : in Date_Field) return String;
+   --  alternative - converts date to string before returning.
 
    function Get (This : in Id_Field) return DB.Types.Object_Id;
 
@@ -263,6 +358,10 @@ package DB.Active_Record.Fields is
    function Get (This : in String_Field) return String;
 
    function Get (This : in String_Field) return Unbounded_String;
+
+   function Get (This : in Timestamp_Field) return DB.Types.DB_Timestamp;
+
+   function Get (This : in Timestamp_Field) return String;
 
    function ILike
      (Left              : in String_Field'Class;
@@ -283,6 +382,11 @@ package DB.Active_Record.Fields is
       Results           : in     DB.Connector.Result_Set);
 
    overriding procedure Load_From
+     (This              : in out Date_Field;
+      Connection        : in     DB.Connector.Connection;
+      Results           : in     DB.Connector.Result_Set);
+
+   overriding procedure Load_From
      (This              : in out Id_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
@@ -297,6 +401,11 @@ package DB.Active_Record.Fields is
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
 
+   overriding procedure Load_From
+     (This              : in out Timestamp_Field;
+      Connection        : in     DB.Connector.Connection;
+      Results           : in     DB.Connector.Result_Set);
+
    procedure Set
      (This              : in out Bigint_Field;
       Value             : in     DB.Types.DB_Bigint);
@@ -304,6 +413,15 @@ package DB.Active_Record.Fields is
    procedure Set
      (This              : in out Boolean_Field;
       Value             : in     Boolean);
+
+   procedure Set
+     (This              : in out Date_Field;
+      Value             : in     Ada.Calendar.Time);
+
+   procedure Set
+     (This              : in out Date_Field;
+      Value             : in     String);
+   --  Accepts ISO formatted date.
 
    procedure Set
      (This              : in out Id_Field;
@@ -320,6 +438,15 @@ package DB.Active_Record.Fields is
    procedure Set
      (This              : in out String_Field;
       Value             : in     Unbounded_String);
+
+   procedure Set
+     (This              : in out Timestamp_Field;
+      Value             : in     DB.Types.DB_Timestamp);
+
+   procedure Set
+     (This              : in out Timestamp_Field;
+      Value             : in     String);
+   --  Accepts ISO formatted date and time.
 
    procedure To_Query
      (This              : in     Field_Criteria;
@@ -340,6 +467,11 @@ package DB.Active_Record.Fields is
      return DB.Types.SQL_String;
 
    overriding function To_SQL
+     (This              : in Date_Field;
+      Connection        : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
+   overriding function To_SQL
      (This              : in Id_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
@@ -351,6 +483,11 @@ package DB.Active_Record.Fields is
 
    overriding function To_SQL
      (This              : in String_Field;
+      Connection        : in DB.Connector.Connection)
+     return DB.Types.SQL_String;
+
+   overriding function To_SQL
+     (This              : in Timestamp_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
@@ -378,6 +515,12 @@ private
       Value             : Boolean := False;
    end record;
 
+   type Date_Field is new Field with record
+      Auto_Now          : Boolean := False;
+      Default_Value     : DB.Types.DB_Date := Null_Date;
+      Value             : DB.Types.DB_Date := Null_Date;
+   end record;
+
    type Id_Field is new Field with record
       Default_Value     : DB.Types.Object_Id := DB.Types.Null_Object_Id;
       Value             : DB.Types.Object_Id := DB.Types.Null_Object_Id;
@@ -392,6 +535,12 @@ private
       Default_Value     : Unbounded_String;
       Maximum_Length    : Positive := 255;
       Value             : Unbounded_String;
+   end record;
+
+   type Timestamp_Field is new Field with record
+      Auto_Now          : Boolean := False;
+      Default_Value     : DB.Types.DB_Timestamp := Null_Timestamp;
+      Value             : DB.Types.DB_Timestamp := Null_Timestamp;
    end record;
 
    type SQL_Operator is
@@ -434,6 +583,9 @@ private
    function Constraints_SQL (This : in Field'Class) return DB.Types.SQL_String;
    --  Returns field constraints as SQL string.
 
+   function Date_Image (This : in DB.Types.DB_Date) return String;
+   --  Converts Date to ISO formatted date string.
+
    procedure Set_Criteria
      (This              : in out Field_Criteria;
       Source_Field      : in     Field'Class;
@@ -441,6 +593,9 @@ private
       Str               : in     String;
       Requires_Quoting  : in     Boolean := False);
    pragma Inline (Set_Criteria);
+
+   function Timestamp_Image (This : in DB.Types.DB_Timestamp) return String;
+   --  Converts Timestamp to ISO formatted date/time string.
 
    function Validate_Field_Name (This : in String) return Boolean;
    --  Validates field name - returns true if valid, false if invalid.
