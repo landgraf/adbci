@@ -42,6 +42,8 @@ package Customer is
        (Name => "no_marketing", Default_Value => False);
      Last_Updated    : Timestamp_Field := Configure
        (Name => "last_updated", Auto_Now => True);
+     Credit_Limit    : Currency_Field := Configure
+       (Name => "credit_limit", Has_Default => True, Default_Value => 100.00);
    end record;
 
    overriding procedure Iterate_Custom_Fields

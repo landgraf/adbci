@@ -72,6 +72,16 @@ package body DB.Active_Record.Fields is
    end "=";
 
    function "="
+     (Left              : in Currency_Field'Class;
+      Right             : in Currency) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, EQUAL, Currency'Image (Right));
+      return Temp;
+   end "=";
+
+   function "="
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria
    is
@@ -150,6 +160,16 @@ package body DB.Active_Record.Fields is
    end "/=";
 
    function "/="
+     (Left              : in Currency_Field'Class;
+      Right             : in Currency) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, NOT_EQUAL, Currency'Image (Right));
+      return Temp;
+   end "/=";
+
+   function "/="
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria
    is
@@ -214,6 +234,16 @@ package body DB.Active_Record.Fields is
    end "<";
 
    function "<"
+     (Left              : in Currency_Field'Class;
+      Right             : in Currency) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LESS_THAN, Currency'Image (Right));
+      return Temp;
+   end "<";
+
+   function "<"
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria
    is
@@ -264,6 +294,16 @@ package body DB.Active_Record.Fields is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, DB.Types.DB_Bigint'Image (Right));
+      return Temp;
+   end "<=";
+
+   function "<="
+     (Left              : in Currency_Field'Class;
+      Right             : in Currency) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Currency'Image (Right));
       return Temp;
    end "<=";
 
@@ -322,6 +362,16 @@ package body DB.Active_Record.Fields is
    end ">=";
 
    function ">="
+     (Left              : in Currency_Field'Class;
+      Right             : in Currency) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Currency'Image (Right));
+      return Temp;
+   end ">=";
+
+   function ">="
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria
    is
@@ -372,6 +422,16 @@ package body DB.Active_Record.Fields is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, GREATER_THAN, DB.Types.DB_Bigint'Image (Right));
+      return Temp;
+   end ">";
+
+   function ">"
+     (Left              : in Currency_Field'Class;
+      Right             : in Currency) return Field_Criteria
+   is
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left, GREATER_THAN, Currency'Image (Right));
       return Temp;
    end ">";
 
@@ -502,6 +562,19 @@ package body DB.Active_Record.Fields is
       end if;
    end Clear;
 
+   procedure Clear (This : in out Currency_Field) is
+   begin
+      This.Changed := True;
+      This.Value := 0.0;
+
+      if This.Has_Default then
+         This.Value := This.Default_Value;
+         This.Is_Null := False;
+      else
+         This.Is_Null := True;
+      end if;
+   end Clear;
+
    procedure Clear (This : in out Date_Field) is
    begin
       This.Changed := True;
@@ -567,6 +640,30 @@ package body DB.Active_Record.Fields is
       end if;
    end Clear;
 
+   -----------------
+   -- Config_Name --
+   -----------------
+
+   procedure Config_Name
+     (This              : in out Field'Class;
+      Name              : in     String;
+      Display_Name      : in     String)
+   is
+      Lower_Name        : constant String := To_Lower (Name);
+   begin
+      if not Validate_Field_Name (Lower_Name) then
+         raise CONSTRAINT_ERROR with "invalid field name";
+      else
+         Set_Unbounded_String (This.Field_Name, Lower_Name);
+         if Display_Name /= "" then
+            Set_Unbounded_String (This.Display_Name, Display_Name);
+         else
+            Set_Unbounded_String (This.Display_Name, Lower_Name);
+         end if;
+      end if;      
+   end Config_Name;
+   pragma Inline (Config_Name);
+
    ---------------
    -- Configure --
    ---------------
@@ -579,25 +676,14 @@ package body DB.Active_Record.Fields is
       Has_Default       : in Boolean := True;
       Default_Value     : in DB.Types.DB_Bigint := 0) return Bigint_Field
    is
-      Lower_Name        : constant String := To_Lower (Name);
       Temp              : Bigint_Field;
    begin
-      if not Validate_Field_Name (Lower_Name) then
-         raise CONSTRAINT_ERROR with "invalid field name";
-      else
-         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
-         if Display_Name /= "" then
-            Set_Unbounded_String (Temp.Display_Name, Display_Name);
-         else
-            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
-         end if;
-
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Default_Value := Default_Value;
-         return Temp;
-      end if;
+      Config_Name (Temp, Name, Display_Name);
+      Temp.Not_Null := Not_Null;
+      Temp.Unique := Unique;
+      Temp.Has_Default := Has_Default;
+      Temp.Default_Value := Default_Value;
+      return Temp;
    end Configure;
 
    function Configure
@@ -608,25 +694,32 @@ package body DB.Active_Record.Fields is
       Has_Default       : in Boolean := True;
       Default_Value     : in Boolean := False) return Boolean_Field
    is
-      Lower_Name        : constant String := To_Lower (Name);
       Temp              : Boolean_Field;
    begin
-      if not Validate_Field_Name (Lower_Name) then
-         raise CONSTRAINT_ERROR with "invalid field name";
-      else
-         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
-         if Display_Name /= "" then
-            Set_Unbounded_String (Temp.Display_Name, Display_Name);
-         else
-            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
-         end if;
+      Config_Name (Temp, Name, Display_Name);
+      Temp.Not_Null := Not_Null;
+      Temp.Unique := Unique;
+      Temp.Has_Default := Has_Default;
+      Temp.Default_Value := Default_Value;
+      return Temp;
+   end Configure;
 
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Default_Value := Default_Value;
-         return Temp;
-      end if;
+   function Configure
+     (Name              : in String;
+      Display_Name      : in String := "";
+      Not_Null          : in Boolean := False;
+      Unique            : in Boolean := False;
+      Has_Default       : in Boolean := True;
+      Default_Value     : in Currency := 0.0) return Currency_Field
+   is
+      Temp              : Currency_Field;
+   begin
+      Config_Name (Temp, Name, Display_Name);
+      Temp.Not_Null := Not_Null;
+      Temp.Unique := Unique;
+      Temp.Has_Default := Has_Default;
+      Temp.Default_Value := Default_Value;
+      return Temp;
    end Configure;
 
    function Configure
@@ -638,26 +731,15 @@ package body DB.Active_Record.Fields is
       Has_Default       : in Boolean := True;
       Default_Value     : in DB.Types.DB_Date := Null_Date) return Date_Field
    is
-      Lower_Name        : constant String := To_Lower (Name);
       Temp              : Date_Field;
    begin
-      if not Validate_Field_Name (Lower_Name) then
-         raise CONSTRAINT_ERROR with "invalid field name";
-      else
-         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
-         if Display_Name /= "" then
-            Set_Unbounded_String (Temp.Display_Name, Display_Name);
-         else
-            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
-         end if;
-
-         Temp.Auto_Now := Auto_Now;
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Default_Value := Default_Value;
-         return Temp;
-      end if;
+      Config_Name (Temp, Name, Display_Name);
+      Temp.Not_Null := Not_Null;
+      Temp.Unique := Unique;
+      Temp.Has_Default := Has_Default;
+      Temp.Auto_Now := Auto_Now;
+      Temp.Default_Value := Default_Value;
+      return Temp;
    end Configure;
 
    function Configure
@@ -669,29 +751,14 @@ package body DB.Active_Record.Fields is
       Default_Value     : in DB.Types.Object_Id := DB.Types.Null_Object_Id)
      return Id_Field
    is
-      Lower_Name        : constant String := To_Lower (Name);
       Temp              : Id_Field;
    begin
-      if not Validate_Field_Name (Lower_Name) then
-         raise CONSTRAINT_ERROR with "invalid field name";
-      else
-         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
-         if Display_Name /= "" then
-            Set_Unbounded_String (Temp.Display_Name, Display_Name);
-         else
-            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
-         end if;
-
-         if Lower_Name = "id" then
-            Temp.Primary_Key := True;     --  special case
-         end if;
-
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Default_Value := Default_Value;
-         return Temp;
-      end if;
+      Config_Name (Temp, Name, Display_Name);
+      Temp.Not_Null := Not_Null;
+      Temp.Unique := Unique;
+      Temp.Has_Default := Has_Default;
+      Temp.Default_Value := Default_Value;
+      return Temp;
    end Configure;
 
    function Configure
@@ -702,25 +769,14 @@ package body DB.Active_Record.Fields is
       Has_Default       : in Boolean := True;
       Default_Value     : in DB.Types.DB_Integer := 0) return Integer_Field
    is
-      Lower_Name        : constant String := To_Lower (Name);
       Temp              : Integer_Field;
    begin
-      if not Validate_Field_Name (Lower_Name) then
-         raise CONSTRAINT_ERROR with "invalid field name";
-      else
-         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
-         if Display_Name /= "" then
-            Set_Unbounded_String (Temp.Display_Name, Display_Name);
-         else
-            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
-         end if;
-
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Default_Value := Default_Value;
-         return Temp;
-      end if;
+      Config_Name (Temp, Name, Display_Name);
+      Temp.Not_Null := Not_Null;
+      Temp.Unique := Unique;
+      Temp.Has_Default := Has_Default;
+      Temp.Default_Value := Default_Value;
+      return Temp;
    end Configure;
 
    function Configure
@@ -735,23 +791,13 @@ package body DB.Active_Record.Fields is
       Lower_Name        : constant String := To_Lower (Name);
       Temp              : String_Field;
    begin
-      if not Validate_Field_Name (Lower_Name) then
-         raise CONSTRAINT_ERROR with "invalid field name";
-      else
-         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
-         if Display_Name /= "" then
-            Set_Unbounded_String (Temp.Display_Name, Display_Name);
-         else
-            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
-         end if;
-
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Maximum_Length := Maximum_Length;
-         Set_Unbounded_String (Temp.Default_Value, Default_Value);
-         return Temp;
-      end if;
+      Config_Name (Temp, Name, Display_Name);
+      Temp.Not_Null := Not_Null;
+      Temp.Unique := Unique;
+      Temp.Has_Default := Has_Default;
+      Temp.Maximum_Length := Maximum_Length;
+      Set_Unbounded_String (Temp.Default_Value, Default_Value);
+      return Temp;
    end Configure;
 
    function Configure
@@ -764,26 +810,15 @@ package body DB.Active_Record.Fields is
       Default_Value     : in DB.Types.DB_Timestamp := Null_Timestamp)
      return Timestamp_Field
    is
-      Lower_Name        : constant String := To_Lower (Name);
       Temp              : Timestamp_Field;
    begin
-      if not Validate_Field_Name (Lower_Name) then
-         raise CONSTRAINT_ERROR with "invalid field name";
-      else
-         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
-         if Display_Name /= "" then
-            Set_Unbounded_String (Temp.Display_Name, Display_Name);
-         else
-            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
-         end if;
-
-         Temp.Auto_Now := Auto_Now;
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Default_Value := Default_Value;
-         return Temp;
-      end if;
+      Config_Name (Temp, Name, Display_Name);
+      Temp.Not_Null := Not_Null;
+      Temp.Unique := Unique;
+      Temp.Has_Default := Has_Default;
+      Temp.Auto_Now := Auto_Now;
+      Temp.Default_Value := Default_Value;
+      return Temp;
    end Configure;
 
    ---------------------
@@ -843,6 +878,18 @@ package body DB.Active_Record.Fields is
       Field_Name        : constant String := To_String (This.Field_Name);
    begin
       return DB.Types.SQL_String (Field_Name & " BOOLEAN") & Constraints;
+   end Field_SQL;
+
+   function Field_SQL
+     (This              : in Currency_Field;
+      Connector         : in DB.Connector.Connection)
+     return DB.Types.SQL_String
+   is
+      Constraints       : constant DB.Types.SQL_String := 
+        Constraints_SQL (This);
+      Field_Name        : constant String := To_String (This.Field_Name);
+   begin
+      return DB.Types.SQL_String (Field_Name & " DECIMAL(16,2)") & Constraints;
    end Field_SQL;
 
    function Field_SQL
@@ -935,6 +982,11 @@ package body DB.Active_Record.Fields is
    end Get;
 
    function Get (This : in Boolean_Field) return Boolean is
+   begin
+      return This.Value;
+   end Get;
+
+   function Get (This : in Currency_Field) return Currency is
    begin
       return This.Value;
    end Get;
@@ -1101,6 +1153,29 @@ package body DB.Active_Record.Fields is
    end Load_From;
 
    procedure Load_From
+     (This              : in out Currency_Field;
+      Connection        : in     DB.Connector.Connection;
+      Results           : in     DB.Connector.Result_Set)
+   is
+      Field_Name        : constant String := This.Get_Name;
+   begin
+      if Results.Get_Is_Null (Field_Name) then
+         if This.Has_Default then
+            This.Value := This.Default_Value;
+            This.Is_Null := False;
+         else
+            This.Value := 0.0;
+            This.Is_Null := True;
+         end if;
+      else
+         This.Value := Currency'Value
+           (Results.Get_String (This.Get_Name, False));
+         This.Is_Null := False;
+      end if;
+      This.Changed := False;
+   end Load_From;
+
+   procedure Load_From
      (This              : in out Date_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set)
@@ -1238,6 +1313,16 @@ package body DB.Active_Record.Fields is
    procedure Set
      (This              : in out Boolean_Field;
       Value             : in     Boolean)
+   is
+   begin
+      This.Value := Value;
+      This.Changed := True;
+      This.Is_Null := False;
+   end Set;
+
+   procedure Set
+     (This              : in out Currency_Field;
+      Value             : in     Currency)
    is
    begin
       This.Value := Value;
@@ -1475,6 +1560,24 @@ package body DB.Active_Record.Fields is
          else
             return "'false'";
          end if;
+      end if;
+   end To_SQL;
+
+   function To_SQL
+     (This              : in Currency_Field;
+      Connection        : in DB.Connector.Connection)
+     return DB.Types.SQL_String
+   is
+   begin
+      if This.Is_Null then
+         return "NULL";
+      else
+         declare
+            Value_Str         : constant String :=
+              Trim (Currency'Image (This.Value), Both);
+         begin
+            return Connection.Quote_Value (Value_Str);
+         end;
       end if;
    end To_SQL;
 

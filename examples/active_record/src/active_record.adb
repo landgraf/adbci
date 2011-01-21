@@ -49,6 +49,7 @@ begin
    Customer_1.Address_2.Set ("Address Line 2");
    Customer_1.Address_3.Set ("Address Line 3");
    Customer_1.Postcode.Set ("Postcode");
+   Customer_1.Credit_Limit.Set (1000.00);
    Customer_1.Save (Database);
 
    Put_Line ("Customer record was inserted with id: " & Customer_1.Get_Id);
@@ -77,6 +78,7 @@ begin
       Put_Line ("Found:" & Natural'Image (Customer_Finder.Count (R)) & " Result(s).");
       Item := Customer_Finder.Item (R, Database, 1);
       Put_Line ("Found Customer Name: " & Item.Customer_Name.Get);
+      Put_Line ("Credit Limit:" & Currency'Image (Item.Credit_Limit.Get));
       Put_Line ("Last Saved: " & Item.Last_Updated.Get);
    end;
 
