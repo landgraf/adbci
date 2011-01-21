@@ -643,6 +643,12 @@ private
 
    overriding procedure Finalize (This : in out Field_Criteria);
 
+   procedure Config_Name
+     (This              : in out Field'Class;
+      Name              : in     String;
+      Display_Name      : in     String);
+   --  Configures name part of fields.
+
    function Constraints_SQL (This : in Field'Class) return DB.Types.SQL_String;
    --  Returns field constraints as SQL string.
 
