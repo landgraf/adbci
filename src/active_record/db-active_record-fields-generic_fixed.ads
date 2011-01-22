@@ -21,6 +21,7 @@ with DB.Active_Record.Fields;
 generic
 
    type Fixed_Type is delta <> digits <>;
+   Initialization_Value : Fixed_Type := 0.0;
 
 package DB.Active_Record.Fields.Generic_Fixed is
 
@@ -58,7 +59,7 @@ package DB.Active_Record.Fields.Generic_Fixed is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in Fixed_Type := 0.0) return Field;
+      Default_Value     : in Fixed_Type := Initialization_Value) return Field;
 
    overriding function Field_SQL
      (This              : in Field;
@@ -92,8 +93,8 @@ package DB.Active_Record.Fields.Generic_Fixed is
 private
 
    type Field is new DB.Active_Record.Fields.Field with record
-      Default_Value     : Fixed_Type := 0.0;
-      Value             : Fixed_Type := 0.0;
+      Default_Value     : Fixed_Type := Initialization_Value;
+      Value             : Fixed_Type := Initialization_Value;
    end record;
 
 end DB.Active_Record.Fields.Generic_Fixed;

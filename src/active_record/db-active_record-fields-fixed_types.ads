@@ -24,6 +24,7 @@ package DB.Active_Record.Fields.Fixed_Types is
    type Currency_Type is delta 0.01 digits 18;
 
    package Currency is new DB.Active_Record.Fields.Generic_Fixed
-     (Fixed_Type => Currency_Type);
+     (Fixed_Type           => Currency_Type,
+      Initialization_Value => 0.0);
 
 end DB.Active_Record.Fields.Fixed_Types;

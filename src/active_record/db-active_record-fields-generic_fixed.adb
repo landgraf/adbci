@@ -109,7 +109,7 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in Fixed_Type := 0.0) return Field
+      Default_Value     : in Fixed_Type := Initialization_Value) return Field
    is
       Lower_Name        : constant String := To_Lower (Name);
       Temp              : Field;
