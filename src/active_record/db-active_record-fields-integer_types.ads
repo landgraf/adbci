@@ -22,12 +22,15 @@ with DB.Active_Record.Fields.Generic_Integer;
 package DB.Active_Record.Fields.Integer_Types is
 
    package Bigint is new DB.Active_Record.Fields.Generic_Integer
-     (Integer_Type => DB.Types.DB_Bigint, Initialization_Value => 0);
+     (Integer_Type         => DB.Types.DB_Bigint, 
+      Initialization_Value => 0);
 
    package Int is new DB.Active_Record.Fields.Generic_Integer
-     (Integer_Type => DB.Types.DB_Integer, Initialization_Value => 0);
+     (Integer_Type         => DB.Types.DB_Integer,
+      Initialization_Value => 0);
 
    package Smallint is new DB.Active_Record.Fields.Generic_Integer
-     (Integer_Type => DB.Types.DB_Smallint, Initialization_Value => 0);
+     (Integer_Type         => DB.Types.DB_Smallint, 
+      Initialization_Value => 0);
 
 end DB.Active_Record.Fields.Integer_Types;
