@@ -552,6 +552,18 @@ package body DB.Driver.PostgreSQL is
       return 0;
    end Get_Inserted_Row_Id;
 
+   -------------------
+   -- Get_Text_Type --
+   -------------------
+
+   function Get_Text_Type
+     (This              : in Driver_Type;
+      Maximum_Size      : in Natural) return DB.Types.SQL_String
+   is
+   begin
+      return "TEXT";
+   end Get_Text_Type;
+
    ---------------------
    -- Get_Tuple_Count --
    ---------------------

@@ -39,6 +39,7 @@ package body Customer is
       Handler.all (This.No_Marketing);
       Handler.all (This.Last_Updated);
       Handler.all (This.Credit_Limit);
+      Handler.all (This.Notes);
    end Iterate_Custom_Fields;
 
 end Customer;

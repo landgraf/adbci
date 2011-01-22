@@ -68,39 +68,14 @@ package DB.Active_Record.Fields is
    --  if not NULL, is enclosed by single quotes.
 
    type Id_Field is new Field with private;
-   type String_Field is new Field with private;
 
    function "="
      (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
 
-   function "="
-     (Left              : in String_Field'Class;
-      Right             : in String) return Field_Criteria;
-
    function "/="
      (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
-
-   function "/="
-     (Left              : in String_Field'Class;
-      Right             : in String) return Field_Criteria;
-
-   function "<"
-     (Left              : in String_Field'Class;
-      Right             : in String) return Field_Criteria;
-
-   function "<="
-     (Left              : in String_Field'Class;
-      Right             : in String) return Field_Criteria;
-
-   function ">="
-     (Left              : in String_Field'Class;
-      Right             : in String) return Field_Criteria;
-
-   function ">"
-     (Left              : in String_Field'Class;
-      Right             : in String) return Field_Criteria;
 
    function "and"
      (Left              : in Field_Criteria;
@@ -118,8 +93,6 @@ package DB.Active_Record.Fields is
 
    overriding procedure Clear (This : in out Id_Field);
 
-   overriding procedure Clear (This : in out String_Field);
-
    function Configure
      (Name              : in String;
       Display_Name      : in String := "";
@@ -129,60 +102,21 @@ package DB.Active_Record.Fields is
       Default_Value     : in DB.Types.Object_Id := DB.Types.Null_Object_Id)
      return Id_Field;
 
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Maximum_Length    : in Positive := 255;
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
-      Default_Value     : in String := "") return String_Field;
-
    overriding function Field_SQL
      (This              : in Id_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
-   overriding function Field_SQL
-     (This              : in String_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
    function Get (This : in Id_Field) return DB.Types.Object_Id;
-
-   function Get (This : in String_Field) return String;
-
-   function Get (This : in String_Field) return Unbounded_String;
-
-   function ILike
-     (Left              : in String_Field'Class;
-      Right             : in String) return Field_Criteria;
-
-   function Like
-     (Left              : in String_Field'Class;
-      Right             : in String) return Field_Criteria;
 
    overriding procedure Load_From
      (This              : in out Id_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set);
-
-   overriding procedure Load_From
-     (This              : in out String_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
 
    procedure Set
      (This              : in out Id_Field;
       Value             : in     DB.Types.Object_Id);
-
-   procedure Set
-     (This              : in out String_Field;
-      Value             : in     String);
-
-   procedure Set
-     (This              : in out String_Field;
-      Value             : in     Unbounded_String);
 
    procedure To_Query
      (This              : in     Field_Criteria;
@@ -194,11 +128,6 @@ package DB.Active_Record.Fields is
 
    overriding function To_SQL
      (This              : in Id_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function To_SQL
-     (This              : in String_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
@@ -219,12 +148,6 @@ private
    type Id_Field is new Field with record
       Default_Value     : DB.Types.Object_Id := DB.Types.Null_Object_Id;
       Value             : DB.Types.Object_Id := DB.Types.Null_Object_Id;
-   end record;
-
-   type String_Field is new Field with record
-      Default_Value     : Unbounded_String;
-      Maximum_Length    : Positive := 255;
-      Value             : Unbounded_String;
    end record;
 
    type SQL_Operator is

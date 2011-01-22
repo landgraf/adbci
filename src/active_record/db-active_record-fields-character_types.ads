@@ -13,70 +13,75 @@
 --  You should have received a copy of the GNU Lesser General Public License
 --  along with this library; if not, see <http://www.gnu.org/licenses/>
 --
---    db-active_record-fields-date_time_types.ads   jvinters   22-January-2011
+--    db-active_record-fields-character_types.ads   jvinters   16-January-2011
 --
 
-with Ada.Calendar;
+with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
 with Ada.Finalization;
 with DB.Connector;                     use DB.Connector;
 with DB.Types;                         use DB.Types;
 
-package DB.Active_Record.Fields.Date_Time_Types is
+package DB.Active_Record.Fields.Character_Types is
 
-   package Date is
-   
-      Null_Date         : constant Ada.Calendar.Time := 
-        Ada.Calendar.Time_Of (1970, 1, 1, 0.0);
+   package Text is
 
       type Field is new DB.Active_Record.Fields.Field with private;
 
       function "="
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Date) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function "/="
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Date) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function "<"
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Date) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function "<="
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Date) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function ">="
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Date) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function ">"
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Date) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
+
+      procedure Append
+        (This           : in out Field;
+         Str            : in     String);
 
       overriding procedure Clear (This : in out Field);
 
       function Configure
         (Name           : in String;
          Display_Name   : in String := "";
-         Auto_Now       : in Boolean := False;
+         Maximum_Length : in Positive := 255;
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
          Has_Default    : in Boolean := True;
-         Default_Value  : in DB.Types.DB_Date := Null_Date) return Field;
-
-      function Date_Image (This : in DB.Types.DB_Date) return String;
-      --  Converts Date to ISO formatted date string.
+         Default_Value  : in String := "") return Field;
 
       overriding function Field_SQL
         (This           : in Field;
          Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
-      function Get (This : in Field) return Ada.Calendar.Time;
-
       function Get (This : in Field) return String;
-      --  alternative - converts date to string before returning.
+
+      function Get (This : in Field) return Unbounded_String;
+
+      function ILike
+        (Left           : in Field'Class;
+         Right          : in String) return Field_Criteria;
+
+      function Like
+        (Left           : in Field'Class;
+         Right          : in String) return Field_Criteria;
 
       overriding procedure Load_From
         (This           : in out Field;
@@ -85,12 +90,11 @@ package DB.Active_Record.Fields.Date_Time_Types is
 
       procedure Set
         (This           : in out Field;
-         Value          : in     Ada.Calendar.Time);
+         Value          : in     String);
 
       procedure Set
         (This           : in out Field;
-         Value          : in     String);
-      --  Accepts ISO formatted date.
+         Value          : in     Unbounded_String);
 
       overriding function To_SQL
         (This           : in Field;
@@ -100,65 +104,73 @@ package DB.Active_Record.Fields.Date_Time_Types is
    private
 
       type Field is new DB.Active_Record.Fields.Field with record
-         Auto_Now          : Boolean := False;
-         Default_Value     : DB.Types.DB_Date := Null_Date;
-         Value             : DB.Types.DB_Date := Null_Date;
+         Default_Value     : Unbounded_String;
+         Maximum_Length    : Positive := 255;
+         Value             : Unbounded_String;
       end record;
 
-   end Date;
+   end Text;
 
 
-   package Timestamp is
-
-      Null_Timestamp    : constant Ada.Calendar.Time :=
-        Ada.Calendar.Time_Of (1970, 1, 1, 0.0);
+   package Varchar is
 
       type Field is new DB.Active_Record.Fields.Field with private;
 
       function "="
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function "/="
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function "<"
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function "<="
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function ">="
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
 
       function ">"
         (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+         Right          : in String) return Field_Criteria;
+
+      procedure Append
+        (This           : in out Field;
+         Str            : in     String);
 
       overriding procedure Clear (This : in out Field);
 
       function Configure
-        (Name              : in String;
-         Display_Name      : in String := "";
-         Auto_Now          : in Boolean := False;
-         Not_Null          : in Boolean := False;
-         Unique            : in Boolean := False;
-         Has_Default       : in Boolean := True;
-         Default_Value     : in DB.Types.DB_Timestamp := Null_Timestamp)
-        return Field;
+        (Name           : in String;
+         Display_Name   : in String := "";
+         Maximum_Length : in Positive := 255;
+         Not_Null       : in Boolean := False;
+         Unique         : in Boolean := False;
+         Has_Default    : in Boolean := True;
+         Default_Value  : in String := "") return Field;
 
       overriding function Field_SQL
-        (This              : in Field;
-         Connector         : in DB.Connector.Connection)
+        (This           : in Field;
+         Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
-      function Get (This : in Field) return DB.Types.DB_Timestamp;
-
       function Get (This : in Field) return String;
+
+      function Get (This : in Field) return Unbounded_String;
+
+      function ILike
+        (Left           : in Field'Class;
+         Right          : in String) return Field_Criteria;
+
+      function Like
+        (Left           : in Field'Class;
+         Right          : in String) return Field_Criteria;
 
       overriding procedure Load_From
         (This           : in out Field;
@@ -167,15 +179,11 @@ package DB.Active_Record.Fields.Date_Time_Types is
 
       procedure Set
         (This           : in out Field;
-         Value          : in     DB.Types.DB_Timestamp);
+         Value          : in     String);
 
       procedure Set
         (This           : in out Field;
-         Value          : in     String);
-      --  Accepts ISO formatted date and time.
-
-      function Timestamp_Image (This : in DB.Types.DB_Timestamp) return String;
-      --  Converts Timestamp to ISO formatted date/time string.
+         Value          : in     Unbounded_String);
 
       overriding function To_SQL
         (This           : in Field;
@@ -185,12 +193,12 @@ package DB.Active_Record.Fields.Date_Time_Types is
    private
 
       type Field is new DB.Active_Record.Fields.Field with record
-         Auto_Now       : Boolean := False;
-         Default_Value  : DB.Types.DB_Timestamp := Null_Timestamp;
-         Value          : DB.Types.DB_Timestamp := Null_Timestamp;
+         Default_Value     : Unbounded_String;
+         Maximum_Length    : Positive := 255;
+         Value             : Unbounded_String;
       end record;
 
-   end Timestamp;
+   end Varchar;
 
-end DB.Active_Record.Fields.Date_Time_Types;
+end DB.Active_Record.Fields.Character_Types;
 

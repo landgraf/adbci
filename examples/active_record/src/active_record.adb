@@ -95,7 +95,7 @@ begin
    end;
 
    --  Now delete the customer from the database...
-   Customer_1.Delete (Database);
+   --Customer_1.Delete (Database);
 
    --  Finished, so disconnect.
    Database.Disconnect;

@@ -18,7 +18,9 @@
 
 with DB.Active_Record.Fields;          use DB.Active_Record.Fields;
 with DB.Active_Record.Fields.Boolean_Type;
+with DB.Active_Record.Fields.Character_Types;
 with DB.Active_Record.Fields.Date_Time_Types;
+                                       use DB.Active_Record.Fields.Character_Types;
                                        use DB.Active_Record.Fields.Date_Time_Types;
 with DB.Active_Record.Fields.Fixed_Types;
                                        use DB.Active_Record.Fields.Fixed_Types;
@@ -27,28 +29,52 @@ with DB.Active_Record.Models;
 package Customer is
 
    type Customer_Model is new DB.Active_Record.Models.Model with record
-     Customer_Name   : String_Field := Configure
-       (Name => "customer_name", Maximum_Length => 64, Not_Null => True, Unique => True);
-     Address_1       : String_Field := Configure
-       (Name => "address_1", Maximum_Length => 32, Has_Default => False);
-     Address_2       : String_Field := Configure
-       (Name => "address_2", Maximum_Length => 32, Has_Default => False);
-     Address_3       : String_Field := Configure
-       (Name => "address_3", Maximum_Length => 32, Has_Default => False);
-     County          : String_Field := Configure
-       (Name => "county", Maximum_Length => 48, Has_Default => False);
-     Postcode        : String_Field := Configure
-       (Name => "postcode", Maximum_Length => 16, Has_Default => False);
-     Country         : String_Field := Configure
-       (Name => "country", Maximum_Length => 32, Default_Value => "UK");
-     Phone           : String_Field := Configure
-       (Name => "phone", Maximum_Length => 32, Has_Default => False);
+     Customer_Name   : Varchar.Field := Varchar.Configure
+       (Name            => "customer_name",
+        Maximum_Length  => 64, 
+        Not_Null        => True, 
+        Unique          => True);
+     Address_1       : Varchar.Field := Varchar.Configure
+       (Name            => "address_1", 
+        Maximum_Length  => 32, 
+        Has_Default     => False);
+     Address_2       : Varchar.Field := Varchar.Configure
+       (Name            => "address_2", 
+        Maximum_Length  => 32, 
+        Has_Default     => False);
+     Address_3       : Varchar.Field := Varchar.Configure
+       (Name            => "address_3", 
+        Maximum_Length  => 32, 
+        Has_Default     => False);
+     County          : Varchar.Field := Varchar.Configure
+       (Name            => "county",
+        Maximum_Length  => 48, 
+        Has_Default     => False);
+     Postcode        : Varchar.Field := Varchar.Configure
+       (Name            => "postcode",
+        Maximum_Length  => 16, 
+        Has_Default     => False);
+     Country         : Varchar.Field := Varchar.Configure
+       (Name            => "country",
+        Maximum_Length  => 32,
+        Default_Value   => "UK");
+     Phone           : Varchar.Field := Varchar.Configure
+       (Name            => "phone",
+        Maximum_Length  => 32,
+        Has_Default     => False);
      No_Marketing    : Boolean_Type.Boolean_Field := Boolean_Type.Configure
-       (Name => "no_marketing", Default_Value => False);
+       (Name            => "no_marketing",
+        Default_Value   => False);
      Last_Updated    : Timestamp.Field := Timestamp.Configure
-       (Name => "last_updated", Auto_Now => True);
+       (Name            => "last_updated",
+        Auto_Now        => True);
      Credit_Limit    : Currency.Field := Currency.Configure
-       (Name => "credit_limit", Has_Default => True, Default_Value => 100.00);
+       (Name            => "credit_limit",
+        Has_Default     => True,
+        Default_Value => 100.00);
+     Notes           : Text.Field := Text.Configure
+       (Name            => "notes",
+        Maximum_Length  => 32768);        
    end record;
 
    overriding procedure Iterate_Custom_Fields

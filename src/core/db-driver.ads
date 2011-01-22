@@ -162,6 +162,11 @@ package DB.Driver is
    --  For databases which support getting the inserted row id via a function,
    --  returns the inserted row id.
 
+   function Get_Text_Type
+     (This              : in Abstract_Driver_Type;
+      Maximum_Size      : in Natural) return DB.Types.SQL_String is abstract;
+   --  Returns the SQL Data type that can store at least Maximum_Size chars.
+
    function Get_Tuple_Count
      (Result            : in Abstract_Result_Type) return Natural is abstract;
    --  Returns the number of tuples (rows) in the result set.

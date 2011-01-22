@@ -16,7 +16,6 @@
 --    db-active_record-fields-boolean_type.ads   jvinters   22-January-2011
 --
 
-with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
 with Ada.Finalization;
 with DB.Connector;                     use DB.Connector;
 
