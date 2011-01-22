@@ -39,15 +39,19 @@ package body DB.Active_Record.Models.Queries is
      (Connection        : in DB.Connector.Connection;
       Criteria          : in DB.Active_Record.Fields.Field_Criteria;
       For_Update        : in Boolean := False;
-      Read_Only         : in Boolean := False) return Query_Result
+      Read_Only         : in Boolean := False;
+      Ordering          : in DB.Active_Record.Fields.Order_Criteria :=
+                            DB.Active_Record.Fields.Null_Order_Criteria)
+     return Query_Result
    is
       use DB.Active_Record.Fields;
+      Order             : constant String := To_String (Ordering);
       Query_SQL         : Unbounded_String;
       Tables            : Unbounded_String;
       Where_Clause      : Unbounded_String;
    begin
       Set_Unbounded_String (Query_SQL, "SELECT ");
-      Append (Query_SQL, Model.Get_Name & "." & Model.Get_Id_Name);
+      Append (Query_SQL, Model.Get_Name & '.' & Model.Get_Id_Name);
       Append (Query_SQL, " FROM ");
       To_Query (Criteria, Connection, Tables, Where_Clause);
       Append (Query_SQL, Tables);
@@ -55,6 +59,13 @@ package body DB.Active_Record.Models.Queries is
       Append (Query_SQL, Where_Clause);
       if For_Update then
          Append (Query_SQL, "FOR UPDATE");
+      end if;
+
+      Append (Query_SQL, " ORDER BY ");
+      if Order'Length = 0 then
+         Append (Query_SQL, Model.Get_Name & '.' & Model.Get_Id_Name);
+      else
+         Append (Query_SQL, Order);
       end if;
 
       return SQL_Query

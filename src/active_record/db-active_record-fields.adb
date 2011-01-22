@@ -263,6 +263,15 @@ package body DB.Active_Record.Fields is
       return To_String (This.Display_Name);
    end Get_Display_Name;
 
+   -------------------
+   -- Get_Full_Name --
+   -------------------
+
+   function Get_Full_Name (This : in Field'Class) return String is
+   begin
+      return To_String (This.Model_Name) & '.' & To_String (This.Field_Name);
+   end Get_Full_Name;
+
    --------------------
    -- Get_Model_Name --
    --------------------
@@ -324,6 +333,53 @@ package body DB.Active_Record.Fields is
       end if;
       This.Changed := False;
    end Load_From;
+
+   --------------
+   -- Order_By --
+   --------------
+
+   function Order_By
+     (Order_Field       : in Field'Class;
+      Ascending         : in Boolean := True) return Order_Criteria
+   is
+   begin
+      if Ascending then
+         return (
+            Ordering => To_Unbounded_String (Order_Field.Get_Full_Name)
+         );
+      else
+         return (
+            Ordering => To_Unbounded_String 
+                          (Order_Field.Get_Full_Name & " DESC")
+         );
+      end if;
+   end Order_By;
+
+   function Order_By
+     (Ordering          : in Order_Criteria;
+      Order_Field       : in Field'Class;
+      Ascending         : in Boolean := True) return Order_Criteria
+   is
+   begin
+      if Ascending then
+         if Length (Ordering.Ordering) > 0 then
+            return (Ordering => Ordering.Ordering &
+                                To_Unbounded_String 
+                                  (", " & Order_Field.Get_Full_Name));
+         else
+            return (Ordering => To_Unbounded_String (Order_Field.Get_Full_Name));
+         end if;
+      else
+         if Length (Ordering.Ordering) > 0 then
+            return (Ordering => Ordering.Ordering &
+                                To_Unbounded_String 
+                                  (", " & Order_Field.Get_Full_Name & " DESC"));
+         else
+            return (Ordering => To_Unbounded_String 
+                                  (Order_Field.Get_Full_Name & " DESC"));
+         end if;
+      end if;
+   end Order_By;
 
    ---------
    -- Set --
@@ -457,6 +513,17 @@ package body DB.Active_Record.Fields is
          end;
       end if;
    end To_SQL;
+
+   ---------------
+   -- To_String --
+   ---------------
+
+   function To_String
+     (This              : in Order_Criteria) return String
+   is
+   begin
+      return To_String (This.Ordering);
+   end To_String;
 
    -------------------------
    -- Validate_Field_Name --

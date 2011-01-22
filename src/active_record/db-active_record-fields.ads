@@ -26,6 +26,9 @@ package DB.Active_Record.Fields is
    type Field is abstract tagged private;
    type Field_Handler is not null access Procedure (This : in out Field'Class);
    type Field_Criteria is private;
+   type Order_Criteria is private;
+
+   Null_Order_Criteria  : constant Order_Criteria;
 
    procedure Clear (This : in out Field) is abstract;
    --  Clears the field - if the field has a default, sets the field to the
@@ -39,6 +42,9 @@ package DB.Active_Record.Fields is
 
    function Get_Display_Name (This : in Field'Class) return String;
    --  Returns the display (human-readable) name of the field.
+
+   function Get_Full_Name (This : in Field'Class) return String;
+   --  Returns the field's full name (<model_name>.<field_name>).
 
    function Get_Model_Name (This : in Field'Class) return String;
    --  Returns the name of the field's parent model.
@@ -60,12 +66,24 @@ package DB.Active_Record.Fields is
    --  the result set, and the field has a defined default, then the field
    --  is set to the default value.
 
+   function Order_By
+     (Order_Field       : in Field'Class;
+      Ascending         : in Boolean := True) return Order_Criteria;
+
+   function Order_By
+     (Ordering          : in Order_Criteria;
+      Order_Field       : in Field'Class;
+      Ascending         : in Boolean := True) return Order_Criteria;
+
    function To_SQL
      (This              : in Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String is abstract;
    --  Returns the SQL representation of the current field value.  The value
    --  if not NULL, is enclosed by single quotes.
+
+   function To_String
+     (This              : in Order_Criteria) return String;
 
    type Id_Field is new Field with private;
 
@@ -179,6 +197,13 @@ private
    type Field_Criteria is new Ada.Finalization.Controlled with record
       Data              : Field_Criteria_Access := null;
    end record;
+
+   type Order_Criteria is record
+      Ordering          : Unbounded_String;
+   end record;
+
+   Null_Order_Criteria  : constant Order_Criteria :=
+     (Ordering => Null_Unbounded_String);
 
    procedure Alloc (This : in out Field_Criteria);
    pragma Inline (Alloc);

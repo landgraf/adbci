@@ -39,7 +39,10 @@ package DB.Active_Record.Models.Queries is
      (Connection        : in DB.Connector.Connection;
       Criteria          : in DB.Active_Record.Fields.Field_Criteria;
       For_Update        : in Boolean := False;
-      Read_Only         : in Boolean := False) return Query_Result;
+      Read_Only         : in Boolean := False;
+      Ordering          : in DB.Active_Record.Fields.Order_Criteria :=
+                            DB.Active_Record.Fields.Null_Order_Criteria)
+     return Query_Result;
    --  Searches for items using specified criteria.
 
    function Item
