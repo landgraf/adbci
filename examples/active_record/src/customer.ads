@@ -18,6 +18,8 @@
 
 with DB.Active_Record.Fields;          use DB.Active_Record.Fields;
 with DB.Active_Record.Fields.Boolean_Type;
+with DB.Active_Record.Fields.Date_Time_Types;
+                                       use DB.Active_Record.Fields.Date_Time_Types;
 with DB.Active_Record.Fields.Fixed_Types;
                                        use DB.Active_Record.Fields.Fixed_Types;
 with DB.Active_Record.Models;
@@ -43,7 +45,7 @@ package Customer is
        (Name => "phone", Maximum_Length => 32, Has_Default => False);
      No_Marketing    : Boolean_Type.Boolean_Field := Boolean_Type.Configure
        (Name => "no_marketing", Default_Value => False);
-     Last_Updated    : Timestamp_Field := Configure
+     Last_Updated    : Timestamp.Field := Timestamp.Configure
        (Name => "last_updated", Auto_Now => True);
      Credit_Limit    : Currency.Field := Currency.Configure
        (Name => "credit_limit", Has_Default => True, Default_Value => 100.00);

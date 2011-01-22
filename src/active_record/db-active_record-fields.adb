@@ -48,16 +48,6 @@ package body DB.Active_Record.Fields is
    ---------
 
    function "="
-     (Left              : in Date_Field'Class;
-      Right             : in DB.Types.DB_Date) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, EQUAL, Date_Image (Right));
-      return Temp;
-   end "=";
-
-   function "="
      (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
@@ -77,29 +67,9 @@ package body DB.Active_Record.Fields is
       return Temp;
    end "=";
 
-   function "="
-     (Left              : in Timestamp_Field'Class;
-      Right             : in DB.Types.DB_Timestamp) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, EQUAL, Timestamp_Image (Right));
-      return Temp;
-   end "=";
-
    ----------
    -- "/=" --
    ----------
-
-   function "/="
-     (Left              : in Date_Field'Class;
-      Right             : in DB.Types.DB_Date) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, Date_Image (Right));
-      return Temp;
-   end "/=";
 
    function "/="
      (Left              : in Id_Field'Class;
@@ -121,29 +91,9 @@ package body DB.Active_Record.Fields is
       return Temp;
    end "/=";
 
-   function "/="
-     (Left              : in Timestamp_Field'Class;
-      Right             : in DB.Types.DB_Timestamp) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, Timestamp_Image (Right));
-      return Temp;
-   end "/=";
-
    ---------
    -- "<" --
    ---------
-
-   function "<"
-     (Left              : in Date_Field'Class;
-      Right             : in DB.Types.DB_Date) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN, Date_Image (Right));
-      return Temp;
-   end "<";
 
    function "<"
      (Left              : in String_Field'Class;
@@ -155,29 +105,9 @@ package body DB.Active_Record.Fields is
       return Temp;
    end "<";
 
-   function "<"
-     (Left              : in Timestamp_Field'Class;
-      Right             : in DB.Types.DB_Timestamp) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN, Timestamp_Image (Right));
-      return Temp;
-   end "<";
-
    ----------
    -- "<=" --
    ----------
-
-   function "<="
-     (Left              : in Date_Field'Class;
-      Right             : in DB.Types.DB_Date) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Date_Image (Right));
-      return Temp;
-   end "<=";
 
    function "<="
      (Left              : in String_Field'Class;
@@ -189,29 +119,9 @@ package body DB.Active_Record.Fields is
       return Temp;
    end "<=";
 
-   function "<="
-     (Left              : in Timestamp_Field'Class;
-      Right             : in DB.Types.DB_Timestamp) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Timestamp_Image (Right));
-      return Temp;
-   end "<=";
-
    ----------
    -- ">=" --
    ----------
-
-   function ">="
-     (Left              : in Date_Field'Class;
-      Right             : in DB.Types.DB_Date) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Date_Image (Right));
-      return Temp;
-   end ">=";
 
    function ">="
      (Left              : in String_Field'Class;
@@ -223,29 +133,9 @@ package body DB.Active_Record.Fields is
       return Temp;
    end ">=";
 
-   function ">="
-     (Left              : in Timestamp_Field'Class;
-      Right             : in DB.Types.DB_Timestamp) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Timestamp_Image (Right));
-      return Temp;
-   end ">=";
-
    ---------
    -- ">" --
    ---------
-
-   function ">"
-     (Left              : in Date_Field'Class;
-      Right             : in DB.Types.DB_Date) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN, Date_Image (Right));
-      return Temp;
-   end ">";
 
    function ">"
      (Left              : in String_Field'Class;
@@ -254,16 +144,6 @@ package body DB.Active_Record.Fields is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
-      return Temp;
-   end ">";
-
-   function ">"
-     (Left              : in Timestamp_Field'Class;
-      Right             : in DB.Types.DB_Timestamp) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN, Timestamp_Image (Right));
       return Temp;
    end ">";
 
@@ -328,19 +208,6 @@ package body DB.Active_Record.Fields is
    -- Clear --
    -----------
 
-   procedure Clear (This : in out Date_Field) is
-   begin
-      This.Changed := True;
-      This.Value := Null_Date;
-
-      if This.Has_Default then
-         This.Value := This.Default_Value;
-         This.Is_Null := False;
-      else
-         This.Is_Null := True;
-      end if;
-   end Clear;
-
    procedure Clear (This : in out Id_Field) is
    begin
       This.Changed := True;
@@ -358,19 +225,6 @@ package body DB.Active_Record.Fields is
    begin
       This.Changed := True;
       Set_Unbounded_String (This.Value, "");
-
-      if This.Has_Default then
-         This.Value := This.Default_Value;
-         This.Is_Null := False;
-      else
-         This.Is_Null := True;
-      end if;
-   end Clear;
-
-   procedure Clear (This : in out Timestamp_Field) is
-   begin
-      This.Changed := True;
-      This.Value := Null_Date;
 
       if This.Has_Default then
          This.Value := This.Default_Value;
@@ -407,26 +261,6 @@ package body DB.Active_Record.Fields is
    ---------------
    -- Configure --
    ---------------
-
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Auto_Now          : in Boolean := False;
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
-      Default_Value     : in DB.Types.DB_Date := Null_Date) return Date_Field
-   is
-      Temp              : Date_Field;
-   begin
-      Config_Name (Temp, Name, Display_Name);
-      Temp.Not_Null := Not_Null;
-      Temp.Unique := Unique;
-      Temp.Has_Default := Has_Default;
-      Temp.Auto_Now := Auto_Now;
-      Temp.Default_Value := Default_Value;
-      return Temp;
-   end Configure;
 
    function Configure
      (Name              : in String;
@@ -468,27 +302,6 @@ package body DB.Active_Record.Fields is
       return Temp;
    end Configure;
 
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Auto_Now          : in Boolean := False;
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
-      Default_Value     : in DB.Types.DB_Timestamp := Null_Timestamp)
-     return Timestamp_Field
-   is
-      Temp              : Timestamp_Field;
-   begin
-      Config_Name (Temp, Name, Display_Name);
-      Temp.Not_Null := Not_Null;
-      Temp.Unique := Unique;
-      Temp.Has_Default := Has_Default;
-      Temp.Auto_Now := Auto_Now;
-      Temp.Default_Value := Default_Value;
-      return Temp;
-   end Configure;
-
    ---------------------
    -- Constraints_SQL --
    ---------------------
@@ -509,32 +322,9 @@ package body DB.Active_Record.Fields is
       return DB.Types.SQL_String (To_String (Temp));
    end Constraints_SQL;
 
-   ----------------
-   -- Date_Image --
-   ----------------
-
-   function Date_Image (This : in DB.Types.DB_Date) return String is
-      Img               : constant String := 
-        Ada.Calendar.Formatting.Image (This);
-   begin
-      return Img (Img'First .. Img'First + 9);
-   end Date_Image;
-
    ---------------
    -- Field_SQL --
    ---------------
-
-   function Field_SQL
-     (This              : in Date_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-      Constraints       : constant DB.Types.SQL_String := 
-        Constraints_SQL (This);
-      Field_Name        : constant String := To_String (This.Field_Name);
-   begin
-      return DB.Types.SQL_String (Field_Name & " DATE") & Constraints;
-   end Field_SQL;
 
    function Field_SQL
      (This              : in Id_Field;
@@ -564,18 +354,6 @@ package body DB.Active_Record.Fields is
         Length_Str & ")" & Constraints;
    end Field_SQL;
 
-   function Field_SQL
-     (This              : in Timestamp_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-      Constraints       : constant DB.Types.SQL_String := 
-        Constraints_SQL (This);
-      Field_Name        : constant String := To_String (This.Field_Name);
-   begin
-      return DB.Types.SQL_String (Field_Name & " TIMESTAMP") & Constraints;
-   end Field_SQL;
-
    --------------
    -- Finalize --
    --------------
@@ -596,16 +374,6 @@ package body DB.Active_Record.Fields is
    -- Get --
    ---------
 
-   function Get (This : in Date_Field) return DB.Types.DB_Date is
-   begin
-      return This.Value;
-   end Get;
-
-   function Get (This : in Date_Field) return String is
-   begin
-      return Date_Image (This.Value);
-   end Get;
-
    function Get (This : in Id_Field) return DB.Types.Object_Id is
    begin
       return This.Value;
@@ -619,16 +387,6 @@ package body DB.Active_Record.Fields is
    function Get (This : in String_Field) return Unbounded_String is
    begin
       return This.Value;
-   end Get;
-
-   function Get (This : in Timestamp_Field) return DB.Types.DB_Timestamp is
-   begin
-      return This.Value;
-   end Get;
-
-   function Get (This : in Timestamp_Field) return String is
-   begin
-      return Timestamp_Image (This.Value);
    end Get;
 
    ----------------------
@@ -709,33 +467,6 @@ package body DB.Active_Record.Fields is
    ---------------
 
    procedure Load_From
-     (This              : in out Date_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set)
-   is
-      Field_Name        : constant String := This.Get_Name;
-   begin
-      if Results.Get_Is_Null (Field_Name) then
-         if This.Has_Default then
-            This.Value := This.Default_Value;
-            This.Is_Null := False;
-         else
-            This.Value := Null_Date;
-            This.Is_Null := True;
-         end if;
-      else
-         declare
-            Str         : constant String :=
-              Results.Get_String (This.Get_Name, False) & " 12:00:00";
-         begin
-            This.Value := Ada.Calendar.Formatting.Value (Str);
-            This.Is_Null := False;
-         end;
-      end if;
-      This.Changed := False;
-   end Load_From;
-
-   procedure Load_From
      (This              : in out Id_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set)
@@ -780,56 +511,9 @@ package body DB.Active_Record.Fields is
       This.Changed := False;
    end Load_From;
 
-   procedure Load_From
-     (This              : in out Timestamp_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set)
-   is
-      Field_Name        : constant String := This.Get_Name;
-   begin
-      if Results.Get_Is_Null (Field_Name) then
-         if This.Has_Default then
-            This.Value := This.Default_Value;
-            This.Is_Null := False;
-         else
-            This.Value := Null_Timestamp;
-            This.Is_Null := True;
-         end if;
-      else
-         declare
-            Str         : constant String :=
-              Results.Get_String (This.Get_Name, False);
-         begin
-            This.Value := Ada.Calendar.Formatting.Value (Str);
-            This.Is_Null := False;
-         end;
-      end if;
-      This.Changed := False;
-   end Load_From;
-
    ---------
    -- Set --
    ---------
-
-   procedure Set
-     (This              : in out Date_Field;
-      Value             : in     DB.Types.DB_Date)
-   is
-   begin
-      This.Value := Value;
-      This.Changed := True;
-      This.Is_Null := False;
-   end Set;
-
-   procedure Set
-     (This              : in out Date_Field;
-      Value             : in     String)
-   is
-   begin
-      This.Value := Ada.Calendar.Formatting.Value (Value & " 12:00:00");
-      This.Changed := True;
-      This.Is_Null := False;
-   end Set;
 
    procedure Set
      (This              : in out Id_Field;
@@ -868,35 +552,6 @@ package body DB.Active_Record.Fields is
          This.Is_Null := False;
       end if;
    end Set;
-
-   procedure Set
-     (This              : in out Timestamp_Field;
-      Value             : in     DB.Types.DB_Timestamp)
-   is
-   begin
-      This.Value := Value;
-      This.Changed := True;
-      This.Is_Null := False;
-   end Set;
-
-   procedure Set
-     (This              : in out Timestamp_Field;
-      Value             : in     String)
-   is
-   begin
-      This.Value := Ada.Calendar.Formatting.Value (Value);
-      This.Changed := True;
-      This.Is_Null := False;
-   end Set;
-
-   ---------------------
-   -- Timestamp_Image --
-   ---------------------
-
-   function Timestamp_Image (This : in DB.Types.DB_Timestamp) return String is
-   begin
-      return Ada.Calendar.Formatting.Image (This, Include_Time_Fraction => False);
-   end Timestamp_Image;
 
    ------------------------
    -- To_Extracted_Query --
@@ -1000,32 +655,6 @@ package body DB.Active_Record.Fields is
    ------------
 
    function To_SQL
-     (This              : in Date_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-   begin
-      if This.Is_Null then
-         return "NULL";
-      else
-         if not This.Auto_Now then
-            declare
-               Value_Str         : constant String := Date_Image (This.Value);
-            begin
-               return "'" & Connection.Quote_Value (Value_Str) & "'";
-            end;
-         else
-            declare
-               Value_Str         : constant String :=
-                 Date_Image (Ada.Calendar.Clock);
-            begin
-               return "'" & Connection.Quote_Value (Value_Str) & "'";
-            end;
-         end if;
-      end if;
-   end To_SQL;
-
-   function To_SQL
      (This              : in Id_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
@@ -1053,33 +682,6 @@ package body DB.Active_Record.Fields is
          return "NULL";
       else
          return "'" & Connection.Quote_Value (To_String (This.Value)) & "'";
-      end if;
-   end To_SQL;
-
-   function To_SQL
-     (This              : in Timestamp_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-   begin
-      if This.Is_Null then
-         return "NULL";
-      else
-         if not This.Auto_Now then
-            declare
-               Value_Str         : constant String := 
-                 Timestamp_Image (This.Value);
-            begin
-               return "'" & Connection.Quote_Value (Value_Str) & "'";
-            end;
-         else
-            declare
-               Value_Str         : constant String :=
-                 Timestamp_Image (Ada.Calendar.Clock);
-            begin
-               return "'" & Connection.Quote_Value (Value_Str) & "'";
-            end;
-         end if;
       end if;
    end To_SQL;
 
