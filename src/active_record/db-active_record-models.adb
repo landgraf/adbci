@@ -47,6 +47,7 @@ package body DB.Active_Record.Models is
       This.Changed := False;
       This.Store := STORE_INSERT;
       Iterate_Fields (This, Clear_Field'Access);
+      This.On_After_Initialize;
    end Clear;
 
    ------------
@@ -107,6 +108,8 @@ package body DB.Active_Record.Models is
       Connection        : in out DB.Connector.Connection)
    is
    begin
+      This.On_Before_Delete;
+
       if This.Store = STORE_UPDATE then
          declare
             Id_Name     : constant String := To_String (This.Id_Name);
@@ -249,6 +252,7 @@ package body DB.Active_Record.Models is
          Initialize_Model (Model'Class (This));
          Prepare_Fields (This);
          This.Initialized := True;
+         This.On_After_Initialize;
       end if;
    end Initialize;
 
@@ -295,7 +299,59 @@ package body DB.Active_Record.Models is
       This.Clear;
       This.Store := STORE_UPDATE;
       This.Iterate_Fields (Load_Field'Access);
+
+      This.On_After_Load;
    end Load_From;
+
+   -------------------------
+   -- On_After_Initialize --
+   -------------------------
+
+   procedure On_After_Initialize (This : in out Model) is
+      pragma Unreferenced (This);
+   begin
+      null;
+   end On_After_Initialize;
+
+   -------------------
+   -- On_After_Load --
+   -------------------
+
+   procedure On_After_Load (This : in out Model) is
+      pragma Unreferenced (This);
+   begin
+      null;
+   end On_After_Load;
+
+   -------------------
+   -- On_After_Save --
+   -------------------
+
+   procedure On_After_Save (This : in out Model) is
+      pragma Unreferenced (This);
+   begin
+      null;
+   end On_After_Save;
+
+   ----------------------
+   -- On_Before_Delete --
+   ----------------------
+
+   procedure On_Before_Delete (This : in out Model) is
+      pragma Unreferenced (This);
+   begin
+      null;
+   end On_Before_Delete;
+
+   --------------------
+   -- On_Before_Save --
+   --------------------
+
+   procedure On_Before_Save (This : in out Model) is
+      pragma Unreferenced (This);
+   begin
+      null;
+   end On_Before_Save;
 
    --------------
    -- Pre_Save --
@@ -344,6 +400,8 @@ package body DB.Active_Record.Models is
       Force_Save        : in     Boolean := False)
    is
    begin
+      This.On_Before_Save;
+
       if This.Read_Only then
          raise DB.Errors.OBJECT_READ_ONLY with
            "object '" & This.Get_Name & "' with id '" & This.Get_Id &
@@ -364,6 +422,8 @@ package body DB.Active_Record.Models is
          else
             Save_Update (This, Connection);
          end if;
+
+         This.On_After_Save;
       end if;
    end Save;
 

@@ -92,6 +92,22 @@ package DB.Active_Record.Models is
       Tuple             : in     DB.Tuple_Index);
    --  Loads the model from a particular result tuple.
 
+   procedure On_After_Initialize (This : in out Model);
+   --  Called after model instance is initialized, and after Clear.
+
+   procedure On_After_Load (This : in out Model);
+   --  Called after model instance is successfully loaded from database.
+
+   procedure On_After_Save (This : in out Model);
+   --  Called after model instance is saved (only called if save didn't raise
+   --  any exceptions).
+
+   procedure On_Before_Delete (This : in out Model);
+   --  Called before model instance is deleted.
+
+   procedure On_Before_Save (This : in out Model);
+   --  Called before model instance is saved.
+
    procedure Save
      (This              : in out Model'Class;
       Connection        : in out DB.Connector.Connection;
