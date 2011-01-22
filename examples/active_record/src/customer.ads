@@ -17,6 +17,8 @@
 --
 
 with DB.Active_Record.Fields;          use DB.Active_Record.Fields;
+with DB.Active_Record.Fields.Fixed_Types;
+                                       use DB.Active_Record.Fields.Fixed_Types;
 with DB.Active_Record.Models;
 
 package Customer is
@@ -42,7 +44,7 @@ package Customer is
        (Name => "no_marketing", Default_Value => False);
      Last_Updated    : Timestamp_Field := Configure
        (Name => "last_updated", Auto_Now => True);
-     Credit_Limit    : Currency_Field := Configure
+     Credit_Limit    : Currency.Field := Currency.Configure
        (Name => "credit_limit", Has_Default => True, Default_Value => 100.00);
    end record;
 

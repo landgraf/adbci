@@ -20,6 +20,8 @@ with Ada.Calendar.Formatting;
 with Ada.Text_IO;                      use Ada.Text_IO;
 with Customer;
 with DB.Active_Record.Fields;          use DB.Active_Record.Fields;
+with DB.Active_Record.Fields.Fixed_Types;
+                                       use DB.Active_Record.Fields.Fixed_Types;
 with DB.Active_Record.Models.Queries;
 with DB.Connector;
 with DB.Driver;
@@ -78,7 +80,8 @@ begin
       Put_Line ("Found:" & Natural'Image (Customer_Finder.Count (R)) & " Result(s).");
       Item := Customer_Finder.Item (R, Database, 1);
       Put_Line ("Found Customer Name: " & Item.Customer_Name.Get);
-      Put_Line ("Credit Limit:" & Currency'Image (Item.Credit_Limit.Get));
+      Put_Line ("Credit Limit:" &
+        Currency_Type'Image (Item.Credit_Limit.Get));
       Put_Line ("Last Saved: " & Item.Last_Updated.Get);
    end;
 

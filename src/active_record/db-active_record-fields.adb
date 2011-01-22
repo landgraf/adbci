@@ -48,16 +48,6 @@ package body DB.Active_Record.Fields is
    ---------
 
    function "="
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, EQUAL, DB.Types.DB_Bigint'Image (Right));
-      return Temp;
-   end "=";
-
-   function "="
      (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria
    is
@@ -68,16 +58,6 @@ package body DB.Active_Record.Fields is
       else
          Set_Criteria (Temp, Left, EQUAL, "false");
       end if;
-      return Temp;
-   end "=";
-
-   function "="
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, EQUAL, Currency'Image (Right));
       return Temp;
    end "=";
 
@@ -98,16 +78,6 @@ package body DB.Active_Record.Fields is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, EQUAL, DB.Types.Object_Id'Image (Right));
-      return Temp;
-   end "=";
-
-   function "="
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, EQUAL, DB.Types.DB_Integer'Image (Right));
       return Temp;
    end "=";
 
@@ -136,16 +106,6 @@ package body DB.Active_Record.Fields is
    ----------
 
    function "/="
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.DB_Bigint'Image (Right));
-      return Temp;
-   end "/=";
-
-   function "/="
      (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria
    is
@@ -156,16 +116,6 @@ package body DB.Active_Record.Fields is
       else
          Set_Criteria (Temp, Left, NOT_EQUAL, "false");
       end if;
-      return Temp;
-   end "/=";
-
-   function "/="
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, Currency'Image (Right));
       return Temp;
    end "/=";
 
@@ -186,16 +136,6 @@ package body DB.Active_Record.Fields is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.Object_Id'Image (Right));
-      return Temp;
-   end "/=";
-
-   function "/="
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.DB_Integer'Image (Right));
       return Temp;
    end "/=";
 
@@ -224,42 +164,12 @@ package body DB.Active_Record.Fields is
    ---------
 
    function "<"
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN, DB.Types.DB_Bigint'Image (Right));
-      return Temp;
-   end "<";
-
-   function "<"
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN, Currency'Image (Right));
-      return Temp;
-   end "<";
-
-   function "<"
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, LESS_THAN, Date_Image (Right));
-      return Temp;
-   end "<";
-
-   function "<"
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN, DB.Types.DB_Integer'Image (Right));
       return Temp;
    end "<";
 
@@ -288,42 +198,12 @@ package body DB.Active_Record.Fields is
    ----------
 
    function "<="
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, DB.Types.DB_Bigint'Image (Right));
-      return Temp;
-   end "<=";
-
-   function "<="
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Currency'Image (Right));
-      return Temp;
-   end "<=";
-
-   function "<="
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Date_Image (Right));
-      return Temp;
-   end "<=";
-
-   function "<="
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, DB.Types.DB_Integer'Image (Right));
       return Temp;
    end "<=";
 
@@ -352,42 +232,12 @@ package body DB.Active_Record.Fields is
    ----------
 
    function ">="
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, DB.Types.DB_Bigint'Image (Right));
-      return Temp;
-   end ">=";
-
-   function ">="
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Currency'Image (Right));
-      return Temp;
-   end ">=";
-
-   function ">="
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Date_Image (Right));
-      return Temp;
-   end ">=";
-
-   function ">="
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, DB.Types.DB_Integer'Image (Right));
       return Temp;
    end ">=";
 
@@ -416,42 +266,12 @@ package body DB.Active_Record.Fields is
    ---------
 
    function ">"
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN, DB.Types.DB_Bigint'Image (Right));
-      return Temp;
-   end ">";
-
-   function ">"
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN, Currency'Image (Right));
-      return Temp;
-   end ">";
-
-   function ">"
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
       Set_Criteria (Temp, Left, GREATER_THAN, Date_Image (Right));
-      return Temp;
-   end ">";
-
-   function ">"
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria
-   is
-      Temp              : Field_Criteria;
-   begin
-      Set_Criteria (Temp, Left, GREATER_THAN, DB.Types.DB_Integer'Image (Right));
       return Temp;
    end ">";
 
@@ -536,36 +356,10 @@ package body DB.Active_Record.Fields is
    -- Clear --
    -----------
 
-   procedure Clear (This : in out Bigint_Field) is
-   begin
-      This.Changed := True;
-      This.Value := 0;
-
-      if This.Has_Default then
-         This.Value := This.Default_Value;
-         This.Is_Null := False;
-      else
-         This.Is_Null := True;
-      end if;
-   end Clear;
-
    procedure Clear (This : in out Boolean_Field) is
    begin
       This.Changed := True;
       This.Value := False;
-
-      if This.Has_Default then
-         This.Value := This.Default_Value;
-         This.Is_Null := False;
-      else
-         This.Is_Null := True;
-      end if;
-   end Clear;
-
-   procedure Clear (This : in out Currency_Field) is
-   begin
-      This.Changed := True;
-      This.Value := 0.0;
 
       if This.Has_Default then
          This.Value := This.Default_Value;
@@ -589,19 +383,6 @@ package body DB.Active_Record.Fields is
    end Clear;
 
    procedure Clear (This : in out Id_Field) is
-   begin
-      This.Changed := True;
-      This.Value := 0;
-
-      if This.Has_Default then
-         This.Value := This.Default_Value;
-         This.Is_Null := False;
-      else
-         This.Is_Null := True;
-      end if;
-   end Clear;
-
-   procedure Clear (This : in out Integer_Field) is
    begin
       This.Changed := True;
       This.Value := 0;
@@ -674,45 +455,9 @@ package body DB.Active_Record.Fields is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in DB.Types.DB_Bigint := 0) return Bigint_Field
-   is
-      Temp              : Bigint_Field;
-   begin
-      Config_Name (Temp, Name, Display_Name);
-      Temp.Not_Null := Not_Null;
-      Temp.Unique := Unique;
-      Temp.Has_Default := Has_Default;
-      Temp.Default_Value := Default_Value;
-      return Temp;
-   end Configure;
-
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
       Default_Value     : in Boolean := False) return Boolean_Field
    is
       Temp              : Boolean_Field;
-   begin
-      Config_Name (Temp, Name, Display_Name);
-      Temp.Not_Null := Not_Null;
-      Temp.Unique := Unique;
-      Temp.Has_Default := Has_Default;
-      Temp.Default_Value := Default_Value;
-      return Temp;
-   end Configure;
-
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
-      Default_Value     : in Currency := 0.0) return Currency_Field
-   is
-      Temp              : Currency_Field;
    begin
       Config_Name (Temp, Name, Display_Name);
       Temp.Not_Null := Not_Null;
@@ -752,24 +497,6 @@ package body DB.Active_Record.Fields is
      return Id_Field
    is
       Temp              : Id_Field;
-   begin
-      Config_Name (Temp, Name, Display_Name);
-      Temp.Not_Null := Not_Null;
-      Temp.Unique := Unique;
-      Temp.Has_Default := Has_Default;
-      Temp.Default_Value := Default_Value;
-      return Temp;
-   end Configure;
-
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
-      Default_Value     : in DB.Types.DB_Integer := 0) return Integer_Field
-   is
-      Temp              : Integer_Field;
    begin
       Config_Name (Temp, Name, Display_Name);
       Temp.Not_Null := Not_Null;
@@ -857,18 +584,6 @@ package body DB.Active_Record.Fields is
    ---------------
 
    function Field_SQL
-     (This              : in Bigint_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-      Constraints       : constant DB.Types.SQL_String := 
-        Constraints_SQL (This);
-      Field_Name        : constant String := To_String (This.Field_Name);
-   begin
-      return DB.Types.SQL_String (Field_Name & " BIGINT") & Constraints;
-   end Field_SQL;
-
-   function Field_SQL
      (This              : in Boolean_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String
@@ -878,18 +593,6 @@ package body DB.Active_Record.Fields is
       Field_Name        : constant String := To_String (This.Field_Name);
    begin
       return DB.Types.SQL_String (Field_Name & " BOOLEAN") & Constraints;
-   end Field_SQL;
-
-   function Field_SQL
-     (This              : in Currency_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-      Constraints       : constant DB.Types.SQL_String := 
-        Constraints_SQL (This);
-      Field_Name        : constant String := To_String (This.Field_Name);
-   begin
-      return DB.Types.SQL_String (Field_Name & " DECIMAL(16,2)") & Constraints;
    end Field_SQL;
 
    function Field_SQL
@@ -915,18 +618,6 @@ package body DB.Active_Record.Fields is
    begin
       return DB.Types.SQL_String (Field_Name & ' ') &
         Connector.Get_Driver.Get_Id_SQL & Constraints;
-   end Field_SQL;
-
-   function Field_SQL
-     (This              : in Integer_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-      Constraints       : constant DB.Types.SQL_String := 
-        Constraints_SQL (This);
-      Field_Name        : constant String := To_String (This.Field_Name);
-   begin
-      return DB.Types.SQL_String (Field_Name & " INTEGER") & Constraints;
    end Field_SQL;
 
    function Field_SQL
@@ -976,17 +667,7 @@ package body DB.Active_Record.Fields is
    -- Get --
    ---------
 
-   function Get (This : in Bigint_Field) return DB.Types.DB_Bigint is
-   begin
-      return This.Value;
-   end Get;
-
    function Get (This : in Boolean_Field) return Boolean is
-   begin
-      return This.Value;
-   end Get;
-
-   function Get (This : in Currency_Field) return Currency is
    begin
       return This.Value;
    end Get;
@@ -1002,11 +683,6 @@ package body DB.Active_Record.Fields is
    end Get;
 
    function Get (This : in Id_Field) return DB.Types.Object_Id is
-   begin
-      return This.Value;
-   end Get;
-
-   function Get (This : in Integer_Field) return DB.Types.DB_Integer is
    begin
       return This.Value;
    end Get;
@@ -1109,28 +785,6 @@ package body DB.Active_Record.Fields is
    ---------------
 
    procedure Load_From
-     (This              : in out Bigint_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set)
-   is
-      Field_Name        : constant String := This.Get_Name;
-   begin
-      if Results.Get_Is_Null (Field_Name) then
-         if This.Has_Default then
-            This.Value := This.Default_Value;
-            This.Is_Null := False;
-         else
-            This.Value := 0;
-            This.Is_Null := True;
-         end if;
-      else
-         This.Value := Results.Get_Bigint (This.Get_Name, False);
-         This.Is_Null := False;
-      end if;
-      This.Changed := False;
-   end Load_From;
-
-   procedure Load_From
      (This              : in out Boolean_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set)
@@ -1147,29 +801,6 @@ package body DB.Active_Record.Fields is
          end if;
       else
          This.Value := Results.Get_Boolean (This.Get_Name, False);
-         This.Is_Null := False;
-      end if;
-      This.Changed := False;
-   end Load_From;
-
-   procedure Load_From
-     (This              : in out Currency_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set)
-   is
-      Field_Name        : constant String := This.Get_Name;
-   begin
-      if Results.Get_Is_Null (Field_Name) then
-         if This.Has_Default then
-            This.Value := This.Default_Value;
-            This.Is_Null := False;
-         else
-            This.Value := 0.0;
-            This.Is_Null := True;
-         end if;
-      else
-         This.Value := Currency'Value
-           (Results.Get_String (This.Get_Name, False));
          This.Is_Null := False;
       end if;
       This.Changed := False;
@@ -1219,28 +850,6 @@ package body DB.Active_Record.Fields is
          end if;
       else
          This.Value := Results.Get_Object_Id (This.Get_Name, False);
-         This.Is_Null := False;
-      end if;
-      This.Changed := False;
-   end Load_From;
-
-   procedure Load_From
-     (This              : in out Integer_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set)
-   is
-      Field_Name        : constant String := This.Get_Name;
-   begin
-      if Results.Get_Is_Null (Field_Name) then
-         if This.Has_Default then
-            This.Value := This.Default_Value;
-            This.Is_Null := False;
-         else
-            This.Value := 0;
-            This.Is_Null := True;
-         end if;
-      else
-         This.Value := Results.Get_Integer (This.Get_Name, False);
          This.Is_Null := False;
       end if;
       This.Changed := False;
@@ -1301,28 +910,8 @@ package body DB.Active_Record.Fields is
    ---------
 
    procedure Set
-     (This              : in out Bigint_Field;
-      Value             : in     DB.Types.DB_Bigint)
-   is
-   begin
-      This.Value := Value;
-      This.Changed := True;
-      This.Is_Null := False;
-   end Set;
-
-   procedure Set
      (This              : in out Boolean_Field;
       Value             : in     Boolean)
-   is
-   begin
-      This.Value := Value;
-      This.Changed := True;
-      This.Is_Null := False;
-   end Set;
-
-   procedure Set
-     (This              : in out Currency_Field;
-      Value             : in     Currency)
    is
    begin
       This.Value := Value;
@@ -1353,16 +942,6 @@ package body DB.Active_Record.Fields is
    procedure Set
      (This              : in out Id_Field;
       Value             : in     DB.Types.Object_Id)
-   is
-   begin
-      This.Value := Value;
-      This.Changed := True;
-      This.Is_Null := False;
-   end Set;
-
-   procedure Set
-     (This              : in out Integer_Field;
-      Value             : in     DB.Types.DB_Integer)
    is
    begin
       This.Value := Value;
@@ -1529,24 +1108,6 @@ package body DB.Active_Record.Fields is
    ------------
 
    function To_SQL
-     (This              : in Bigint_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-   begin
-      if This.Is_Null then
-         return "NULL";
-      else
-         declare
-            Value_Str         : constant String :=
-              Trim (DB.Types.DB_Bigint'Image (This.Value), Both);
-         begin
-            return Connection.Quote_Value (Value_Str);
-         end;
-      end if;
-   end To_SQL;
-
-   function To_SQL
      (This              : in Boolean_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
@@ -1560,24 +1121,6 @@ package body DB.Active_Record.Fields is
          else
             return "'false'";
          end if;
-      end if;
-   end To_SQL;
-
-   function To_SQL
-     (This              : in Currency_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-   begin
-      if This.Is_Null then
-         return "NULL";
-      else
-         declare
-            Value_Str         : constant String :=
-              Trim (Currency'Image (This.Value), Both);
-         begin
-            return Connection.Quote_Value (Value_Str);
-         end;
       end if;
    end To_SQL;
 
@@ -1621,24 +1164,6 @@ package body DB.Active_Record.Fields is
               Trim (DB.Types.Object_Id'Image (This.Value), Both);
          begin
             return "'" & Connection.Quote_Value (Value_Str) & "'";
-         end;
-      end if;
-   end To_SQL;
-
-   function To_SQL
-     (This              : in Integer_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String
-   is
-   begin
-      if This.Is_Null then
-         return "NULL";
-      else
-         declare
-            Value_Str         : constant String :=
-              Trim (DB.Types.DB_Integer'Image (This.Value), Both);
-         begin
-            return Connection.Quote_Value (Value_Str);
          end;
       end if;
    end To_SQL;

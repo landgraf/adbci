@@ -30,8 +30,6 @@ package DB.Active_Record.Fields is
    Null_Timestamp       : constant Ada.Calendar.Time :=
      Ada.Calendar.Time_Of (1970, 1, 1, 0.0);
 
-   type Currency is delta 0.01 digits 18;
-
    type Field is abstract tagged private;
    type Field_Handler is not null access Procedure (This : in out Field'Class);
    type Field_Criteria is private;
@@ -76,26 +74,15 @@ package DB.Active_Record.Fields is
    --  Returns the SQL representation of the current field value.  The value
    --  if not NULL, is enclosed by single quotes.
 
-   type Bigint_Field is new Field with private;
    type Boolean_Field is new Field with private;
-   type Currency_Field is new Field with private;
    type Date_Field is new Field with private;
    type Id_Field is new Field with private;
-   type Integer_Field is new Field with private;
    type String_Field is new Field with private;
    type Timestamp_Field is new Field with private;
 
    function "="
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
-
-   function "="
      (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria;
-
-   function "="
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria;
 
    function "="
      (Left              : in Date_Field'Class;
@@ -106,10 +93,6 @@ package DB.Active_Record.Fields is
       Right             : in DB.Types.Object_Id) return Field_Criteria;
 
    function "="
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria;
-
-   function "="
      (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
@@ -118,16 +101,8 @@ package DB.Active_Record.Fields is
       Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
    function "/="
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
-
-   function "/="
      (Left              : in Boolean_Field'Class;
       Right             : in Boolean) return Field_Criteria;
-
-   function "/="
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria;
 
    function "/="
      (Left              : in Date_Field'Class;
@@ -138,10 +113,6 @@ package DB.Active_Record.Fields is
       Right             : in DB.Types.Object_Id) return Field_Criteria;
 
    function "/="
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria;
-
-   function "/="
      (Left              : in String_Field'Class;
       Right             : in String) return Field_Criteria;
 
@@ -150,20 +121,8 @@ package DB.Active_Record.Fields is
       Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
    function "<"
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
-
-   function "<"
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria;
-
-   function "<"
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria;
-
-   function "<"
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function "<"
      (Left              : in String_Field'Class;
@@ -174,20 +133,8 @@ package DB.Active_Record.Fields is
       Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
    function "<="
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
-
-   function "<="
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria;
-
-   function "<="
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria;
-
-   function "<="
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function "<="
      (Left              : in String_Field'Class;
@@ -198,20 +145,8 @@ package DB.Active_Record.Fields is
       Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
    function ">="
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
-
-   function ">="
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria;
-
-   function ">="
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria;
-
-   function ">="
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function ">="
      (Left              : in String_Field'Class;
@@ -222,20 +157,8 @@ package DB.Active_Record.Fields is
       Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
    function ">"
-     (Left              : in Bigint_Field'Class;
-      Right             : in DB.Types.DB_Bigint) return Field_Criteria;
-
-   function ">"
-     (Left              : in Currency_Field'Class;
-      Right             : in Currency) return Field_Criteria;
-
-   function ">"
      (Left              : in Date_Field'Class;
       Right             : in DB.Types.DB_Date) return Field_Criteria;
-
-   function ">"
-     (Left              : in Integer_Field'Class;
-      Right             : in DB.Types.DB_Integer) return Field_Criteria;
 
    function ">"
      (Left              : in String_Field'Class;
@@ -259,17 +182,11 @@ package DB.Active_Record.Fields is
      (Left              : in Field_Criteria;
       Right             : in Field_Criteria) return Field_Criteria;
 
-   overriding procedure Clear (This : in out Bigint_Field);
-
    overriding procedure Clear (This : in out Boolean_Field);
-
-   overriding procedure Clear (This : in out Currency_Field);
 
    overriding procedure Clear (This : in out Date_Field);
 
    overriding procedure Clear (This : in out Id_Field);
-
-   overriding procedure Clear (This : in out Integer_Field);
 
    overriding procedure Clear (This : in out String_Field);
 
@@ -281,23 +198,7 @@ package DB.Active_Record.Fields is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in DB.Types.DB_Bigint := 0) return Bigint_Field;
-
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
       Default_Value     : in Boolean := False) return Boolean_Field;
-
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
-      Default_Value     : in Currency := 0.0) return Currency_Field;
 
    function Configure
      (Name              : in String;
@@ -320,14 +221,6 @@ package DB.Active_Record.Fields is
    function Configure
      (Name              : in String;
       Display_Name      : in String := "";
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
-      Default_Value     : in DB.Types.DB_Integer := 0) return Integer_Field;
-
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
       Maximum_Length    : in Positive := 255;
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
@@ -345,17 +238,7 @@ package DB.Active_Record.Fields is
      return Timestamp_Field;
 
    overriding function Field_SQL
-     (This              : in Bigint_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function Field_SQL
      (This              : in Boolean_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function Field_SQL
-     (This              : in Currency_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
@@ -370,11 +253,6 @@ package DB.Active_Record.Fields is
      return DB.Types.SQL_String;
 
    overriding function Field_SQL
-     (This              : in Integer_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function Field_SQL
      (This              : in String_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
@@ -384,11 +262,7 @@ package DB.Active_Record.Fields is
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
-   function Get (This : in Bigint_Field) return DB.Types.DB_Bigint;
-
    function Get (This : in Boolean_Field) return Boolean;
-
-   function Get (This : in Currency_Field) return Currency;
 
    function Get (This : in Date_Field) return Ada.Calendar.Time;
 
@@ -396,8 +270,6 @@ package DB.Active_Record.Fields is
    --  alternative - converts date to string before returning.
 
    function Get (This : in Id_Field) return DB.Types.Object_Id;
-
-   function Get (This : in Integer_Field) return DB.Types.DB_Integer;
 
    function Get (This : in String_Field) return String;
 
@@ -416,17 +288,7 @@ package DB.Active_Record.Fields is
       Right             : in String) return Field_Criteria;
 
    overriding procedure Load_From
-     (This              : in out Bigint_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set);
-
-   overriding procedure Load_From
      (This              : in out Boolean_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set);
-
-   overriding procedure Load_From
-     (This              : in out Currency_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
 
@@ -437,11 +299,6 @@ package DB.Active_Record.Fields is
 
    overriding procedure Load_From
      (This              : in out Id_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set);
-
-   overriding procedure Load_From
-     (This              : in out Integer_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
 
@@ -456,16 +313,8 @@ package DB.Active_Record.Fields is
       Results           : in     DB.Connector.Result_Set);
 
    procedure Set
-     (This              : in out Bigint_Field;
-      Value             : in     DB.Types.DB_Bigint);
-
-   procedure Set
      (This              : in out Boolean_Field;
       Value             : in     Boolean);
-
-   procedure Set
-     (This              : in out Currency_Field;
-      Value             : in     Currency);
 
    procedure Set
      (This              : in out Date_Field;
@@ -479,10 +328,6 @@ package DB.Active_Record.Fields is
    procedure Set
      (This              : in out Id_Field;
       Value             : in     DB.Types.Object_Id);
-
-   procedure Set
-     (This              : in out Integer_Field;
-      Value             : in     DB.Types.DB_Integer);
 
    procedure Set
      (This              : in out String_Field;
@@ -510,17 +355,7 @@ package DB.Active_Record.Fields is
    --  use in a query.
 
    overriding function To_SQL
-     (This              : in Bigint_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function To_SQL
      (This              : in Boolean_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function To_SQL
-     (This              : in Currency_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
@@ -531,11 +366,6 @@ package DB.Active_Record.Fields is
 
    overriding function To_SQL
      (This              : in Id_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function To_SQL
-     (This              : in Integer_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
@@ -563,19 +393,9 @@ private
       Unique            : Boolean := False;     --  Is field UNIQUE?
    end record;
 
-   type Bigint_Field is new Field with record
-      Default_Value     : DB.Types.DB_Bigint := 0;
-      Value             : DB.Types.DB_Bigint := 0;
-   end record;
-
    type Boolean_Field is new Field with record
       Default_Value     : Boolean := False;
       Value             : Boolean := False;
-   end record;
-
-   type Currency_Field is new Field with record
-      Default_Value     : Currency := 0.0;
-      Value             : Currency := 0.0;
    end record;
 
    type Date_Field is new Field with record
@@ -587,11 +407,6 @@ private
    type Id_Field is new Field with record
       Default_Value     : DB.Types.Object_Id := DB.Types.Null_Object_Id;
       Value             : DB.Types.Object_Id := DB.Types.Null_Object_Id;
-   end record;
-
-   type Integer_Field is new Field with record
-      Default_Value     : DB.Types.DB_Integer := 0;
-      Value             : DB.Types.DB_Integer := 0;
    end record;
 
    type String_Field is new Field with record

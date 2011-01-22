@@ -13,72 +13,75 @@
 --  You should have received a copy of the GNU Lesser General Public License
 --  along with this library; if not, see <http://www.gnu.org/licenses/>
 --
---    db-active_record-fields-generic_fixed.ads   jvinters   21-January-2011
+--    db-active_record-fields-generic_Integer.ads   jvinters   21-January-2011
 --
 
 with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 
-package body DB.Active_Record.Fields.Generic_Fixed is
+package body DB.Active_Record.Fields.Generic_Integer is
+
+   type Field_Size_Type is (BITS_16, BITS_32, BITS_64);
+   Field_Size           : Field_Size_Type := BITS_16;
 
    function "="
      (Left              : in Field'Class;
-      Right             : in Fixed_Type) return Field_Criteria
+      Right             : in Integer_Type) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, EQUAL, Fixed_Type'Image (Right));
+      Set_Criteria (Temp, Left, EQUAL, Integer_Type'Image (Right));
       return Temp;
    end "=";
 
    function "/="
      (Left              : in Field'Class;
-      Right             : in Fixed_Type) return Field_Criteria
+      Right             : in Integer_Type) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, Fixed_Type'Image (Right));
+      Set_Criteria (Temp, Left, NOT_EQUAL, Integer_Type'Image (Right));
       return Temp;
    end "/=";
 
    function "<"
      (Left              : in Field'Class;
-      Right             : in Fixed_Type) return Field_Criteria
+      Right             : in Integer_Type) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, LESS_THAN, Fixed_Type'Image (Right));
+      Set_Criteria (Temp, Left, LESS_THAN, Integer_Type'Image (Right));
       return Temp;
    end "<";
 
    function "<="
      (Left              : in Field'Class;
-      Right             : in Fixed_Type) return Field_Criteria
+      Right             : in Integer_Type) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Fixed_Type'Image (Right));
+      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Integer_Type'Image (Right));
       return Temp;
    end "<=";
 
    function ">="
      (Left              : in Field'Class;
-      Right             : in Fixed_Type) return Field_Criteria
+      Right             : in Integer_Type) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Fixed_Type'Image (Right));
+      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Integer_Type'Image (Right));
       return Temp;
    end ">=";
 
    function ">"
      (Left              : in Field'Class;
-      Right             : in Fixed_Type) return Field_Criteria
+      Right             : in Integer_Type) return Field_Criteria
    is
       Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, GREATER_THAN, Fixed_Type'Image (Right));
+      Set_Criteria (Temp, Left, GREATER_THAN, Integer_Type'Image (Right));
       return Temp;
    end ">";
 
@@ -89,7 +92,7 @@ package body DB.Active_Record.Fields.Generic_Fixed is
    procedure Clear (This : in out Field) is
    begin
       This.Changed := True;
-      This.Value := 0.0;
+      This.Value := Initialization_Value;
 
       if This.Has_Default then
          This.Value := This.Default_Value;
@@ -109,7 +112,8 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in Fixed_Type := 0.0) return Field
+      Default_Value     : in Integer_Type := Initialization_Value)
+     return Field
    is
       Lower_Name        : constant String := To_Lower (Name);
       Temp              : Field;
@@ -134,28 +138,29 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       Constraints       : constant DB.Types.SQL_String := 
         Constraints_SQL (This);
       Field_Name        : constant String := To_String (This.Field_Name);
-      Scale             : constant String := 
-        Trim (Natural'Image (Fixed_Type'Aft), Both);
-      Precision         : constant String := 
-        Trim (Natural'Image (Fixed_Type'Digits), Both);
    begin
-      return DB.Types.SQL_String
-        (Field_Name & " DECIMAL(" & Precision & ',' & Scale &')') & 
-        Constraints;
+      case Field_Size is
+         when BITS_16 =>
+            return DB.Types.SQL_String (Field_Name & " SMALLINT") & Constraints;
+         when BITS_32 =>
+            return DB.Types.SQL_String (Field_Name & " INTEGER") & Constraints;
+         when BITS_64 =>
+            return DB.Types.SQL_String (Field_Name & " BIGINT") & Constraints;
+      end case;
    end Field_SQL;
 
    ---------
    -- Get --
    ---------
 
-   function Get (This : in Field) return Fixed_Type is
+   function Get (This : in Field) return Integer_Type is
    begin
       return This.Value;
    end Get;
 
    function Get (This : in Field) return String is
       Temp              : constant String :=
-        Trim (Fixed_Type'Image (This.Value), Both);
+        Trim (Integer_Type'Image (This.Value), Both);
    begin
       return Temp;
    end Get;
@@ -176,11 +181,11 @@ package body DB.Active_Record.Fields.Generic_Fixed is
             This.Value := This.Default_Value;
             This.Is_Null := False;
          else
-            This.Value := 0.0;
+            This.Value := Initialization_Value;
             This.Is_Null := True;
          end if;
       else
-         This.Value := Fixed_Type'Value
+         This.Value := Integer_Type'Value
            (Results.Get_String (This.Get_Name, False));
          This.Is_Null := False;
       end if;
@@ -193,7 +198,7 @@ package body DB.Active_Record.Fields.Generic_Fixed is
 
    procedure Set
      (This              : in out Field;
-      Value             : in     Fixed_Type)
+      Value             : in     Integer_Type)
    is
    begin
       This.Value := Value;
@@ -206,7 +211,7 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       Value             : in     String)
    is
    begin
-      This.Value := Fixed_Type'Value (Value);
+      This.Value := Integer_Type'Value (Value);
       This.Changed := True;
       This.Is_Null := False;
    end Set;
@@ -226,11 +231,23 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       else
          declare
             Value_Str         : constant String :=
-              Trim (Fixed_Type'Image (This.Value), Both);
+              Trim (Integer_Type'Image (This.Value), Both);
          begin
             return Connection.Quote_Value (Value_Str);
          end;
       end if;
    end To_SQL;
 
-end DB.Active_Record.Fields.Generic_Fixed;
+begin
+   --  Pick the smallest integer type that will hold the entire range.
+   
+   if Integer_Type'First < -2**63 or else Integer_Type'Last >= 2**63 then
+      raise CONSTRAINT_ERROR with "can't support more than 64-bit integers";
+   elsif Integer_Type'First < -2**31 or else Integer_Type'Last >= 2**31 then
+      Field_Size := BITS_64;
+   elsif Integer_Type'First < -2**15 or else Integer_Type'Last >= 2**15 then
+      Field_Size := BITS_32;
+   else
+      Field_Size := BITS_16;
+   end if;
+end DB.Active_Record.Fields.Generic_Integer;
