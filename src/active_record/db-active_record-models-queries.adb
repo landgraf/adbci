@@ -64,6 +64,36 @@ package body DB.Active_Record.Models.Queries is
          Read_Only      => Read_Only);
    end Find;
 
+   -------------
+   -- Iterate --
+   -------------
+
+   procedure Iterate
+     (This              : in Query_Result;
+      Connection        : in DB.Connector.Connection;
+      Handler           : not null Iterator)
+   is
+      Found             : Boolean;
+      Stop              : Boolean := False;
+      Temp              : Model_Type;
+   begin
+      for i in 1 .. This.Count loop
+         begin
+            Temp := Item (This, Connection, i);
+            Found := True;
+         exception
+            when DB.Errors.OBJECT_NOT_FOUND =>
+               Found := False;
+         end;
+
+         if Found then
+            Handler (Temp, Stop);
+         end if;
+
+         exit when Stop;
+      end loop;
+   end Iterate;
+
    ----------
    -- Item --
    ----------

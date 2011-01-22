@@ -26,6 +26,10 @@ package DB.Active_Record.Models.Queries is
 
    Object               : Model_Type;
 
+   type Iterator is access procedure
+     (Item              : in out Model_Type;
+      Stop              : in out Boolean);
+
    type Query_Result is private;
 
    function Count (This : in Query_Result) return Natural;
@@ -43,6 +47,12 @@ package DB.Active_Record.Models.Queries is
       Connection        : in DB.Connector.Connection;
       Index             : in Positive) return Model_Type;
    --  Fetches the Index'th item from the result set.
+
+   procedure Iterate
+     (This              : in Query_Result;
+      Connection        : in DB.Connector.Connection;
+      Handler           : not null Iterator);
+   --  Iterates through the result set, loading each object in turn.
 
    function SQL_Query
      (Connection        : in DB.Connector.Connection;
