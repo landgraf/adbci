@@ -17,6 +17,7 @@
 --
 
 with DB.Active_Record.Fields;          use DB.Active_Record.Fields;
+with DB.Active_Record.Fields.Boolean_Type;
 with DB.Active_Record.Fields.Fixed_Types;
                                        use DB.Active_Record.Fields.Fixed_Types;
 with DB.Active_Record.Models;
@@ -40,7 +41,7 @@ package Customer is
        (Name => "country", Maximum_Length => 32, Default_Value => "UK");
      Phone           : String_Field := Configure
        (Name => "phone", Maximum_Length => 32, Has_Default => False);
-     No_Marketing    : Boolean_Field := Configure
+     No_Marketing    : Boolean_Type.Boolean_Field := Boolean_Type.Configure
        (Name => "no_marketing", Default_Value => False);
      Last_Updated    : Timestamp_Field := Configure
        (Name => "last_updated", Auto_Now => True);

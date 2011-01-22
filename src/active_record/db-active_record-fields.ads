@@ -74,15 +74,10 @@ package DB.Active_Record.Fields is
    --  Returns the SQL representation of the current field value.  The value
    --  if not NULL, is enclosed by single quotes.
 
-   type Boolean_Field is new Field with private;
    type Date_Field is new Field with private;
    type Id_Field is new Field with private;
    type String_Field is new Field with private;
    type Timestamp_Field is new Field with private;
-
-   function "="
-     (Left              : in Boolean_Field'Class;
-      Right             : in Boolean) return Field_Criteria;
 
    function "="
      (Left              : in Date_Field'Class;
@@ -99,10 +94,6 @@ package DB.Active_Record.Fields is
    function "="
      (Left              : in Timestamp_Field'Class;
       Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
-
-   function "/="
-     (Left              : in Boolean_Field'Class;
-      Right             : in Boolean) return Field_Criteria;
 
    function "/="
      (Left              : in Date_Field'Class;
@@ -182,8 +173,6 @@ package DB.Active_Record.Fields is
      (Left              : in Field_Criteria;
       Right             : in Field_Criteria) return Field_Criteria;
 
-   overriding procedure Clear (This : in out Boolean_Field);
-
    overriding procedure Clear (This : in out Date_Field);
 
    overriding procedure Clear (This : in out Id_Field);
@@ -191,14 +180,6 @@ package DB.Active_Record.Fields is
    overriding procedure Clear (This : in out String_Field);
 
    overriding procedure Clear (This : in out Timestamp_Field);
-
-   function Configure
-     (Name              : in String;
-      Display_Name      : in String := "";
-      Not_Null          : in Boolean := False;
-      Unique            : in Boolean := False;
-      Has_Default       : in Boolean := True;
-      Default_Value     : in Boolean := False) return Boolean_Field;
 
    function Configure
      (Name              : in String;
@@ -238,11 +219,6 @@ package DB.Active_Record.Fields is
      return Timestamp_Field;
 
    overriding function Field_SQL
-     (This              : in Boolean_Field;
-      Connector         : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function Field_SQL
      (This              : in Date_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
@@ -261,8 +237,6 @@ package DB.Active_Record.Fields is
      (This              : in Timestamp_Field;
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
-
-   function Get (This : in Boolean_Field) return Boolean;
 
    function Get (This : in Date_Field) return Ada.Calendar.Time;
 
@@ -288,11 +262,6 @@ package DB.Active_Record.Fields is
       Right             : in String) return Field_Criteria;
 
    overriding procedure Load_From
-     (This              : in out Boolean_Field;
-      Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set);
-
-   overriding procedure Load_From
      (This              : in out Date_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
@@ -311,10 +280,6 @@ package DB.Active_Record.Fields is
      (This              : in out Timestamp_Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set);
-
-   procedure Set
-     (This              : in out Boolean_Field;
-      Value             : in     Boolean);
 
    procedure Set
      (This              : in out Date_Field;
@@ -355,11 +320,6 @@ package DB.Active_Record.Fields is
    --  use in a query.
 
    overriding function To_SQL
-     (This              : in Boolean_Field;
-      Connection        : in DB.Connector.Connection)
-     return DB.Types.SQL_String;
-
-   overriding function To_SQL
      (This              : in Date_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
@@ -391,11 +351,6 @@ private
       Not_Null          : Boolean := False;     --  Is field NOT NULL?
       Primary_Key       : Boolean := False;     --  Is field PRIMARY KEY?
       Unique            : Boolean := False;     --  Is field UNIQUE?
-   end record;
-
-   type Boolean_Field is new Field with record
-      Default_Value     : Boolean := False;
-      Value             : Boolean := False;
    end record;
 
    type Date_Field is new Field with record
