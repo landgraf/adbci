@@ -119,7 +119,7 @@ package body DB.Active_Record.Models is
       Connection        : in out DB.Connector.Connection)
    is
    begin
-      This.On_Before_Delete;
+      This.On_Before_Delete (Connection);
 
       if This.Store = STORE_UPDATE then
          declare
@@ -311,14 +311,16 @@ package body DB.Active_Record.Models is
       This.Store := STORE_UPDATE;
       This.Iterate_Fields (Load_Field'Access);
 
-      This.On_After_Load;
+      This.On_After_Load (Connection);
    end Load_From;
 
    -------------------------
    -- On_After_Initialize --
    -------------------------
 
-   procedure On_After_Initialize (This : in out Model) is
+   procedure On_After_Initialize
+     (This              : in out Model)
+   is
       pragma Unreferenced (This);
    begin
       null;
@@ -328,7 +330,11 @@ package body DB.Active_Record.Models is
    -- On_After_Load --
    -------------------
 
-   procedure On_After_Load (This : in out Model) is
+   procedure On_After_Load
+     (This              : in out Model;
+      Connection        : in     DB.Connector.Connection)
+   is
+      pragma Unreferenced (Connection);
       pragma Unreferenced (This);
    begin
       null;
@@ -338,7 +344,11 @@ package body DB.Active_Record.Models is
    -- On_After_Save --
    -------------------
 
-   procedure On_After_Save (This : in out Model) is
+   procedure On_After_Save
+     (This              : in out Model;
+      Connection        : in out DB.Connector.Connection)
+   is
+      pragma Unreferenced (Connection);
       pragma Unreferenced (This);
    begin
       null;
@@ -348,7 +358,11 @@ package body DB.Active_Record.Models is
    -- On_Before_Delete --
    ----------------------
 
-   procedure On_Before_Delete (This : in out Model) is
+   procedure On_Before_Delete
+     (This              : in out Model;
+      Connection        : in out DB.Connector.Connection)
+   is
+      pragma Unreferenced (Connection);
       pragma Unreferenced (This);
    begin
       null;
@@ -358,7 +372,11 @@ package body DB.Active_Record.Models is
    -- On_Before_Save --
    --------------------
 
-   procedure On_Before_Save (This : in out Model) is
+   procedure On_Before_Save
+     (This              : in out Model;
+      Connection        : in out DB.Connector.Connection)
+   is
+      pragma Unreferenced (Connection);
       pragma Unreferenced (This);
    begin
       null;
@@ -411,7 +429,7 @@ package body DB.Active_Record.Models is
       Force_Save        : in     Boolean := False)
    is
    begin
-      This.On_Before_Save;
+      This.On_Before_Save (Connection);
 
       if This.Read_Only then
          raise DB.Errors.OBJECT_READ_ONLY with
@@ -434,7 +452,7 @@ package body DB.Active_Record.Models is
             Save_Update (This, Connection);
          end if;
 
-         This.On_After_Save;
+         This.On_After_Save (Connection);
       end if;
    end Save;
 
