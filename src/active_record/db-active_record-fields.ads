@@ -55,6 +55,9 @@ package DB.Active_Record.Fields is
    function Is_Changed (This : in Field'Class) return Boolean;
    --  Returns the field change status flag.
 
+   function Is_Empty (This : in Field_Criteria) return Boolean;
+   --  Returns true if the criteria tree is empty.
+
    function Is_Null (This : in Field'Class) return Boolean;
    --  Returns true if field is NULL.
 

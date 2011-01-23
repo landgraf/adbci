@@ -41,7 +41,9 @@ package body DB.Active_Record.Models.Queries is
       For_Update        : in Boolean := False;
       Read_Only         : in Boolean := False;
       Ordering          : in DB.Active_Record.Fields.Order_Criteria :=
-                            DB.Active_Record.Fields.Null_Order_Criteria)
+                            DB.Active_Record.Fields.Null_Order_Criteria;
+      First             : in DB.Types.Object_Id := 0;
+      Last              : in DB.Types.Object_Id := 0)
      return Query_Result
    is
       use DB.Active_Record.Fields;
@@ -50,30 +52,73 @@ package body DB.Active_Record.Models.Queries is
       Tables            : Unbounded_String;
       Where_Clause      : Unbounded_String;
    begin
-      Set_Unbounded_String (Query_SQL, "SELECT ");
-      Append (Query_SQL, Model.Get_Name & '.' & Model.Get_Id_Name);
-      Append (Query_SQL, " FROM ");
-      To_Query (Criteria, Connection, Tables, Where_Clause);
-      Append (Query_SQL, Tables);
-      Append (Query_SQL, " WHERE ");
-      Append (Query_SQL, Where_Clause);
-      if For_Update then
-         Append (Query_SQL, "FOR UPDATE");
-      end if;
-
-      Append (Query_SQL, " ORDER BY ");
-      if Order'Length = 0 then
-         Append (Query_SQL, Model.Get_Name & '.' & Model.Get_Id_Name);
+      if First > Last then
+         declare
+            Null_Result : Query_Result;
+         begin
+            Null_Result.Count := 0;
+            Null_Result.Lazy_Fetched := True;
+            Null_Result.Read_Only := Read_Only;
+            return Null_Result;
+         end;
       else
-         Append (Query_SQL, Order);
-      end if;
+         Set_Unbounded_String (Query_SQL, "SELECT ");
+         Append (Query_SQL, Model.Get_Name & '.' & Model.Get_Id_Name);
 
-      return SQL_Query
-        (Connection, 
-         DB.Types.SQL_String (To_String (Query_SQL)), 
-         Lazy_Fetch     => True, 
-         Read_Only      => Read_Only);
+         if not Is_Empty (Criteria) then
+            Append (Query_SQL, " FROM ");
+            To_Query (Criteria, Connection, Tables, Where_Clause);
+            Append (Query_SQL, Tables);
+            Append (Query_SQL, " WHERE ");
+            Append (Query_SQL, Where_Clause);
+         else
+            Append (Query_SQL, " FROM ");
+            Append (Query_SQL, Model.Get_Name);
+         end if;
+
+         if For_Update then
+            Append (Query_SQL, "FOR UPDATE");
+         end if;
+
+         Append (Query_SQL, " ORDER BY ");
+         if Order'Length = 0 then
+            --  if no ordering is specified, order by Object Id
+            Append (Query_SQL, Model.Get_Name & '.' & Model.Get_Id_Name);
+         else
+            Append (Query_SQL, Order);
+         end if;
+
+         if Last > 0 then
+            declare
+               --  requires Last > First (see check at top of routine)
+               Row_Count   : constant DB.Types.Object_Id := (Last - First) + 1;
+            begin
+               Append (Query_SQL, " LIMIT" & 
+                                  DB.Types.Object_Id'IMage (Row_Count));
+            end;
+         end if;
+
+         if First > 0 then
+            Append (Query_SQL, " OFFSET" & 
+                               DB.Types.Object_Id'Image (First - 1));
+         end if;
+
+         return SQL_Query
+           (Connection, 
+            DB.Types.SQL_String (To_String (Query_SQL)), 
+            Lazy_Fetch     => True, 
+            Read_Only      => Read_Only);
+      end if;
    end Find;
+
+   -------------
+   -- Get_SQL --
+   -------------
+
+   function Get_SQL (This : in Query_Result) return DB.Types.SQL_String is
+   begin
+      return DB.Types.SQL_String (To_String (This.Query));
+   end Get_SQL;
 
    -------------
    -- Iterate --
@@ -123,7 +168,10 @@ package body DB.Active_Record.Models.Queries is
       else
          if This.Lazy_Fetched then
             Id := This.Items.Get_Object_Id_At
-              (Column_Id, Tuple_Index (Index), True, 0);
+              (Column_Id, 
+               Tuple_Index (Index) + Tuple_Index (This.First), 
+               True, 
+               0);
             if Id /= 0 then
                Temp.Get (Connection, Id);
             else
@@ -133,13 +181,44 @@ package body DB.Active_Record.Models.Queries is
             declare
                R        : DB.Connector.Result_Set := This.Items;
             begin
-               Temp.Load_From (Connection, R, Tuple_Index (Index));
+               Temp.Load_From (Connection, 
+                               R, 
+                               Tuple_Index (Index) + Tuple_Index (This.First));
             end;
          end if;
          Temp.Set_Read_Only (This.Read_Only);
          return Temp;
       end if;
    end Item;
+
+   -----------
+   -- Slice --
+   -----------
+
+   function Slice
+     (This              : in Query_Result;
+      First             : in DB.Types.Object_Id;
+      Last              : in DB.Types.Object_Id) return Query_Result
+   is
+      Count             : constant DB.Types.Object_Id :=
+        DB.Types.Object_Id (This.Count);
+      Result            : Query_Result;
+   begin
+      if First = 0 then
+         raise CONSTRAINT_ERROR;
+      elsif First > Last then
+         null;          --  first > last, so return empty result set.
+      else
+         if First > Count or else (Last - First) + 1 > Count then
+            raise CONSTRAINT_ERROR;
+         end if;
+
+         Result := This;
+         Result.First := Result.First + (First - 1);
+         Result.Count := Natural (Last - First) + 1;
+      end if;
+      return Result;
+   end Slice;
 
    ---------------
    -- SQL_Query --
@@ -154,10 +233,12 @@ package body DB.Active_Record.Models.Queries is
       Result            : Query_Result;
    begin
       Result.Count := 0;
+      Result.First := 0;
       Result.Items := Connection.Execute (Query_SQL);
       Result.Count := Result.Items.Count;
       Result.Lazy_Fetched := Lazy_Fetch;
       Result.Read_Only := Read_Only;
+      Set_Unbounded_String (Result.Query, String (Query_SQL));
       return Result;
    end SQL_Query;
 

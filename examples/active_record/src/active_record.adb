@@ -26,6 +26,7 @@ with DB.Active_Record.Models.Queries;
 with DB.Connector;
 with DB.Driver;
 with DB.Driver.PostgreSQL;
+with Slice_Test;
 
 procedure Active_Record is
    Database             : DB.Connector.Connection :=
@@ -95,7 +96,10 @@ begin
    end;
 
    --  Now delete the customer from the database...
-   --Customer_1.Delete (Database);
+   Customer_1.Delete (Database);
+
+   --  Run the slice tests...
+   Slice_Test.Run (Database);
 
    --  Finished, so disconnect.
    Database.Disconnect;

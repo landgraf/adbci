@@ -299,6 +299,15 @@ package body DB.Active_Record.Fields is
       return This.Changed;
    end Is_Changed;
 
+   --------------
+   -- Is_Empty --
+   --------------
+
+   function Is_Empty (This : in Field_Criteria) return Boolean is
+   begin
+      return This.Data = null;
+   end Is_Empty;
+
    -------------
    -- Is_Null --
    -------------

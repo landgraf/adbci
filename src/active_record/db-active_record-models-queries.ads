@@ -41,9 +41,15 @@ package DB.Active_Record.Models.Queries is
       For_Update        : in Boolean := False;
       Read_Only         : in Boolean := False;
       Ordering          : in DB.Active_Record.Fields.Order_Criteria :=
-                            DB.Active_Record.Fields.Null_Order_Criteria)
+                            DB.Active_Record.Fields.Null_Order_Criteria;
+      First             : in DB.Types.Object_Id := 0;
+      Last              : in DB.Types.Object_Id := 0)
      return Query_Result;
    --  Searches for items using specified criteria.
+   --  If First or Last is non-zero, then they are used to slice the results.
+
+   function Get_SQL (This : in Query_Result) return DB.Types.SQL_String;
+   --  Returns the SQL used to generate the result set.
 
    function Item
      (This              : in Query_Result;
@@ -56,6 +62,14 @@ package DB.Active_Record.Models.Queries is
       Connection        : in DB.Connector.Connection;
       Handler           : not null Iterator);
    --  Iterates through the result set, loading each object in turn.
+
+   function Slice
+     (This              : in Query_Result;
+      First             : in DB.Types.Object_Id;
+      Last              : in DB.Types.Object_Id) return Query_Result;
+   --  Slices a result set.  If First > Last, then an empty set will be
+   --  returned.  If Last > the number of elements, then CONSTRAINT_ERROR
+   --  will be raised.
 
    function SQL_Query
      (Connection        : in DB.Connector.Connection;
@@ -72,8 +86,10 @@ private
 
    type Query_Result is record
       Count             : Natural := 0;
+      First             : DB.Types.Object_Id := 0;
       Items             : DB.Connector.Result_Set;
       Lazy_Fetched      : Boolean := True;
+      Query             : Unbounded_String;
       Read_Only         : Boolean := False;
    end record;
 
