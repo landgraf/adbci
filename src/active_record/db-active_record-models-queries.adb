@@ -33,8 +33,6 @@ package body DB.Active_Record.Models.Queries is
    function Count
      (Connection        : in DB.Connector.Connection;
       Criteria          : in DB.Active_Record.Fields.Field_Criteria;
-      For_Update        : in Boolean := False;
-      Read_Only         : in Boolean := False;
       First             : in DB.Types.Object_Id := 0;
       Last              : in DB.Types.Object_Id := 0)
      return Natural
@@ -49,7 +47,7 @@ package body DB.Active_Record.Models.Queries is
          Append (Query_SQL, Object.Get_Name & '.' & Object.Get_Id_Name);
          Append (Query_SQL, ')');
          Append (Query_SQL, String
-           (To_SQL_Criteria (Connection, Criteria, For_Update, Read_Only,
+           (To_SQL_Criteria (Connection, Criteria, False, False,
                              Null_Order_Criteria, First, Last, 
                              No_Order => True)));
          declare

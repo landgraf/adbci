@@ -38,8 +38,6 @@ package DB.Active_Record.Models.Queries is
    function Count
      (Connection        : in DB.Connector.Connection;
       Criteria          : in DB.Active_Record.Fields.Field_Criteria;
-      For_Update        : in Boolean := False;
-      Read_Only         : in Boolean := False;
       First             : in DB.Types.Object_Id := 0;
       Last              : in DB.Types.Object_Id := 0)
      return Natural;
