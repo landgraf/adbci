@@ -60,6 +60,7 @@ package DB.Active_Record.Fields.Date_Time_Types is
         (Name           : in String;
          Display_Name   : in String := "";
          Auto_Now       : in Boolean := False;
+         Auto_Now_Add   : in Boolean := False;
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
          Has_Default    : in Boolean := True;
@@ -101,6 +102,7 @@ package DB.Active_Record.Fields.Date_Time_Types is
 
       type Field is new DB.Active_Record.Fields.Field with record
          Auto_Now          : Boolean := False;
+         Auto_Now_Add      : Boolean := False;
          Default_Value     : DB.Types.DB_Date := Null_Date;
          Value             : DB.Types.DB_Date := Null_Date;
       end record;
@@ -145,6 +147,7 @@ package DB.Active_Record.Fields.Date_Time_Types is
         (Name              : in String;
          Display_Name      : in String := "";
          Auto_Now          : in Boolean := False;
+         Auto_Now_Add      : in Boolean := False;
          Not_Null          : in Boolean := False;
          Unique            : in Boolean := False;
          Has_Default       : in Boolean := True;
@@ -186,6 +189,7 @@ package DB.Active_Record.Fields.Date_Time_Types is
 
       type Field is new DB.Active_Record.Fields.Field with record
          Auto_Now       : Boolean := False;
+         Auto_Now_Add   : Boolean := False;
          Default_Value  : DB.Types.DB_Timestamp := Null_Timestamp;
          Value          : DB.Types.DB_Timestamp := Null_Timestamp;
       end record;

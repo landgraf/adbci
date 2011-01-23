@@ -131,6 +131,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Name           : in String;
          Display_Name   : in String := "";
          Auto_Now       : in Boolean := False;
+         Auto_Now_Add   : in Boolean := False;
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
          Has_Default    : in Boolean := True;
@@ -143,6 +144,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          Temp.Unique := Unique;
          Temp.Has_Default := Has_Default;
          Temp.Auto_Now := Auto_Now;
+         Temp.Auto_Now_Add := Auto_Now_Add;
          Temp.Default_Value := Default_Value;
          return Temp;
       end Configure;
@@ -253,19 +255,19 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         return DB.Types.SQL_String
       is
       begin
-         if This.Is_Null then
-            return "NULL";
+         if This.Auto_Now or else (This.Auto_Now_Add and then This.Is_Null) then
+            declare
+               Value_Str         : constant String :=
+                 Date_Image (Ada.Calendar.Clock);
+            begin
+               return "'" & Connection.Quote_Value (Value_Str) & "'";
+            end;
          else
-            if not This.Auto_Now then
-               declare
-                  Value_Str      : constant String := Date_Image (This.Value);
-               begin
-                  return "'" & Connection.Quote_Value (Value_Str) & "'";
-               end;
+            if This.Is_Null then
+               return "NULL";
             else
                declare
-                  Value_Str      : constant String :=
-                    Date_Image (Ada.Calendar.Clock);
+                  Value_Str      : constant String := Date_Image (This.Value);
                begin
                   return "'" & Connection.Quote_Value (Value_Str) & "'";
                end;
@@ -389,6 +391,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Name           : in String;
          Display_Name   : in String := "";
          Auto_Now       : in Boolean := False;
+         Auto_Now_Add   : in Boolean := False;
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
          Has_Default    : in Boolean := True;
@@ -402,6 +405,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          Temp.Unique := Unique;
          Temp.Has_Default := Has_Default;
          Temp.Auto_Now := Auto_Now;
+         Temp.Auto_Now_Add := Auto_Now_Add;
          Temp.Default_Value := Default_Value;
          return Temp;
       end Configure;
@@ -512,19 +516,20 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         return DB.Types.SQL_String
       is
       begin
-         if This.Is_Null then
-            return "NULL";
+         if This.Auto_Now or else (This.Auto_Now_Add and then This.Is_Null) then
+            declare
+               Value_Str         : constant String :=
+                 Timestamp_Image (Ada.Calendar.Clock);
+            begin
+               return "'" & Connection.Quote_Value (Value_Str) & "'";
+            end;
          else
-            if not This.Auto_Now then
-               declare
-                  Value_Str   : constant String := Timestamp_Image (This.Value);
-               begin
-                  return "'" & Connection.Quote_Value (Value_Str) & "'";
-               end;
+            if This.Is_Null then
+               return "NULL";
             else
                declare
-                  Value_Str   : constant String :=
-                    Timestamp_Image (Ada.Calendar.Clock);
+                  Value_Str      : constant String :=
+                    Timestamp_Image (This.Value);
                begin
                   return "'" & Connection.Quote_Value (Value_Str) & "'";
                end;
