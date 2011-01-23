@@ -75,7 +75,15 @@ package body Slice_Test is
       QR := Slice_Query.Find (Database, NC);
       if Slice_Query.Count (QR) /= 100 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
+      else
+         Put_Line ("OK");
+      end if;
+
+      Put ("Checking count works correctly... ");
+      if Slice_Query.Count (QR) /= Slice_Query.Count (Database, NC) then
+         Put_Line ("FAILED");
+         raise PROGRAM_ERROR;
       else
          Put_Line ("OK");
       end if;

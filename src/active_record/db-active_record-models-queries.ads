@@ -35,6 +35,17 @@ package DB.Active_Record.Models.Queries is
    function Count (This : in Query_Result) return Natural;
    --  Returns the number of items in the result set.
 
+   function Count
+     (Connection        : in DB.Connector.Connection;
+      Criteria          : in DB.Active_Record.Fields.Field_Criteria;
+      For_Update        : in Boolean := False;
+      Read_Only         : in Boolean := False;
+      First             : in DB.Types.Object_Id := 0;
+      Last              : in DB.Types.Object_Id := 0)
+     return Natural;
+   --  Returns the number of results that would be returned by a query.
+   --  Executes using an SQL COUNT instead of fetching all rows.
+
    function Find
      (Connection        : in DB.Connector.Connection;
       Criteria          : in DB.Active_Record.Fields.Field_Criteria;
@@ -92,5 +103,18 @@ private
       Query             : Unbounded_String;
       Read_Only         : Boolean := False;
    end record;
+
+   function To_SQL_Criteria
+     (Connection        : in DB.Connector.Connection;
+      Criteria          : in DB.Active_Record.Fields.Field_Criteria;
+      For_Update        : in Boolean := False;
+      Read_Only         : in Boolean := False;
+      Ordering          : in DB.Active_Record.Fields.Order_Criteria :=
+                            DB.Active_Record.Fields.Null_Order_Criteria;
+      First             : in DB.Types.Object_Id := 0;
+      Last              : in DB.Types.Object_Id := 0;
+      No_Order          : in Boolean := False)
+     return DB.Types.SQL_String;
+   --  Converts search criteria into SQL query criteria.
 
 end DB.Active_Record.Models.Queries;

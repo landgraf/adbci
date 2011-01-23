@@ -16,11 +16,10 @@
 --    db-active_record-models-queries.adb   jvinters   17-January-2011
 --
 
+with DB.Connector;                     use DB.Connector;
 with DB.Errors;
 
 package body DB.Active_Record.Models.Queries is
-
-   Model                : Model_Type;
 
    -----------
    -- Count --
@@ -29,6 +28,39 @@ package body DB.Active_Record.Models.Queries is
    function Count (This : in Query_Result) return Natural is
    begin
       return This.Count;
+   end Count;
+
+   function Count
+     (Connection        : in DB.Connector.Connection;
+      Criteria          : in DB.Active_Record.Fields.Field_Criteria;
+      For_Update        : in Boolean := False;
+      Read_Only         : in Boolean := False;
+      First             : in DB.Types.Object_Id := 0;
+      Last              : in DB.Types.Object_Id := 0)
+     return Natural
+   is
+      use DB.Active_Record.Fields;
+      Query_SQL         : Unbounded_String;
+   begin
+      if First > Last then
+         return 0;
+      else
+         Set_Unbounded_String (Query_SQL, "SELECT COUNT (");
+         Append (Query_SQL, Object.Get_Name & '.' & Object.Get_Id_Name);
+         Append (Query_SQL, ')');
+         Append (Query_SQL, String
+           (To_SQL_Criteria (Connection, Criteria, For_Update, Read_Only,
+                             Null_Order_Criteria, First, Last, 
+                             No_Order => True)));
+         declare
+            Query       : constant DB.Types.SQL_String :=
+              DB.Types.SQL_String (To_String (Query_SQL));
+            R           : DB.Connector.Result_Set;
+         begin
+            R := Connection.Execute (Query);
+            return Natural (R.Get_Bigint ("count"));
+         end;
+      end if;
    end Count;
 
    ----------
@@ -49,8 +81,6 @@ package body DB.Active_Record.Models.Queries is
       use DB.Active_Record.Fields;
       Order             : constant String := To_String (Ordering);
       Query_SQL         : Unbounded_String;
-      Tables            : Unbounded_String;
-      Where_Clause      : Unbounded_String;
    begin
       if First > Last then
          declare
@@ -63,45 +93,10 @@ package body DB.Active_Record.Models.Queries is
          end;
       else
          Set_Unbounded_String (Query_SQL, "SELECT ");
-         Append (Query_SQL, Model.Get_Name & '.' & Model.Get_Id_Name);
-
-         if not Is_Empty (Criteria) then
-            Append (Query_SQL, " FROM ");
-            To_Query (Criteria, Connection, Tables, Where_Clause);
-            Append (Query_SQL, Tables);
-            Append (Query_SQL, " WHERE ");
-            Append (Query_SQL, Where_Clause);
-         else
-            Append (Query_SQL, " FROM ");
-            Append (Query_SQL, Model.Get_Name);
-         end if;
-
-         if For_Update then
-            Append (Query_SQL, "FOR UPDATE");
-         end if;
-
-         Append (Query_SQL, " ORDER BY ");
-         if Order'Length = 0 then
-            --  if no ordering is specified, order by Object Id
-            Append (Query_SQL, Model.Get_Name & '.' & Model.Get_Id_Name);
-         else
-            Append (Query_SQL, Order);
-         end if;
-
-         if Last > 0 then
-            declare
-               --  requires Last > First (see check at top of routine)
-               Row_Count   : constant DB.Types.Object_Id := (Last - First) + 1;
-            begin
-               Append (Query_SQL, " LIMIT" & 
-                                  DB.Types.Object_Id'IMage (Row_Count));
-            end;
-         end if;
-
-         if First > 0 then
-            Append (Query_SQL, " OFFSET" & 
-                               DB.Types.Object_Id'Image (First - 1));
-         end if;
+         Append (Query_SQL, Object.Get_Name & '.' & Object.Get_Id_Name);
+         Append (Query_SQL, String
+           (To_SQL_Criteria (Connection, Criteria, For_Update, Read_Only,
+                             Ordering, First, Last)));
 
          return SQL_Query
            (Connection, 
@@ -241,5 +236,74 @@ package body DB.Active_Record.Models.Queries is
       Set_Unbounded_String (Result.Query, String (Query_SQL));
       return Result;
    end SQL_Query;
+
+   ---------------------
+   -- To_SQL_Criteria --
+   ---------------------
+
+   function To_SQL_Criteria
+     (Connection        : in DB.Connector.Connection;
+      Criteria          : in DB.Active_Record.Fields.Field_Criteria;
+      For_Update        : in Boolean := False;
+      Read_Only         : in Boolean := False;
+      Ordering          : in DB.Active_Record.Fields.Order_Criteria :=
+                            DB.Active_Record.Fields.Null_Order_Criteria;
+      First             : in DB.Types.Object_Id := 0;
+      Last              : in DB.Types.Object_Id := 0;
+      No_Order          : in Boolean := False)
+     return DB.Types.SQL_String
+   is
+      use DB.Active_Record.Fields;
+      Order             : constant String := To_String (Ordering);
+      Query_SQL         : Unbounded_String;
+      Tables            : Unbounded_String;
+      Where_Clause      : Unbounded_String;
+   begin
+      if First > Last then
+         return "";
+      else
+         if not Is_Empty (Criteria) then
+            Append (Query_SQL, " FROM ");
+            To_Query (Criteria, Connection, Tables, Where_Clause);
+            Append (Query_SQL, Tables);
+            Append (Query_SQL, " WHERE ");
+            Append (Query_SQL, Where_Clause);
+         else
+            Append (Query_SQL, " FROM ");
+            Append (Query_SQL, Object.Get_Name);
+         end if;
+
+         if For_Update then
+            Append (Query_SQL, "FOR UPDATE");
+         end if;
+
+         if No_Order = False then
+            Append (Query_SQL, " ORDER BY ");
+            if Order'Length = 0 then
+               --  if no ordering is specified, order by Object Id
+               Append (Query_SQL, Object.Get_Name & '.' & Object.Get_Id_Name);
+            else
+               Append (Query_SQL, Order);
+            end if;
+         end if;
+
+         if Last > 0 then
+            declare
+               --  requires Last > First (see check at top of routine)
+               Row_Count   : constant DB.Types.Object_Id := (Last - First) + 1;
+            begin
+               Append (Query_SQL, " LIMIT" & 
+                                  DB.Types.Object_Id'IMage (Row_Count));
+            end;
+         end if;
+
+         if First > 0 then
+            Append (Query_SQL, " OFFSET" & 
+                               DB.Types.Object_Id'Image (First - 1));
+         end if;
+
+         return DB.Types.SQL_String (To_String (Query_SQL));
+      end if;
+   end To_SQL_Criteria;
 
 end DB.Active_Record.Models.Queries;
