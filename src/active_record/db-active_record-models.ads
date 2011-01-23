@@ -30,6 +30,10 @@ package DB.Active_Record.Models is
    procedure Clear (This : in out Model'Class);
    --  Clears model fields.
 
+   procedure Clear_Id (This : in out Model'Class);
+   --  Clears the id field, and forces the next save to be an insert
+   --  using a new id.
+
    procedure Create
      (This              : in out Model'Class;
       Connection        : in out DB.Connector.Connection);

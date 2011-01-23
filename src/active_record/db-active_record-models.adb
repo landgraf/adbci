@@ -50,6 +50,17 @@ package body DB.Active_Record.Models is
       This.On_After_Initialize;
    end Clear;
 
+   --------------
+   -- Clear_Id --
+   --------------
+
+   procedure Clear_Id (This : in out Model'Class) is
+   begin
+      This.Changed := True;
+      This.Store := STORE_INSERT;
+      This.Id.Clear;
+   end Clear_Id;
+
    ------------
    -- Create --
    ------------
