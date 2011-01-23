@@ -84,12 +84,12 @@ package body Slice_Test is
       I := Slice_Query.Item (QR, Database, 1);
       if I.Get_Id /= 1 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       end if;
       I := Slice_Query.Item (QR, Database, 100);
       if I.Get_Id /= 100 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       end if;
       Put_Line ("OK");
 
@@ -97,7 +97,7 @@ package body Slice_Test is
       SQ := Slice_Query.Slice (QR, 10, 89);
       if Slice_Query.Count (SQ) /= 80 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       else
          Put_Line ("OK");
       end if;
@@ -106,12 +106,12 @@ package body Slice_Test is
       I := Slice_Query.Item (SQ, Database, 1);
       if I.Get_Id /= 10 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       end if;
       I := Slice_Query.Item (SQ, Database, 80);
       if I.Get_Id /= 89 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       end if;
       Put_Line ("OK");
 
@@ -119,7 +119,7 @@ package body Slice_Test is
       S2 := Slice_Query.Slice (SQ, 1, 2);
       if Slice_Query.Count (S2) /= 2 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       else
          Put_Line ("OK");
       end if;
@@ -128,12 +128,12 @@ package body Slice_Test is
       I := Slice_Query.Item (S2, Database, 1);
       if I.Get_Id /= 10 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       end if;
       I := Slice_Query.Item (S2, Database, 2);
       if I.Get_Id /= 11 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       end if;
       Put_Line ("OK");
 
@@ -141,7 +141,7 @@ package body Slice_Test is
       begin
          I := Slice_Query.Item (S2, Database, 3);
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       exception
          when CONSTRAINT_ERROR =>
             Put_Line ("OK");
@@ -151,7 +151,7 @@ package body Slice_Test is
       S2 := Slice_Query.Find (Database, NC, First => 1, Last => 10);
       if Slice_Query.Count (S2) /= 10 then
          Put_Line ("FAILED");
-         return;
+         raise PROGRAM_ERROR;
       else
          Put_Line ("OK");
       end if;
