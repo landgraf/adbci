@@ -242,6 +242,15 @@ package body DB.Active_Record.Models is
       return This.Read_Only;
    end Get_Read_Only;
 
+   ----------------------
+   -- Get_Store_Method --
+   ----------------------
+
+   function Get_Store_Method (This : in Model'Class) return Store_Method is
+   begin
+      return This.Store;
+   end Get_Store_Method;
+
    ----------------
    -- Initialize --
    ----------------
@@ -454,6 +463,12 @@ package body DB.Active_Record.Models is
            "' is read only";
       end if;
 
+      if This.Id.Is_Changed then
+         --  Id has been overwritten, so treat as a new object -- force an
+         --  INSERT rather than an UPDATE.
+         This.Store := STORE_INSERT;
+      end if;
+
       --  Validate the model before we save; validators should mark fields
       --  as having failed validation if required.  VALIDATION_ERROR will
       --  be raised if any of the custom fields in the model have errors.
@@ -469,12 +484,6 @@ package body DB.Active_Record.Models is
       --  to the database.
       if not Force_Save then
          Pre_Save (This);
-      end if;
-
-      if This.Id.Is_Changed then
-         --  Id has been overwritten, so treat as a new object -- force an
-         --  INSERT rather than an UPDATE.
-         This.Store := STORE_INSERT;
       end if;
 
       if This.Changed or else Force_Save then

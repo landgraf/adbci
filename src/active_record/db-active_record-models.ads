@@ -27,6 +27,10 @@ package DB.Active_Record.Models is
    type Model is abstract new Ada.Finalization.Controlled with private;
    type Model_Access is access all Model'Class;
 
+   type Store_Method is
+     (STORE_INSERT,     --  store using an SQL INSERT (a new item)
+      STORE_UPDATE);    --  store using an SQL UPDATE (an existing item)
+
    procedure Clear (This : in out Model'Class);
    --  Clears model fields.
 
@@ -73,6 +77,9 @@ package DB.Active_Record.Models is
 
    function Get_Read_Only (This : in Model'Class) return Boolean;
    --  Returns the read-only status of the model.
+
+   function Get_Store_Method (This : in Model'Class) return Store_Method;
+   --  Returns the storage method.
 
    procedure Initialize_Model (This : in out Model);
    --  Initializes the model.
@@ -152,10 +159,6 @@ package DB.Active_Record.Models is
    --  Validates the model - should be overridden if validation is required.
 
 private
-
-   type Store_Method is
-     (STORE_INSERT,     --  store using an SQL INSERT (a new item)
-      STORE_UPDATE);    --  store using an SQL UPDATE (an existing item)
 
    type Model is abstract new Ada.Finalization.Controlled with record
       Changed           : Boolean := False;
