@@ -34,6 +34,20 @@ package body DB.Active_Record.Models is
       True              => new String'(" FOR UPDATE "));
 
    -----------
+   -- Clean --
+   -----------
+
+   procedure Clean
+     (This              : in out Model;
+      Connection        : in out DB.Connector.Connection)
+   is
+      pragma Unreferenced (Connection);
+      pragma Unreferenced (This);
+   begin
+      null;
+   end Clean;
+
+   -----------
    -- Clear --
    -----------
 
@@ -468,6 +482,9 @@ package body DB.Active_Record.Models is
          --  INSERT rather than an UPDATE.
          This.Store := STORE_INSERT;
       end if;
+
+      --  Allow any clean-up of fields before validation takes place.
+      This.Clean (Connection);
 
       --  Validate the model before we save; validators should mark fields
       --  as having failed validation if required.  VALIDATION_ERROR will

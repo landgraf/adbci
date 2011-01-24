@@ -31,6 +31,11 @@ package DB.Active_Record.Models is
      (STORE_INSERT,     --  store using an SQL INSERT (a new item)
       STORE_UPDATE);    --  store using an SQL UPDATE (an existing item)
 
+   procedure Clean 
+     (This              : in out Model;
+      Connection        : in out DB.Connector.Connection);
+   --  Cleans fields before validation and save.
+
    procedure Clear (This : in out Model'Class);
    --  Clears model fields.
 
