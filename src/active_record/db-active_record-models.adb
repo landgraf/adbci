@@ -428,20 +428,52 @@ package body DB.Active_Record.Models is
       Connection        : in out DB.Connector.Connection;
       Force_Save        : in     Boolean := False)
    is
-   begin
-      This.On_Before_Save (Connection);
+      procedure Clear_Validation_Errors
+        (F : in out DB.Active_Record.Fields.Field'Class)
+      is
+      begin
+         F.Clear_Validation;
+      end Clear_Validation_Errors;
 
+      procedure Detect_Validation_Errors
+        (F : in out DB.Active_Record.Fields.Field'Class)
+      is
+      begin
+         --  Throw an exception at the first field we find that
+         --  has a validation error.  Calling code can search the fields
+         --  manually for further information if required.
+         if F.Validation_Failed then
+            raise DB.Errors.VALIDATION_ERROR with F.Validation_Error;
+         end if;
+      end Detect_Validation_Errors;
+   begin
+      --  First, check to see if item is read only.
       if This.Read_Only then
          raise DB.Errors.OBJECT_READ_ONLY with
            "object '" & This.Get_Name & "' with id '" & This.Get_Id &
            "' is read only";
       end if;
 
+      --  Validate the model before we save; validators should mark fields
+      --  as having failed validation if required.  VALIDATION_ERROR will
+      --  be raised if any of the custom fields in the model have errors.
+      This.Iterate_Custom_Fields (Clear_Validation_Errors'Access);
+      This.Validate (Connection);
+      This.Iterate_Custom_Fields (Detect_Validation_Errors'Access);
+
+      --  If validation is successful, trigger the On_Before_Save event.
+      This.On_Before_Save (Connection);
+
+      --  determine if any fields need to be saved; if there are no changes
+      --  and we are not forcing a save, then nothing will be written back
+      --  to the database.
       if not Force_Save then
          Pre_Save (This);
       end if;
 
       if This.Id.Is_Changed then
+         --  Id has been overwritten, so treat as a new object -- force an
+         --  INSERT rather than an UPDATE.
          This.Store := STORE_INSERT;
       end if;
 
@@ -596,6 +628,19 @@ package body DB.Active_Record.Models is
    begin
       This.Read_Only := Value;
    end Set_Read_Only;
+
+   --------------
+   -- Validate --
+   --------------
+
+   procedure Validate
+     (This              : in out Model;
+      Connection        : in out DB.Connector.Connection)
+   is
+      pragma Unreferenced (This);
+   begin
+      null;
+   end Validate;
 
    -------------------------
    -- Validate_Model_Name --

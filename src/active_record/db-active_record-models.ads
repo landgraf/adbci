@@ -146,6 +146,11 @@ package DB.Active_Record.Models is
       Value             : in     Boolean);
    --  Sets the model read-only status.
 
+   procedure Validate
+     (This              : in out Model;
+      Connection        : in out DB.Connector.Connection);
+   --  Validates the model - should be overridden if validation is required.
+
 private
 
    type Store_Method is
