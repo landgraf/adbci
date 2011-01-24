@@ -127,7 +127,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Foreign_Model     : constant DB.Types.SQL_String :=
         DB.Types.SQL_String (This.FK.Get_Name);
       Id_SQL            : constant DB.Types.SQL_String :=
-        Connection.Get_Driver.Get_Id_SQL;
+        Connection.Get_Driver.Get_Foreign_Key_SQL;
       Result            : constant DB.Types.SQL_String :=
         DB.Types.SQL_String (Field_Name & ' ') &
         Id_SQL & " REFERENCES " & Foreign_Model & "(" &
