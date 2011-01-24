@@ -34,6 +34,9 @@ package DB.Active_Record.Fields is
    --  Clears the field - if the field has a default, sets the field to the
    --  default value, otherwise sets it to NULL.
 
+   procedure Clear_Validation (This : in out Field'Class);
+   --  Clears validation results for field.
+
    function Field_SQL
      (This              : in Field;
       Connection        : in DB.Connector.Connection)
@@ -78,6 +81,11 @@ package DB.Active_Record.Fields is
       Order_Field       : in Field'Class;
       Ascending         : in Boolean := True) return Order_Criteria;
 
+   procedure Set_Validation_Failed
+     (This              : in out Field'Class;
+      Message           : in     String);
+   --  Sets validation failure status.
+
    function To_SQL
      (This              : in Field;
       Connection        : in DB.Connector.Connection)
@@ -87,6 +95,14 @@ package DB.Active_Record.Fields is
 
    function To_String
      (This              : in Order_Criteria) return String;
+
+   function Validation_Error
+     (This              : in Field'Class) return String;
+   --  Returns the validation error message.
+
+   function Validation_Failed
+     (This              : in Field'Class) return Boolean;
+   --  Returns true if the field has failed validation.
 
    type Id_Field is new Field with private;
 
@@ -164,6 +180,8 @@ private
       Not_Null          : Boolean := False;     --  Is field NOT NULL?
       Primary_Key       : Boolean := False;     --  Is field PRIMARY KEY?
       Unique            : Boolean := False;     --  Is field UNIQUE?
+      Validation_Failed : Boolean := False;     --  Has field failed validation?
+      Validation_Error  : Unbounded_String;     --  Validation Error (if any)
    end record;
 
    type Id_Field is new Field with record

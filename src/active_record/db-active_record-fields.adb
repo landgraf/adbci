@@ -145,6 +145,16 @@ package body DB.Active_Record.Fields is
       end if;
    end Clear;
 
+   ----------------------
+   -- Clear_Validation --
+   ----------------------
+
+   procedure Clear_Validation (This : in out Field'Class) is
+   begin
+      This.Validation_Failed := False;
+      Set_Unbounded_String (This.Validation_Error, "");
+   end Clear_Validation;
+
    -----------------
    -- Config_Name --
    -----------------
@@ -404,6 +414,19 @@ package body DB.Active_Record.Fields is
       This.Is_Null := False;
    end Set;
 
+   ---------------------------
+   -- Set_Validation_Failed --
+   ---------------------------
+
+   procedure Set_Validation_Failed
+     (This              : in out Field'Class;
+      Message           : in     String)
+   is
+   begin
+      This.Validation_Failed := True;
+      Set_Unbounded_String (This.Validation_Error, Message);
+   end Set_Validation_Failed;
+
    ------------------------
    -- To_Extracted_Query --
    ------------------------
@@ -533,6 +556,28 @@ package body DB.Active_Record.Fields is
    begin
       return To_String (This.Ordering);
    end To_String;
+
+   ----------------------
+   -- Validation_Error --
+   ----------------------
+
+   function Validation_Error
+     (This              : in Field'Class) return String
+   is
+   begin
+      return To_String (This.Validation_Error);
+   end Validation_Error;
+
+   -----------------------
+   -- Validation_Failed --
+   -----------------------
+
+   function Validation_Failed
+     (This              : in Field'Class) return Boolean
+   is
+   begin
+      return This.Validation_Failed;
+   end Validation_Failed;
 
    -------------------------
    -- Validate_Field_Name --
