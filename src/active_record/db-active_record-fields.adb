@@ -338,6 +338,7 @@ package body DB.Active_Record.Fields is
    is
       Field_Name        : constant String := This.Get_Name;
    begin
+      This.Validation_Failed := False;
       if Results.Get_Is_Null (Field_Name) then
          if This.Has_Default then
             This.Value := This.Default_Value;
@@ -565,7 +566,11 @@ package body DB.Active_Record.Fields is
      (This              : in Field'Class) return String
    is
    begin
-      return To_String (This.Validation_Error);
+      if This.Validation_Failed then
+         return To_String (This.Validation_Error);
+      else
+         return "";
+      end if;
    end Validation_Error;
 
    -----------------------
