@@ -34,7 +34,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, EQUAL, Right);
+         Set_Criteria (Temp, Left, EQUAL, Right, True);
          return Temp;
       end "=";
 
@@ -48,7 +48,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, NOT_EQUAL, Right);
+         Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
          return Temp;
       end "/=";
 
@@ -62,7 +62,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN, Right);
+         Set_Criteria (Temp, Left, LESS_THAN, Right, True);
          return Temp;
       end "<";
 
@@ -76,7 +76,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right);
+         Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right, True);
          return Temp;
       end "<=";
 
@@ -90,7 +90,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right);
+         Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right, True);
          return Temp;
       end ">=";
 
@@ -104,7 +104,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN, Right);
+         Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
          return Temp;
       end ">";
 
@@ -315,7 +315,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, EQUAL, Right);
+         Set_Criteria (Temp, Left, EQUAL, Right, True);
          return Temp;
       end "=";
 
@@ -329,7 +329,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, NOT_EQUAL, Right);
+         Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
          return Temp;
       end "/=";
 
@@ -343,7 +343,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN, Right);
+         Set_Criteria (Temp, Left, LESS_THAN, Right, True);
          return Temp;
       end "<";
 
@@ -357,7 +357,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right);
+         Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right, True);
          return Temp;
       end "<=";
 
@@ -371,7 +371,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right);
+         Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right, True);
          return Temp;
       end ">=";
 
@@ -385,7 +385,7 @@ package body DB.Active_Record.Fields.Character_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN, Right);
+         Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
          return Temp;
       end ">";
 
