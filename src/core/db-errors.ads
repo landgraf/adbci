@@ -25,6 +25,7 @@ package DB.Errors is
    INTEGRITY_ERROR      : Exception;   --  constraint violation (usually)
    NO_DRIVER            : Exception;   --  driver not found
    NOT_CONNECTED        : Exception;   --  not connected to database
+   NOT_LOADED           : Exception;   --  foreign key not fetched yet
    NOT_RANDOM_ACCESS    : Exception;   --  result set isn't random access
    NOT_SUPPORTED        : Exception;   --  operation not supported
    OBJECT_NOT_FOUND     : Exception;   --  object not found

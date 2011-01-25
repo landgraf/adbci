@@ -67,7 +67,8 @@ package DB.Active_Record.Fields is
    procedure Load_From
      (This              : in out Field;
       Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set) is abstract;
+      Results           : in     DB.Connector.Result_Set;
+      Load_Foreign_Keys : in     Boolean := False) is abstract;
    --  Loads the field value from a result set.  If the field is NULL in
    --  the result set, and the field has a defined default, then the field
    --  is set to the default value.
@@ -149,7 +150,8 @@ package DB.Active_Record.Fields is
    overriding procedure Load_From
      (This              : in out Id_Field;
       Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set);
+      Results           : in     DB.Connector.Result_Set;
+      Load_Foreign_Keys : in     Boolean := False);
 
    procedure Set
      (This              : in out Id_Field;

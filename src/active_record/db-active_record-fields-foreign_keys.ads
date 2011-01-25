@@ -67,7 +67,8 @@ package DB.Active_Record.Fields.Foreign_Keys is
    overriding procedure Load_From
      (This              : in out Foreign_Key_Field;
       Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set);
+      Results           : in     DB.Connector.Result_Set;
+      Load_Foreign_Keys : in     Boolean := False);
 
    procedure Set
      (This              : in out Foreign_Key_Field;
@@ -82,6 +83,7 @@ private
 
    type Options is record
       Cascade_Delete    : Boolean := False;
+      Loaded            : Boolean := False;
    end record;
 
 end DB.Active_Record.Fields.Foreign_Keys;

@@ -17,6 +17,7 @@
 --
 
 with Ada.Characters.Handling;          use Ada.Characters.Handling;
+with DB.Errors;
 
 package body DB.Active_Record.Fields.Foreign_Keys is
 
@@ -146,7 +147,11 @@ package body DB.Active_Record.Fields.Foreign_Keys is
 
    function Get (This : in Foreign_Key_Field) return Model_Type is
    begin
-      return This.FK;
+      if This.FK_Options.Loaded then
+         return This.FK;
+      else
+         raise DB.Errors.NOT_LOADED;
+      end if;
    end Get;
 
    ---------------
@@ -156,18 +161,21 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    procedure Load_From
      (This              : in out Foreign_Key_Field;
       Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set)
+      Results           : in     DB.Connector.Result_Set;
+      Load_Foreign_Keys : in     Boolean := False)
    is
       Field_Name        : constant String := This.Get_Name;
    begin
-      if not Results.Get_Is_Null (Field_Name) then
+      if not Results.Get_Is_Null (Field_Name) and then Load_Foreign_Keys then
          declare
             Item_FK     : constant DB.Types.Object_Id :=
               Results.Get_Object_Id (Field_Name);
          begin
-            This.FK.Get (Connection, Item_FK);
+            This.FK_Options.Loaded := True;
+            This.FK.Get (Connection, Item_FK, Load_Foreign_Keys);
          end;
       else
+         This.FK_Options.Loaded := False;
          This.FK.Clear;
       end if;
    end Load_From;

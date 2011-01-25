@@ -28,47 +28,47 @@ package DB.Active_Record.Fields.Character_Types is
       type Field is new DB.Active_Record.Fields.Field with private;
 
       function "="
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function "/="
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function "<"
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function "<="
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function ">="
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function ">"
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       procedure Append
-        (This           : in out Field;
-         Str            : in     String);
+        (This              : in out Field;
+         Str               : in     String);
 
       overriding procedure Clear (This : in out Field);
 
       function Configure
-        (Name           : in String;
-         Display_Name   : in String := "";
-         Maximum_Length : in Positive := 255;
-         Not_Null       : in Boolean := False;
-         Unique         : in Boolean := False;
-         Has_Default    : in Boolean := True;
-         Default_Value  : in String := "") return Field;
+        (Name              : in String;
+         Display_Name      : in String := "";
+         Maximum_Length    : in Positive := 255;
+         Not_Null          : in Boolean := False;
+         Unique            : in Boolean := False;
+         Has_Default       : in Boolean := True;
+         Default_Value     : in String := "") return Field;
 
       overriding function Field_SQL
-        (This           : in Field;
-         Connector      : in DB.Connector.Connection)
+        (This              : in Field;
+         Connector         : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
       function Get (This : in Field) return String;
@@ -76,29 +76,30 @@ package DB.Active_Record.Fields.Character_Types is
       function Get (This : in Field) return Unbounded_String;
 
       function ILike
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function Like
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       overriding procedure Load_From
-        (This           : in out Field;
-         Connection     : in     DB.Connector.Connection;
-         Results        : in     DB.Connector.Result_Set);
+        (This              : in out Field;
+         Connection        : in     DB.Connector.Connection;
+         Results           : in     DB.Connector.Result_Set;
+         Load_Foreign_Keys : in     Boolean := False);
 
       procedure Set
-        (This           : in out Field;
-         Value          : in     String);
+        (This              : in out Field;
+         Value             : in     String);
 
       procedure Set
-        (This           : in out Field;
-         Value          : in     Unbounded_String);
+        (This              : in out Field;
+         Value             : in     Unbounded_String);
 
       overriding function To_SQL
-        (This           : in Field;
-         Connection     : in DB.Connector.Connection)
+        (This              : in Field;
+         Connection        : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
    private
@@ -111,53 +112,52 @@ package DB.Active_Record.Fields.Character_Types is
 
    end Text;
 
-
    package Varchar is
 
       type Field is new DB.Active_Record.Fields.Field with private;
 
       function "="
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function "/="
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function "<"
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function "<="
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function ">="
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function ">"
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       procedure Append
-        (This           : in out Field;
-         Str            : in     String);
+        (This              : in out Field;
+         Str               : in     String);
 
       overriding procedure Clear (This : in out Field);
 
       function Configure
-        (Name           : in String;
-         Display_Name   : in String := "";
-         Maximum_Length : in Positive := 255;
-         Not_Null       : in Boolean := False;
-         Unique         : in Boolean := False;
-         Has_Default    : in Boolean := True;
-         Default_Value  : in String := "") return Field;
+        (Name              : in String;
+         Display_Name      : in String := "";
+         Maximum_Length    : in Positive := 255;
+         Not_Null          : in Boolean := False;
+         Unique            : in Boolean := False;
+         Has_Default       : in Boolean := True;
+         Default_Value     : in String := "") return Field;
 
       overriding function Field_SQL
-        (This           : in Field;
-         Connector      : in DB.Connector.Connection)
+        (This              : in Field;
+         Connector         : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
       function Get (This : in Field) return String;
@@ -165,29 +165,30 @@ package DB.Active_Record.Fields.Character_Types is
       function Get (This : in Field) return Unbounded_String;
 
       function ILike
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       function Like
-        (Left           : in Field'Class;
-         Right          : in String) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in String) return Field_Criteria;
 
       overriding procedure Load_From
-        (This           : in out Field;
-         Connection     : in     DB.Connector.Connection;
-         Results        : in     DB.Connector.Result_Set);
+        (This              : in out Field;
+         Connection        : in     DB.Connector.Connection;
+         Results           : in     DB.Connector.Result_Set;
+         Load_Foreign_Keys : in     Boolean := False);
 
       procedure Set
-        (This           : in out Field;
-         Value          : in     String);
+        (This              : in out Field;
+         Value             : in     String);
 
       procedure Set
-        (This           : in out Field;
-         Value          : in     Unbounded_String);
+        (This              : in out Field;
+         Value             : in     Unbounded_String);
 
       overriding function To_SQL
-        (This           : in Field;
-         Connection     : in DB.Connector.Connection)
+        (This              : in Field;
+         Connection        : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
    private

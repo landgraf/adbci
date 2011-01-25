@@ -334,8 +334,10 @@ package body DB.Active_Record.Fields is
    procedure Load_From
      (This              : in out Id_Field;
       Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set)
+      Results           : in     DB.Connector.Result_Set;
+      Load_Foreign_Keys : in     Boolean := False)
    is
+      pragma Unreferenced (Load_Foreign_Keys);
       Field_Name        : constant String := This.Get_Name;
    begin
       This.Validation_Failed := False;

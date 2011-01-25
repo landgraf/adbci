@@ -187,7 +187,8 @@ package body DB.Active_Record.Models is
      (This              : in out Model'Class;
       Connection        : in     DB.Connector.Connection;
       Id                : in     DB.Types.Object_Id;
-      For_Update        : in     Boolean := False)
+      For_Update        : in     Boolean := False;
+      Load_Foreign_Keys : in     Boolean := True)
    is
       For_Update_Str    : constant String := For_Update_Strings (For_Update).all;
       Id_Name           : constant String := To_String (This.Id_Name);
@@ -202,13 +203,13 @@ package body DB.Active_Record.Models is
 
       procedure Load_Field (F : in out DB.Active_Record.Fields.Field'Class) is
       begin
-         F.Load_From (Connection, Query_Result);
+         F.Load_From (Connection, Query_Result, Load_Foreign_Keys);
       end Load_Field;
    begin
       This.Clear;
       if Query_Result.Count /= 1 then
-         raise DB.Errors.OBJECT_NOT_FOUND with "object '" & Model_Name &
-           "' with id '" & Id_Str & "' not found";
+         raise DB.Errors.OBJECT_NOT_FOUND with 
+           Model_Name & " with id '" & Id_Str & "' not found";
       else
          This.Store := STORE_UPDATE;
          This.Iterate_Fields (Load_Field'Access);

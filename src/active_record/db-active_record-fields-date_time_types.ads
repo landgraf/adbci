@@ -80,9 +80,10 @@ package DB.Active_Record.Fields.Date_Time_Types is
       --  alternative - converts date to string before returning.
 
       overriding procedure Load_From
-        (This           : in out Field;
-         Connection     : in     DB.Connector.Connection;
-         Results        : in     DB.Connector.Result_Set);
+        (This              : in out Field;
+         Connection        : in     DB.Connector.Connection;
+         Results           : in     DB.Connector.Result_Set;
+         Load_Foreign_Keys : in     Boolean := False);
 
       procedure Set
         (This           : in out Field;
@@ -118,28 +119,28 @@ package DB.Active_Record.Fields.Date_Time_Types is
       type Field is new DB.Active_Record.Fields.Field with private;
 
       function "="
-        (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
       function "/="
-        (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
       function "<"
-        (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
       function "<="
-        (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
       function ">="
-        (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
       function ">"
-        (Left           : in Field'Class;
-         Right          : in DB.Types.DB_Timestamp) return Field_Criteria;
+        (Left              : in Field'Class;
+         Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
       overriding procedure Clear (This : in out Field);
 
@@ -164,34 +165,35 @@ package DB.Active_Record.Fields.Date_Time_Types is
       function Get (This : in Field) return String;
 
       overriding procedure Load_From
-        (This           : in out Field;
-         Connection     : in     DB.Connector.Connection;
-         Results        : in     DB.Connector.Result_Set);
+        (This              : in out Field;
+         Connection        : in     DB.Connector.Connection;
+         Results           : in     DB.Connector.Result_Set;
+         Load_Foreign_Keys : in     Boolean := False);
 
       procedure Set
-        (This           : in out Field;
-         Value          : in     DB.Types.DB_Timestamp);
+        (This              : in out Field;
+         Value             : in     DB.Types.DB_Timestamp);
 
       procedure Set
-        (This           : in out Field;
-         Value          : in     String);
+        (This              : in out Field;
+         Value             : in     String);
       --  Accepts ISO formatted date and time.
 
       function Timestamp_Image (This : in DB.Types.DB_Timestamp) return String;
       --  Converts Timestamp to ISO formatted date/time string.
 
       overriding function To_SQL
-        (This           : in Field;
-         Connection     : in DB.Connector.Connection)
+        (This              : in Field;
+         Connection        : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
    private
 
       type Field is new DB.Active_Record.Fields.Field with record
-         Auto_Now       : Boolean := False;
-         Auto_Now_Add   : Boolean := False;
-         Default_Value  : DB.Types.DB_Timestamp := Null_Timestamp;
-         Value          : DB.Types.DB_Timestamp := Null_Timestamp;
+         Auto_Now          : Boolean := False;
+         Auto_Now_Add      : Boolean := False;
+         Default_Value     : DB.Types.DB_Timestamp := Null_Timestamp;
+         Value             : DB.Types.DB_Timestamp := Null_Timestamp;
       end record;
 
    end Timestamp;

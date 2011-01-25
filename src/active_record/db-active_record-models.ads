@@ -62,11 +62,14 @@ package DB.Active_Record.Models is
      (This              : in out Model'Class;
       Connection        : in     DB.Connector.Connection;
       Id                : in     DB.Types.Object_Id;
-      For_Update        : in     Boolean := False);
+      For_Update        : in     Boolean := False;
+      Load_Foreign_Keys : in     Boolean := True);
    --  Fetches object with specified id from the database.  If For_Update is
    --  true, then the object is fetched for immediate update (you shouldn't
    --  use this unless you are going to _immediately_ update the object).
    --  OBJECT_NOT_FOUND will be raised if the object can't be located.
+   --  If Load_Foreign_Keys is True, then any foreign keys will be loaded as
+   --  well.
 
    function Get_Id (This : in Model'Class) return DB.Types.Object_Id;
    --  Gets Model Id (or 0 if none).

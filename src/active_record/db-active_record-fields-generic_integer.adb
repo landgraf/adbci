@@ -172,8 +172,10 @@ package body DB.Active_Record.Fields.Generic_Integer is
    procedure Load_From
      (This              : in out Field;
       Connection        : in     DB.Connector.Connection;
-      Results           : in     DB.Connector.Result_Set)
+      Results           : in     DB.Connector.Result_Set;
+      Load_Foreign_Keys : in     Boolean := False)
    is
+      pragma Unreferenced (Load_Foreign_Keys);
       Field_Name        : constant String := This.Get_Name;
    begin
       if Results.Get_Is_Null (Field_Name) then
