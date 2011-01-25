@@ -26,13 +26,13 @@ package body DB.Connector.Transactions is
 
    procedure Begin_Transaction (This : in out Connection'Class) is
    begin
-      if This.In_Transaction then
+      if This.Data.In_Transaction then
          raise DB.Errors.TRANSACTION_ERROR with "already in transaction";
       else
          declare
             Temp        : Result_Set := This.Execute ("BEGIN");
          begin
-            This.In_Transaction := True;
+            This.Data.In_Transaction := True;
          end;
       end if;
    end Begin_Transaction;
@@ -43,10 +43,10 @@ package body DB.Connector.Transactions is
 
    procedure Commit_Transaction (This : in out Connection'Class) is
    begin
-      if not This.In_Transaction then
+      if not This.Data.In_Transaction then
          raise DB.Errors.TRANSACTION_ERROR with "not in transaction";
       else
-         This.In_Transaction := False;
+         This.Data.In_Transaction := False;
 
          declare
             Temp        : Result_Set := This.Execute ("COMMIT");
@@ -62,10 +62,10 @@ package body DB.Connector.Transactions is
 
    procedure Rollback_Transaction (This : in out Connection'Class) is
    begin
-      if not This.In_Transaction then
+      if not This.Data.In_Transaction then
          raise DB.Errors.TRANSACTION_ERROR with "not in transaction";
       else
-         This.In_Transaction := False;
+         This.Data.In_Transaction := False;
 
          declare
             Temp        : Result_Set := This.Execute ("ROLLBACK");

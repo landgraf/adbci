@@ -22,7 +22,7 @@ with DB.Types;
 
 package DB.Connector is
 
-   type Connection is new Ada.Finalization.Limited_Controlled with private;
+   type Connection is new Ada.Finalization.Controlled with private;
    type Result_Set is new Ada.Finalization.Controlled with private;
 
    function Connect
@@ -204,10 +204,19 @@ package DB.Connector is
 
 private
 
-   type Connection is new Ada.Finalization.Limited_Controlled with record
+   type Connection_Record is record
       Driver            : DB.Driver.Driver_Handle;
+      Reference_Count   : Natural := 0;
       In_Transaction    : Boolean := False;
    end record;
+
+   type Connection_Record_Access is access all Connection_Record;
+
+   type Connection is new Ada.Finalization.Controlled with record
+      Data              : Connection_Record_Access := null;
+   end record;
+
+   overriding procedure Adjust (This : in out Connection);
 
    overriding procedure Finalize (This : in out Connection);
 

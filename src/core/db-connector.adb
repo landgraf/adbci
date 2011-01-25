@@ -16,6 +16,7 @@
 --    db-connector.adb   jvinters   16-January-2011
 --
 
+with Ada.Unchecked_Deallocation;
 with DB.Driver_Manager;
 with DB.Errors;
 
@@ -27,6 +28,13 @@ package body DB.Connector is
    ------------
    -- Adjust --
    ------------
+
+   procedure Adjust (This : in out Connection) is
+   begin
+      if This.Data /= null then
+         This.Data.Reference_Count := This.Data.Reference_Count + 1;
+      end if;
+   end Adjust;
 
    procedure Adjust (This : in out Result_Set) is
    begin
@@ -48,14 +56,16 @@ package body DB.Connector is
       Options           : in String := "") return Connection
    is
       Reqd_Driver       : DB.Driver.Driver_Handle;
+      Result            : Connection;
    begin
       Reqd_Driver := DB.Driver_Manager.Get_Driver (Driver);
       Reqd_Driver.Connect (Hostname, Database, Username, Password, Options);
 
-      return (Ada.Finalization.Limited_Controlled with
-        Driver          => Reqd_Driver,
-        In_Transaction  => False
-      );
+      Result.Data := new Connection_Record;
+      Result.Data.Driver := Reqd_Driver;
+      Result.Data.In_Transaction := False;
+      Result.Data.Reference_Count := 1;
+      return Result;
    end Connect;
 
    -----------
@@ -77,9 +87,9 @@ package body DB.Connector is
 
    procedure Disconnect (This : in out Connection) is
    begin
-      if This.Driver /= null then
-         This.Driver.Disconnect;
-         DB.Driver.Free_Driver (This.Driver);
+      if This.Data /= null and then This.Data.Driver /= null then
+         This.Data.Driver.Disconnect;
+         DB.Driver.Free_Driver (This.Data.Driver);
       end if;
    end Disconnect;
 
@@ -95,11 +105,15 @@ package body DB.Connector is
       Result_Rec        : Result_Record_Access := null;
       Tuple             : Tuple_Index := INVALID_TUPLE;
    begin
-      This.Driver.Execute_SQL (R, SQL);
+      if This.Data = null then
+         raise DB.Errors.NOT_CONNECTED;
+      end if;
+
+      This.Data.Driver.Execute_SQL (R, SQL);
 
       Result_Rec := new Result_Record;
       Result_Rec.Data := R;
-      Result_Rec.Driver := This.Driver;
+      Result_Rec.Driver := This.Data.Driver;
       Result_Rec.Reference_Count := 1;
 
       if R /= null and then R.Get_Tuple_Count > 0 then
@@ -117,11 +131,23 @@ package body DB.Connector is
    --------------
 
    procedure Finalize (This : in out Connection) is
+      procedure Unchecked_Free is new Ada.Unchecked_Deallocation
+        (Connection_Record, Connection_Record_Access);
    begin
-      Disconnect (This);
+      if This.Data /= null then
+         if This.Data.Reference_Count > 0 then
+            This.Data.Reference_Count := This.Data.Reference_Count - 1;
+            if This.Data.Reference_Count = 0 then
+               Disconnect (This);
+               Unchecked_Free (This.Data);
+            end if;
+         end if;
+      end if;
    end Finalize;
 
    procedure Finalize (This : in out Result_Set) is
+      procedure Unchecked_Free is new Ada.Unchecked_Deallocation
+        (Result_Record, Result_Record_Access);
    begin
       if This.Results /= null then
          if This.Results.Reference_Count > 0 then
@@ -130,6 +156,7 @@ package body DB.Connector is
             if This.Results.Reference_Count = 0 then
                DB.Driver.Free_Result
                  (This.Results.Driver.all, This.Results.Data);
+               Unchecked_Free (This.Results);
             end if;
          end if;
       end if;
@@ -223,7 +250,11 @@ package body DB.Connector is
      (This              : in Connection) return DB.Driver.Driver_Handle
    is
    begin
-      return This.Driver;
+      if This.Data = null then
+         raise DB.Errors.NOT_CONNECTED;
+      else
+         return This.Data.Driver;
+      end if;
    end Get_Driver;
 
    -----------------
@@ -550,10 +581,10 @@ package body DB.Connector is
       Identifier        : in String) return DB.Types.SQL_String
    is
    begin
-      if This.Driver = Null then
+      if This.Data = null or else This.Data.Driver = Null then
          raise DB.Errors.NOT_CONNECTED;
       else
-         return This.Driver.Quote_Identifier (Identifier);
+         return This.Data.Driver.Quote_Identifier (Identifier);
       end if;
    end Quote_Identifier;
 
@@ -566,10 +597,10 @@ package body DB.Connector is
       Value             : in String) return DB.Types.SQL_String
    is
    begin
-      if This.Driver = Null then
+      if This.Data = null or else This.Data.Driver = Null then
          raise DB.Errors.NOT_CONNECTED;
       else
-         return This.Driver.Quote_Value (Value);
+         return This.Data.Driver.Quote_Value (Value);
       end if;
    end Quote_Value;
 
