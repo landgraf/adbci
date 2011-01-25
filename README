@@ -22,9 +22,11 @@ Currently only supports PostgreSQL 8.0 or later (including 9.x series).
 CAVEATS
 -------
 
-No UTC/Offset handling in date/time fields yet.
+No UTC/Offset handling in date/time fields yet.  Safest to treat anything in
+the database as being UTC, and convert to local time for display.
 The Active Record implementation doesn't cache or track object ids, so it is
 possible to retreive the same record from the database multiple times without
 them referencing the same data in memory.
 The Active Record implementation requires that result sets be random access.
+Don't access connections or results across tasks.
 
