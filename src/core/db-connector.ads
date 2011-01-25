@@ -25,6 +25,8 @@ package DB.Connector is
    type Connection is new Ada.Finalization.Controlled with private;
    type Result_Set is new Ada.Finalization.Controlled with private;
 
+   Null_Result_Set      : constant Result_Set;
+
    function Connect
      (Driver            : in String;
       Hostname          : in String;
@@ -236,6 +238,10 @@ private
    overriding procedure Adjust (This : in out Result_Set);
 
    overriding procedure Finalize (This : in out Result_Set);
+
+   Null_Result_Set      : constant Result_Set := 
+     (Ada.Finalization.Controlled with 
+        Results => null, Tuple => INVALID_TUPLE);
 
 end DB.Connector;
 

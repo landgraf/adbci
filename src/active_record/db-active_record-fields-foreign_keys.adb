@@ -187,9 +187,10 @@ package body DB.Active_Record.Fields.Foreign_Keys is
             Item_FK     : constant DB.Types.Object_Id :=
               Results.Get_Object_Id (Field_Name);
          begin
-            This.Loaded := True;
+            This.FK_Options.Results := DB.Connector.Null_Result_Set;
             This.FK.Get (Connection, Item_FK, Load_Foreign_Keys);
             This.FK_Options.FK_Id := Item_FK;
+            This.Loaded := True;
          end;
       else
          if not Is_Null then
@@ -197,7 +198,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
                Item_FK  : constant DB.Types.Object_Id :=
                  Results.Get_Object_Id (Field_Name);
             begin
-               This.Loaded := False;
+               This.FK_Options.Results := Results;
                DB.Active_Record.Models.Iterate_Fields
                  (This.FK, Set_Not_Loaded'Access);
                This.FK_Options.FK_Id := Item_FK;
@@ -207,6 +208,26 @@ package body DB.Active_Record.Fields.Foreign_Keys is
          end if;
       end if;
    end Load_From;
+
+   --------------
+   -- Load_Now --
+   --------------
+
+   procedure Load_Now
+     (This              : in out Foreign_Key_Field;
+      Connection        : in     DB.Connector.Connection;
+      Recurse           : in     Boolean := False)
+   is
+      Field_Name        : constant String := This.Get_Name;
+      Item_FK           : constant DB.Types.Object_Id :=
+        This.FK_Options.Results.Get_Object_Id (Field_Name);
+   begin
+      if This.FK_Options.Results /= DB.Connector.Null_Result_Set then
+         This.FK.Get (Connection, Item_FK, Recurse);
+         This.FK_Options.FK_Id := Item_FK;
+         This.Loaded := True;
+      end if;
+   end Load_Now;
 
    ---------
    -- Set --

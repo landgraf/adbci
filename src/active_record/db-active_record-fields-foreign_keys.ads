@@ -72,6 +72,13 @@ package DB.Active_Record.Fields.Foreign_Keys is
       Results           : in     DB.Connector.Result_Set;
       Load_Foreign_Keys : in     Boolean := False);
 
+   procedure Load_Now
+     (This              : in out Foreign_Key_Field;
+      Connection        : in     DB.Connector.Connection;
+      Recurse           : in     Boolean := False);
+   --  Forces load of foreign key object (and optionally, all objects
+   --  below).
+
    procedure Set
      (This              : in out Foreign_Key_Field;
       Value             : in     Model_Type);
@@ -86,6 +93,8 @@ private
    type Options is record
       Cascade_Delete    : Boolean := False;
       FK_Id             : DB.Types.Object_Id := 0;
+      Results           : DB.Connector.Result_Set := 
+                            DB.Connector.Null_Result_Set;
    end record;
 
 end DB.Active_Record.Fields.Foreign_Keys;
