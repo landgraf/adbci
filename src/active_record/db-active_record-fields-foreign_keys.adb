@@ -78,6 +78,8 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       This.Changed := True;
       This.Is_Null := True;
       This.FK.Clear;
+      This.FK_Options.FK_Id := 0;
+      This.Loaded := True;
    end Clear;
 
    ---------------
@@ -147,11 +149,16 @@ package body DB.Active_Record.Fields.Foreign_Keys is
 
    function Get (This : in Foreign_Key_Field) return Model_Type is
    begin
-      if This.FK_Options.Loaded then
+      if This.Loaded then
          return This.FK;
       else
          raise DB.Errors.NOT_LOADED;
       end if;
+   end Get;
+
+   function Get (This : in Foreign_Key_Field) return DB.Types.Object_Id is
+   begin
+      return This.FK_Options.FK_Id;
    end Get;
 
    ---------------
@@ -164,19 +171,40 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Results           : in     DB.Connector.Result_Set;
       Load_Foreign_Keys : in     Boolean := False)
    is
+      procedure Set_Not_Loaded
+        (F : in out DB.Active_Record.Fields.Field'Class)
+      is
+      begin
+         F.Set_Loaded (False);
+      end Set_Not_Loaded;
+
       Field_Name        : constant String := This.Get_Name;
+      Is_Null           : constant Boolean := Results.Get_Is_Null (Field_Name);
    begin
-      if not Results.Get_Is_Null (Field_Name) and then Load_Foreign_Keys then
+      This.Loaded := False;
+      if not Is_Null and then Load_Foreign_Keys then
          declare
             Item_FK     : constant DB.Types.Object_Id :=
               Results.Get_Object_Id (Field_Name);
          begin
-            This.FK_Options.Loaded := True;
+            This.Loaded := True;
             This.FK.Get (Connection, Item_FK, Load_Foreign_Keys);
+            This.FK_Options.FK_Id := Item_FK;
          end;
       else
-         This.FK_Options.Loaded := False;
-         This.FK.Clear;
+         if not Is_Null then
+            declare
+               Item_FK  : constant DB.Types.Object_Id :=
+                 Results.Get_Object_Id (Field_Name);
+            begin
+               This.Loaded := False;
+               DB.Active_Record.Models.Iterate_Fields
+                 (This.FK, Set_Not_Loaded'Access);
+               This.FK_Options.FK_Id := Item_FK;
+            end;
+         else
+            This.FK.Clear;
+         end if;
       end if;
    end Load_From;
 
@@ -190,8 +218,10 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    is
    begin
       This.FK := Value;
+      This.FK_Options.FK_Id := This.FK.Get_Id;
       This.Changed := True;
       This.Is_Null := False;
+      This.Loaded := True;
    end Set;
 
    ------------
@@ -203,8 +233,15 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is
+      Id                : DB.Types.Object_Id;
    begin
-      if This.FK.Get_Id /= 0 then
+      if This.Loaded then
+         Id := This.FK.Get_Id;
+      else
+         Id := This.FK_Options.FK_Id;
+      end if;
+
+      if Id /= 0 then
          declare
             Id          : constant String := This.FK.Get_Id;
          begin

@@ -64,6 +64,8 @@ package DB.Active_Record.Fields.Foreign_Keys is
 
    function Get (This : in Foreign_Key_Field) return Model_Type;
 
+   function Get (This : in Foreign_Key_Field) return DB.Types.Object_Id;
+
    overriding procedure Load_From
      (This              : in out Foreign_Key_Field;
       Connection        : in     DB.Connector.Connection;
@@ -83,7 +85,7 @@ private
 
    type Options is record
       Cascade_Delete    : Boolean := False;
-      Loaded            : Boolean := False;
+      FK_Id             : DB.Types.Object_Id := 0;
    end record;
 
 end DB.Active_Record.Fields.Foreign_Keys;

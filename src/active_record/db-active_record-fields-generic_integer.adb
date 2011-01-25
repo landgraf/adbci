@@ -19,6 +19,7 @@
 with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
+with DB.Errors;
 
 package body DB.Active_Record.Fields.Generic_Integer is
 
@@ -100,6 +101,8 @@ package body DB.Active_Record.Fields.Generic_Integer is
       else
          This.Is_Null := True;
       end if;
+
+      This.Loaded := True;
    end Clear;
 
    ---------------
@@ -155,14 +158,22 @@ package body DB.Active_Record.Fields.Generic_Integer is
 
    function Get (This : in Field) return Integer_Type is
    begin
-      return This.Value;
+      if This.Loaded then
+         return This.Value;
+      else
+         raise DB.Errors.NOT_LOADED;
+      end if;
    end Get;
 
    function Get (This : in Field) return String is
       Temp              : constant String :=
         Trim (Integer_Type'Image (This.Value), Both);
    begin
-      return Temp;
+      if This.Loaded then
+         return Temp;
+      else
+         raise DB.Errors.NOT_LOADED;
+      end if;
    end Get;
 
    ---------------
@@ -178,6 +189,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
       pragma Unreferenced (Load_Foreign_Keys);
       Field_Name        : constant String := This.Get_Name;
    begin
+      This.Loaded := False;
       if Results.Get_Is_Null (Field_Name) then
          if This.Has_Default then
             This.Value := This.Default_Value;
@@ -192,6 +204,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
          This.Is_Null := False;
       end if;
       This.Changed := False;
+      This.Loaded := True;
    end Load_From;
 
    ---------
@@ -206,6 +219,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
       This.Value := Value;
       This.Changed := True;
       This.Is_Null := False;
+      This.Loaded := True;
    end Set;
 
    procedure Set
@@ -216,6 +230,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
       This.Value := Integer_Type'Value (Value);
       This.Changed := True;
       This.Is_Null := False;
+      This.Loaded := True;
    end Set;
 
    ------------
@@ -228,7 +243,9 @@ package body DB.Active_Record.Fields.Generic_Integer is
      return DB.Types.SQL_String
    is
    begin
-      if This.Is_Null then
+      if not This.Loaded then
+         raise DB.Errors.NOT_LOADED;
+      elsif This.Is_Null then
          return "NULL";
       else
          declare

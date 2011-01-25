@@ -19,6 +19,7 @@
 with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
+with DB.Errors;
 
 package body DB.Active_Record.Fields.Character_Types is
 
@@ -117,9 +118,13 @@ package body DB.Active_Record.Fields.Character_Types is
          Str            : in     String)
       is
       begin
-         Append (This.Value, Str);
-         This.Changed := True;
-         This.Is_Null := False;
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         else
+            Append (This.Value, Str);
+            This.Changed := True;
+            This.Is_Null := False;
+         end if;
       end Append;
 
       -----------
@@ -137,6 +142,8 @@ package body DB.Active_Record.Fields.Character_Types is
          else
             This.Is_Null := True;
          end if;
+
+         This.Loaded := True;
       end Clear;
 
       ---------------
@@ -188,12 +195,20 @@ package body DB.Active_Record.Fields.Character_Types is
 
       function Get (This : in Field) return String is
       begin
-         return To_String (This.Value);
+         if This.Loaded then
+            return To_String (This.Value);
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Get;
 
       function Get (This : in Field) return Unbounded_String is
       begin
-         return This.Value;
+         if This.Loaded then
+            return This.Value;
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Get;
 
       -----------
@@ -237,6 +252,7 @@ package body DB.Active_Record.Fields.Character_Types is
          pragma Unreferenced (Load_Foreign_Keys);
          Field_Name     : constant String := This.Get_Name;
       begin
+         This.Loaded := False;
          if Results.Get_Is_Null (Field_Name) then
             if This.Has_Default then
                This.Value := This.Default_Value;
@@ -251,6 +267,7 @@ package body DB.Active_Record.Fields.Character_Types is
             This.Is_Null := False;
          end if;
          This.Changed := False;
+         This.Loaded := True;
       end Load_From;
 
       ---------
@@ -268,6 +285,7 @@ package body DB.Active_Record.Fields.Character_Types is
             Set_Unbounded_String (This.Value, Value);
             This.Changed := True;
             This.Is_Null := False;
+            This.Loaded := True;
          end if;
       end Set;
 
@@ -282,6 +300,7 @@ package body DB.Active_Record.Fields.Character_Types is
             This.Value := Value;
             This.Changed := True;
             This.Is_Null := False;
+            This.Loaded := True;
          end if;
       end Set;
 
@@ -295,7 +314,9 @@ package body DB.Active_Record.Fields.Character_Types is
         return DB.Types.SQL_String
       is
       begin
-         if This.Is_Null then
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         elsif This.Is_Null then
             return "NULL";
          else
             return "'" & Connection.Quote_Value (To_String (This.Value)) & "'";
@@ -400,9 +421,14 @@ package body DB.Active_Record.Fields.Character_Types is
          Str            : in     String)
       is
       begin
-         Append (This.Value, Str);
-         This.Changed := True;
-         This.Is_Null := False;
+         if not This.Loaded then
+            Append (This.Value, Str);
+            This.Changed := True;
+            This.Is_Null := False;
+            This.Loaded := True;
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Append;
 
       -----------
@@ -420,6 +446,8 @@ package body DB.Active_Record.Fields.Character_Types is
          else
             This.Is_Null := True;
          end if;
+
+         This.Loaded := True;
       end Clear;
 
       ---------------
@@ -472,12 +500,20 @@ package body DB.Active_Record.Fields.Character_Types is
 
       function Get (This : in Field) return String is
       begin
-         return To_String (This.Value);
+         if This.Loaded then 
+            return To_String (This.Value);
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Get;
 
       function Get (This : in Field) return Unbounded_String is
       begin
-         return This.Value;
+         if This.Loaded then
+            return This.Value;
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Get;
 
       -----------
@@ -535,6 +571,7 @@ package body DB.Active_Record.Fields.Character_Types is
             This.Is_Null := False;
          end if;
          This.Changed := False;
+         This.Loaded := True;
       end Load_From;
 
       ---------
@@ -552,6 +589,7 @@ package body DB.Active_Record.Fields.Character_Types is
             Set_Unbounded_String (This.Value, Value);
             This.Changed := True;
             This.Is_Null := False;
+            This.Loaded := True;
          end if;
       end Set;
 
@@ -566,6 +604,7 @@ package body DB.Active_Record.Fields.Character_Types is
             This.Value := Value;
             This.Changed := True;
             This.Is_Null := False;
+            This.Loaded := True;
          end if;
       end Set;
 
@@ -579,7 +618,9 @@ package body DB.Active_Record.Fields.Character_Types is
         return DB.Types.SQL_String
       is
       begin
-         if This.Is_Null then
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         elsif This.Is_Null then
             return "NULL";
          else
             return "'" & Connection.Quote_Value (To_String (This.Value)) & "'";

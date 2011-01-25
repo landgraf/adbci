@@ -17,6 +17,7 @@
 --
 
 with Ada.Calendar.Formatting;
+with DB.Errors;
 
 package body DB.Active_Record.Fields.Date_Time_Types is
 
@@ -121,6 +122,8 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          else
             This.Is_Null := True;
          end if;
+
+         This.Loaded := True;
       end Clear;
 
       ---------------
@@ -182,12 +185,20 @@ package body DB.Active_Record.Fields.Date_Time_Types is
 
       function Get (This : in Field) return Ada.Calendar.Time is
       begin
-         return This.Value;
+         if This.Loaded then
+            return This.Value;
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Get;
 
       function Get (This : in Field) return String is
       begin
-         return Date_Image (This.Value);
+         if This.Loaded then
+            return Date_Image (This.Value);
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Get;
 
       ---------------
@@ -203,6 +214,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          pragma Unreferenced (Load_Foreign_Keys);
          Field_Name     : constant String := This.Get_Name;
       begin
+         This.Loaded := False;
          if Results.Get_Is_Null (Field_Name) then
             if This.Has_Default then
                This.Value := This.Default_Value;
@@ -221,6 +233,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
             end;
          end if;
          This.Changed := False;
+         This.Loaded := True;
       end Load_From;
 
       ---------
@@ -235,6 +248,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          This.Value := Value;
          This.Changed := True;
          This.Is_Null := False;
+         This.Loaded := True;
       end Set;
 
       procedure Set
@@ -245,6 +259,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          This.Value := Ada.Calendar.Formatting.Value (Value & " 12:00:00");
          This.Changed := True;
          This.Is_Null := False;
+         This.Loaded := True;
       end Set;
 
       ------------
@@ -257,7 +272,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         return DB.Types.SQL_String
       is
       begin
-         if This.Auto_Now or else (This.Auto_Now_Add and then This.Is_Null) then
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         elsif This.Auto_Now or else 
+           (This.Auto_Now_Add and then This.Is_Null) then
             declare
                Value_Str         : constant String :=
                  Date_Image (Ada.Calendar.Clock);
@@ -383,6 +401,8 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          else
             This.Is_Null := True;
          end if;
+
+         This.Loaded := True;
       end Clear;
 
       ---------------
@@ -434,12 +454,20 @@ package body DB.Active_Record.Fields.Date_Time_Types is
 
       function Get (This : in Field) return Ada.Calendar.Time is
       begin
-         return This.Value;
+         if This.Loaded then
+            return This.Value;
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Get;
 
       function Get (This : in Field) return String is
       begin
-         return Timestamp_Image (This.Value);
+         if This.Loaded then
+            return Timestamp_Image (This.Value);
+         else
+            raise DB.Errors.NOT_LOADED;
+         end if;
       end Get;
 
       ---------------
@@ -473,6 +501,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
             end;
          end if;
          This.Changed := False;
+         This.Loaded := True;
       end Load_From;
 
       ---------
@@ -487,6 +516,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          This.Value := Value;
          This.Changed := True;
          This.Is_Null := False;
+         This.Loaded := True;
       end Set;
 
       procedure Set
@@ -497,6 +527,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          This.Value := Ada.Calendar.Formatting.Value (Value);
          This.Changed := True;
          This.Is_Null := False;
+         This.Loaded := True;
       end Set;
 
       ---------------------
@@ -520,7 +551,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         return DB.Types.SQL_String
       is
       begin
-         if This.Auto_Now or else (This.Auto_Now_Add and then This.Is_Null) then
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         elsif This.Auto_Now or else 
+           (This.Auto_Now_Add and then This.Is_Null) then
             declare
                Value_Str         : constant String :=
                  Timestamp_Image (Ada.Calendar.Clock);

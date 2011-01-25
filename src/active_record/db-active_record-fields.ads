@@ -61,6 +61,10 @@ package DB.Active_Record.Fields is
    function Is_Empty (This : in Field_Criteria) return Boolean;
    --  Returns true if the criteria tree is empty.
 
+   function Is_Loaded (This : in Field'Class) return Boolean;
+   --  Returns true if the field has been loaded/is available, false
+   --  if the field has not been loaded from the database.
+
    function Is_Null (This : in Field'Class) return Boolean;
    --  Returns true if field is NULL.
 
@@ -81,6 +85,12 @@ package DB.Active_Record.Fields is
      (Ordering          : in Order_Criteria;
       Order_Field       : in Field'Class;
       Ascending         : in Boolean := True) return Order_Criteria;
+
+   procedure Set_Loaded
+     (This              : in out Field'Class;
+      Value             : in     Boolean);
+   --  Sets/Clears the loaded status for the field.  Normally only used
+   --  by internal code.
 
    procedure Set_Validation_Failed
      (This              : in out Field'Class;
@@ -184,6 +194,7 @@ private
       Unique            : Boolean := False;     --  Is field UNIQUE?
       Validation_Failed : Boolean := False;     --  Has field failed validation?
       Validation_Error  : Unbounded_String;     --  Validation Error (if any)
+      Loaded            : Boolean := True;      --  Field Loaded?
    end record;
 
    type Id_Field is new Field with record

@@ -23,6 +23,7 @@ with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 with Ada.Strings.Unbounded.Hash;
 with Ada.Unchecked_Deallocation;
+with DB.Errors;
 
 package body DB.Active_Record.Fields is
 
@@ -135,6 +136,7 @@ package body DB.Active_Record.Fields is
    procedure Clear (This : in out Id_Field) is
    begin
       This.Changed := True;
+      This.Loaded := True;
       This.Value := 0;
 
       if This.Has_Default then
@@ -261,7 +263,11 @@ package body DB.Active_Record.Fields is
 
    function Get (This : in Id_Field) return DB.Types.Object_Id is
    begin
-      return This.Value;
+      if This.Loaded then
+         return This.Value;
+      else
+         raise DB.Errors.NOT_LOADED;
+      end if;
    end Get;
 
    ----------------------
@@ -306,7 +312,11 @@ package body DB.Active_Record.Fields is
 
    function Is_Changed (This : in Field'Class) return Boolean is
    begin
-      return This.Changed;
+      if This.Loaded then
+         return This.Changed;
+      else
+         raise DB.Errors.NOT_LOADED;
+      end if;
    end Is_Changed;
 
    --------------
@@ -318,13 +328,26 @@ package body DB.Active_Record.Fields is
       return This.Data = null;
    end Is_Empty;
 
+   ---------------
+   -- Is_Loaded --
+   ---------------
+
+   function Is_Loaded (This : in Field'Class) return Boolean is
+   begin
+      return This.Loaded;
+   end Is_Loaded;
+
    -------------
    -- Is_Null --
    -------------
 
    function Is_Null (This : in Field'Class) return Boolean is
    begin
-      return This.Is_Null;
+      if This.Loaded then
+         return This.Is_Null;
+      else
+         raise DB.Errors.NOT_LOADED;
+      end if;
    end Is_Null;
 
    ---------------
@@ -340,6 +363,7 @@ package body DB.Active_Record.Fields is
       pragma Unreferenced (Load_Foreign_Keys);
       Field_Name        : constant String := This.Get_Name;
    begin
+      This.Loaded := False;
       This.Validation_Failed := False;
       if Results.Get_Is_Null (Field_Name) then
          if This.Has_Default then
@@ -354,6 +378,7 @@ package body DB.Active_Record.Fields is
          This.Is_Null := False;
       end if;
       This.Changed := False;
+      This.Loaded := True;
    end Load_From;
 
    --------------
@@ -415,7 +440,20 @@ package body DB.Active_Record.Fields is
       This.Value := Value;
       This.Changed := True;
       This.Is_Null := False;
+      This.Loaded := True;
    end Set;
+
+   ----------------
+   -- Set_Loaded --
+   ----------------
+
+   procedure Set_Loaded
+     (This              : in out Field'Class;
+      Value             : in     Boolean)
+   is
+   begin
+      This.Loaded := Value;
+   end Set_Loaded;
 
    ---------------------------
    -- Set_Validation_Failed --
@@ -537,6 +575,10 @@ package body DB.Active_Record.Fields is
      return DB.Types.SQL_String
    is
    begin
+      if not This.Loaded then
+         raise DB.Errors.NOT_LOADED;
+      end if;
+
       if This.Is_Null then
          return "NULL";
       else
