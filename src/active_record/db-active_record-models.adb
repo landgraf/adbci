@@ -220,14 +220,16 @@ package body DB.Active_Record.Models is
       For_Update        : in     Boolean := False;
       Load_Foreign_Keys : in     Boolean := True)
    is
-      For_Update_Str    : constant String := For_Update_Strings (For_Update).all;
+      For_Update_Str    : constant DB.Types.SQL_String := 
+        DB.Types.SQL_String (For_Update_Strings (For_Update).all);
       Id_Name           : constant String := To_String (This.Id_Name);
       Id_Str            : constant String :=
         Trim (DB.Types.Object_Id'Image (Id), Both);
       Model_Name        : constant String := To_String (This.Model_Name);
       Query_SQL         : constant DB.Types.SQL_String :=
-        DB.Types.SQL_String ("SELECT" & For_Update_Str & "* FROM " &
-                             Model_Name & " WHERE " & Id_Name & "=" & Id_Str);
+        DB.Types.SQL_String ("SELECT * FROM " &
+                             Model_Name & " WHERE " & Id_Name & "=" & Id_Str) &
+                             ' ' & For_Update_Str;
       Query_Result      : constant DB.Connector.Result_Set :=
         Connection.Execute (Query_SQL);
 
