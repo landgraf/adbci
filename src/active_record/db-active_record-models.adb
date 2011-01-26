@@ -20,6 +20,7 @@ with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 with Ada.Tags;
+with DB.Active_Record.Fields;
 with DB.Active_Record.Fields.Model_Operations;
 with DB.Driver;
 with DB.Errors;
@@ -32,6 +33,35 @@ package body DB.Active_Record.Models is
    For_Update_Strings   : constant Boolean_String_Array :=
      (False             => new String'(" "),
       True              => new String'(" FOR UPDATE "));
+
+   ---------
+   -- "=" --
+   ---------
+
+   function "="
+     (Left              : in Model;
+      Right             : in Model)
+     return DB.Active_Record.Fields.Field_Criteria
+   is
+      use DB.Active_Record.Fields;
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria
+        (Temp, Left.Id, EQUAL, DB.Types.Object_Id'Image (Right.Get_Id));
+      return Temp;
+   end "=";
+
+   function "="
+     (Left              : in Model;
+      Right             : in DB.Types.Object_Id)
+     return DB.Active_Record.Fields.Field_Criteria
+   is
+      use DB.Active_Record.Fields;
+      Temp              : Field_Criteria;
+   begin
+      Set_Criteria (Temp, Left.Id, EQUAL, DB.Types.Object_Id'Image (Right));
+      return Temp;
+   end "=";
 
    -----------
    -- Clean --

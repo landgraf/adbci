@@ -30,6 +30,18 @@ package DB.Active_Record.Fields is
 
    Null_Order_Criteria  : constant Order_Criteria;
 
+   type SQL_Operator is
+     (EQUAL,                                    --  =
+      NOT_EQUAL,                                --  <>
+      LESS_THAN,                                --  <
+      LESS_THAN_OR_EQUAL,                       --  <=
+      GREATER_THAN,                             --  >
+      GREATER_THAN_OR_EQUAL,                    --  >=
+      LIKE,                                     --  LIKE
+      ILIKE,                                    --  ILIKE
+      SQL_AND,                                  --  AND (requires subtrees)
+      SQL_OR);                                  --  OR (requires subtrees)
+
    procedure Clear (This : in out Field) is abstract;
    --  Clears the field - if the field has a default, sets the field to the
    --  default value, otherwise sets it to NULL.
@@ -167,6 +179,14 @@ package DB.Active_Record.Fields is
      (This              : in out Id_Field;
       Value             : in     DB.Types.Object_Id);
 
+   procedure Set_Criteria
+     (This              : in out Field_Criteria;
+      Source_Field      : in     Field'Class;
+      Operator          : in     SQL_Operator;
+      Str               : in     String;
+      Requires_Quoting  : in     Boolean := False);
+   pragma Inline (Set_Criteria);
+
    procedure To_Query
      (This              : in     Field_Criteria;
       Database          : in     DB.Connector.Connection;
@@ -201,18 +221,6 @@ private
       Default_Value     : DB.Types.Object_Id := DB.Types.Null_Object_Id;
       Value             : DB.Types.Object_Id := DB.Types.Null_Object_Id;
    end record;
-
-   type SQL_Operator is
-     (EQUAL,                                    --  =
-      NOT_EQUAL,                                --  <>
-      LESS_THAN,                                --  <
-      LESS_THAN_OR_EQUAL,                       --  <=
-      GREATER_THAN,                             --  >
-      GREATER_THAN_OR_EQUAL,                    --  >=
-      LIKE,                                     --  LIKE
-      ILIKE,                                    --  ILIKE
-      SQL_AND,                                  --  AND (requires subtrees)
-      SQL_OR);                                  --  OR (requires subtrees)
 
    type Field_Criteria_Data;
    type Field_Criteria_Access is access all Field_Criteria_Data;
@@ -254,14 +262,6 @@ private
 
    function Constraints_SQL (This : in Field'Class) return DB.Types.SQL_String;
    --  Returns field constraints as SQL string.
-
-   procedure Set_Criteria
-     (This              : in out Field_Criteria;
-      Source_Field      : in     Field'Class;
-      Operator          : in     SQL_Operator;
-      Str               : in     String;
-      Requires_Quoting  : in     Boolean := False);
-   pragma Inline (Set_Criteria);
 
    function Validate_Field_Name (This : in String) return Boolean;
    --  Validates field name - returns true if valid, false if invalid.
