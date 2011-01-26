@@ -63,7 +63,8 @@ package DB.Active_Record.Models.Queries is
    function Item
      (This              : in Query_Result;
       Connection        : in DB.Connector.Connection;
-      Index             : in Positive) return Model_Type;
+      Index             : in Positive;
+      Load_Foreign_Keys : in Boolean := True) return Model_Type;
    --  Fetches the Index'th item from the result set.
 
    procedure Iterate

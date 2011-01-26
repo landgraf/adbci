@@ -150,7 +150,8 @@ package body DB.Active_Record.Models.Queries is
    function Item
      (This              : in Query_Result;
       Connection        : in DB.Connector.Connection;
-      Index             : in Positive) return Model_Type
+      Index             : in Positive;
+      Load_Foreign_Keys : in Boolean := True) return Model_Type
    is
       Id                : DB.Types.Object_Id;
       Temp              : Model_Type;
@@ -166,7 +167,7 @@ package body DB.Active_Record.Models.Queries is
                True, 
                0);
             if Id /= 0 then
-               Temp.Get (Connection, Id);
+               Temp.Get (Connection, Id, Load_Foreign_Keys);
             else
                null;    --  return an empty object if column is NULL
             end if;
