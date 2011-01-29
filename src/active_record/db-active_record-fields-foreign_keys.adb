@@ -26,7 +26,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    ---------
 
    function "="
-     (Left              : in Foreign_Key_Field;
+     (Left              : in Field;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -36,7 +36,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    end "=";
 
    function "="
-     (Left              : in Foreign_Key_Field;
+     (Left              : in Field;
       Right             : in Model_Type) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -50,7 +50,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    ----------
 
    function "/="
-     (Left              : in Foreign_Key_Field;
+     (Left              : in Field;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -60,7 +60,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    end "/=";
 
    function "/="
-     (Left              : in Foreign_Key_Field;
+     (Left              : in Field;
       Right             : in Model_Type) return Field_Criteria
    is
       Temp              : Field_Criteria;
@@ -73,7 +73,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    -- Clear --
    -----------
 
-   procedure Clear (This : in out Foreign_Key_Field) is
+   procedure Clear (This : in out Field) is
    begin
       This.Changed := True;
       This.Is_Null := True;
@@ -91,10 +91,10 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Display_Name      : in String := "";
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
-      Cascade_Delete    : in Boolean := False) return Foreign_Key_Field
+      Cascade_Delete    : in Boolean := False) return Field
    is
       Lower_Name        : constant String := To_Lower (Name);
-      Temp              : Foreign_Key_Field;
+      Temp              : Field;
    begin
       if not Validate_Field_Name (Lower_Name) then
          raise CONSTRAINT_ERROR with "invalid field name";
@@ -120,7 +120,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    ---------------
 
    function Field_SQL
-     (This              : in Foreign_Key_Field;
+     (This              : in Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is
@@ -147,7 +147,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    -- Get --
    ---------
 
-   function Get (This : in Foreign_Key_Field) return Model_Type is
+   function Get (This : in Field) return Model_Type is
    begin
       if This.Loaded then
          return This.FK;
@@ -156,7 +156,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       end if;
    end Get;
 
-   function Get (This : in Foreign_Key_Field) return DB.Types.Object_Id is
+   function Get (This : in Field) return DB.Types.Object_Id is
    begin
       return This.FK_Options.FK_Id;
    end Get;
@@ -165,7 +165,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    -- Is_Foreign_Key --
    --------------------
 
-   function Is_Foreign_Key (This : in Foreign_Key_Field) return Boolean is
+   function Is_Foreign_Key (This : in Field) return Boolean is
    begin
       pragma Unreferenced (This);
       return True;
@@ -176,7 +176,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    ---------------
 
    procedure Load_From
-     (This              : in out Foreign_Key_Field;
+     (This              : in out Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set;
       Load_Foreign_Keys : in     Boolean := False)
@@ -224,7 +224,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    --------------
 
    procedure Load_Now
-     (This              : in out Foreign_Key_Field;
+     (This              : in out Field;
       Connection        : in     DB.Connector.Connection;
       Recurse           : in     Boolean := False)
    is
@@ -244,7 +244,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    ---------
 
    procedure Set
-     (This              : in out Foreign_Key_Field;
+     (This              : in out Field;
       Value             : in     Model_Type)
    is
    begin
@@ -260,7 +260,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    ------------
 
    function To_SQL
-     (This              : in Foreign_Key_Field;
+     (This              : in Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is

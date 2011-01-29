@@ -27,67 +27,67 @@ package DB.Active_Record.Fields.Foreign_Keys is
 
    type Options is private;
 
-   type Foreign_Key_Field is new DB.Active_Record.Fields.Field with record
+   type Field is new DB.Active_Record.Fields.Field with record
       FK                : Model_Type;
       FK_Options        : Options;
    end record;
 
    function "="
-     (Left              : in Foreign_Key_Field;
+     (Left              : in Field;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
 
    function "="
-     (Left              : in Foreign_Key_Field;
+     (Left              : in Field;
       Right             : in Model_Type) return Field_Criteria;
 
    function "/="
-     (Left              : in Foreign_Key_Field;
+     (Left              : in Field;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
 
    function "/="
-     (Left              : in Foreign_Key_Field;
+     (Left              : in Field;
       Right             : in Model_Type) return Field_Criteria;
 
-   overriding procedure Clear (This : in out Foreign_Key_Field);
+   overriding procedure Clear (This : in out Field);
 
    function Configure
      (Name              : in String;
       Display_Name      : in String := "";
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
-      Cascade_Delete    : in Boolean := False) return Foreign_Key_Field;
+      Cascade_Delete    : in Boolean := False) return Field;
 
    overriding function Field_SQL
-     (This              : in Foreign_Key_Field;
+     (This              : in Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
-   function Get (This : in Foreign_Key_Field) return Model_Type;
+   function Get (This : in Field) return Model_Type;
 
-   function Get (This : in Foreign_Key_Field) return DB.Types.Object_Id;
+   function Get (This : in Field) return DB.Types.Object_Id;
 
    overriding function Is_Foreign_Key
-     (This              : in Foreign_Key_Field) return Boolean;
+     (This              : in Field) return Boolean;
 
    overriding procedure Load_From
-     (This              : in out Foreign_Key_Field;
+     (This              : in out Field;
       Connection        : in     DB.Connector.Connection;
       Results           : in     DB.Connector.Result_Set;
       Load_Foreign_Keys : in     Boolean := False);
 
    procedure Load_Now
-     (This              : in out Foreign_Key_Field;
+     (This              : in out Field;
       Connection        : in     DB.Connector.Connection;
       Recurse           : in     Boolean := False);
    --  Forces load of foreign key object (and optionally, all objects
    --  below).
 
    procedure Set
-     (This              : in out Foreign_Key_Field;
+     (This              : in out Field;
       Value             : in     Model_Type);
 
    overriding function To_SQL
-     (This              : in Foreign_Key_Field;
+     (This              : in Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
