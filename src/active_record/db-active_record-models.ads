@@ -223,6 +223,9 @@ private
       Connection        : in out DB.Connector.Connection);
    --  Saves the model using an SQL UPDATE.
 
+   procedure Validate_Constraints (This : in out Model'Class);
+   --  Validates field constraints.
+
    function Validate_Model_Name (This : in String) return Boolean;
    --  Validates a model name -- return true if OK, false if invalid.
 

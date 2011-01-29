@@ -306,6 +306,24 @@ package body DB.Active_Record.Fields is
       return To_String (This.Field_Name);
    end Get_Name;
 
+   --------------------
+   -- Is_Allow_Blank --
+   --------------------
+
+   function Is_Allow_Blank (This : in Field) return Boolean is
+   begin
+      return This.Allow_Blank;
+   end Is_Allow_Blank;
+
+   --------------
+   -- Is_Blank --
+   --------------
+
+   function Is_Blank (This : in Field) return Boolean is
+   begin
+      return This.Is_Null;
+   end Is_Blank;
+
    ----------------
    -- Is_Changed --
    ----------------
@@ -328,6 +346,17 @@ package body DB.Active_Record.Fields is
       return This.Data = null;
    end Is_Empty;
 
+   --------------------
+   -- Is_Foreign_Key --
+   --------------------
+
+   function Is_Foreign_Key (This : in Field) return Boolean is
+   begin
+      --  This should be overridden for foreign key fields!
+      pragma Unreferenced (This);
+      return False;
+   end Is_Foreign_Key;
+
    ---------------
    -- Is_Loaded --
    ---------------
@@ -336,6 +365,15 @@ package body DB.Active_Record.Fields is
    begin
       return This.Loaded;
    end Is_Loaded;
+
+   -----------------
+   -- Is_Not_Null --
+   -----------------
+
+   function Is_Not_Null (This : in Field'Class) return Boolean is
+   begin
+      return This.Not_Null;
+   end Is_Not_Null;
 
    -------------
    -- Is_Null --
@@ -349,6 +387,15 @@ package body DB.Active_Record.Fields is
          raise DB.Errors.NOT_LOADED;
       end if;
    end Is_Null;
+
+   ---------------
+   -- Is_Unique --
+   ---------------
+
+   function Is_Unique (This : in Field'Class) return Boolean is
+   begin
+      return This.Unique;
+   end Is_Unique;
 
    ---------------
    -- Load_From --

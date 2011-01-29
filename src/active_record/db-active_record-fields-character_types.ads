@@ -63,6 +63,7 @@ package DB.Active_Record.Fields.Character_Types is
          Maximum_Length    : in Positive := 255;
          Not_Null          : in Boolean := False;
          Unique            : in Boolean := False;
+         Allow_Blank       : in Boolean := True;
          Has_Default       : in Boolean := True;
          Default_Value     : in String := "") return Field;
 
@@ -78,6 +79,8 @@ package DB.Active_Record.Fields.Character_Types is
       function ILike
         (Left              : in Field'Class;
          Right             : in String) return Field_Criteria;
+
+      overriding function Is_Blank (This : in Field) return Boolean;
 
       function Like
         (Left              : in Field'Class;
@@ -152,6 +155,7 @@ package DB.Active_Record.Fields.Character_Types is
          Maximum_Length    : in Positive := 255;
          Not_Null          : in Boolean := False;
          Unique            : in Boolean := False;
+         Allow_Blank       : in Boolean := True;
          Has_Default       : in Boolean := True;
          Default_Value     : in String := "") return Field;
 
@@ -167,6 +171,8 @@ package DB.Active_Record.Fields.Character_Types is
       function ILike
         (Left              : in Field'Class;
          Right             : in String) return Field_Criteria;
+
+      overriding function Is_Blank (This : in Field) return Boolean;
 
       function Like
         (Left              : in Field'Class;

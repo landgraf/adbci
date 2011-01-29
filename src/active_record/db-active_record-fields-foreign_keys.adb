@@ -161,6 +161,16 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       return This.FK_Options.FK_Id;
    end Get;
 
+   --------------------
+   -- Is_Foreign_Key --
+   --------------------
+
+   function Is_Foreign_Key (This : in Foreign_Key_Field) return Boolean is
+   begin
+      pragma Unreferenced (This);
+      return True;
+   end Is_Foreign_Key;
+
    ---------------
    -- Load_From --
    ---------------

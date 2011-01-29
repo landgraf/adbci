@@ -67,18 +67,33 @@ package DB.Active_Record.Fields is
    function Get_Name (This : in Field'Class) return String;
    --  Returns the field name.
 
+   function Is_Allow_Blank (This : in Field) return Boolean;
+   --  Returns true if field can be blank.
+
+   function Is_Blank (This : in Field) return Boolean;
+   --  Returns true if the field is blank
+
    function Is_Changed (This : in Field'Class) return Boolean;
    --  Returns the field change status flag.
 
    function Is_Empty (This : in Field_Criteria) return Boolean;
    --  Returns true if the criteria tree is empty.
 
+   function Is_Foreign_Key (This : in Field) return Boolean;
+   --  Returns true if the field is a foreign key field.
+
    function Is_Loaded (This : in Field'Class) return Boolean;
    --  Returns true if the field has been loaded/is available, false
    --  if the field has not been loaded from the database.
 
+   function Is_Not_Null (This : in Field'Class) return Boolean;
+   --  Returns true if the field has a NOT NULL constraint.
+
    function Is_Null (This : in Field'Class) return Boolean;
    --  Returns true if field is NULL.
+
+   function Is_Unique (This : in Field'Class) return Boolean;
+   --  Returns true if the field has a UNIQUE constraint.
 
    procedure Load_From
      (This              : in out Field;
@@ -203,6 +218,7 @@ package DB.Active_Record.Fields is
 private
 
    type Field is abstract tagged record
+      Allow_Blank       : Boolean := True;      --  Allow blank content?
       Changed           : Boolean := False;     --  Has field been modified?
       Display_Name      : Unbounded_String;     --  Human readable name
       Field_Name        : Unbounded_String;     --  Db table column name

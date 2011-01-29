@@ -156,6 +156,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Maximum_Length : in Positive := 255;
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
+         Allow_Blank    : in Boolean := True;
          Has_Default    : in Boolean := True;
          Default_Value  : in String := "") return Field
       is
@@ -163,6 +164,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Temp              : Field;
       begin
          Config_Name (Temp, Name, Display_Name);
+         Temp.Allow_Blank := Allow_Blank;
          Temp.Not_Null := Not_Null;
          Temp.Unique := Unique;
          Temp.Has_Default := Has_Default;
@@ -224,6 +226,15 @@ package body DB.Active_Record.Fields.Character_Types is
          Set_Criteria (Temp, Left, ILIKE, Right, True);
          return Temp;
       end ILike;
+
+      --------------
+      -- Is_Blank --
+      --------------
+
+      function Is_Blank (This : in Field) return Boolean is
+      begin
+         return Length (This.Value) = 0;
+      end Is_Blank;
 
       ----------
       -- Like --
@@ -460,6 +471,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Maximum_Length : in Positive := 255;
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
+         Allow_Blank    : in Boolean := True;
          Has_Default    : in Boolean := True;
          Default_Value  : in String := "") return Field
       is
@@ -467,6 +479,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Temp              : Field;
       begin
          Config_Name (Temp, Name, Display_Name);
+         Temp.Allow_Blank := Allow_Blank;
          Temp.Not_Null := Not_Null;
          Temp.Unique := Unique;
          Temp.Has_Default := Has_Default;
@@ -529,6 +542,15 @@ package body DB.Active_Record.Fields.Character_Types is
          Set_Criteria (Temp, Left, ILIKE, Right, True);
          return Temp;
       end ILike;
+
+      --------------
+      -- Is_Blank --
+      --------------
+
+      function Is_Blank (This : in Field) return Boolean is
+      begin
+         return This.Is_Null or else Length (This.Value) = 0;
+      end Is_Blank;
 
       ----------
       -- Like --

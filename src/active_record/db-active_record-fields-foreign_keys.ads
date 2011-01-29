@@ -66,6 +66,9 @@ package DB.Active_Record.Fields.Foreign_Keys is
 
    function Get (This : in Foreign_Key_Field) return DB.Types.Object_Id;
 
+   overriding function Is_Foreign_Key
+     (This              : in Foreign_Key_Field) return Boolean;
+
    overriding procedure Load_From
      (This              : in out Foreign_Key_Field;
       Connection        : in     DB.Connector.Connection;

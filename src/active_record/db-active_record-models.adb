@@ -523,6 +523,7 @@ package body DB.Active_Record.Models is
       --  as having failed validation if required.  VALIDATION_ERROR will
       --  be raised if any of the custom fields in the model have errors.
       This.Iterate_Custom_Fields (Clear_Validation_Errors'Access);
+      This.Validate_Constraints;
       This.Validate (Connection);
       This.Iterate_Custom_Fields (Detect_Validation_Errors'Access);
 
@@ -700,6 +701,27 @@ package body DB.Active_Record.Models is
    begin
       null;
    end Validate;
+
+   --------------------------
+   -- Validate_Constraints --
+   --------------------------
+
+   procedure Validate_Constraints
+     (This              : in out Model'Class)
+   is
+      procedure Detect_Validation_Errors
+        (F : in out DB.Active_Record.Fields.Field'Class)
+      is
+      begin
+         if F.Is_Not_Null and then F.Is_Null then
+            F.Set_Validation_Failed (F.Get_Display_Name & " can't be empty");
+         elsif F.Is_Blank and then not F.Is_Allow_Blank then
+            F.Set_Validation_Failed (F.Get_Display_Name & " can't be empty");
+         end if;
+      end Detect_Validation_Errors;
+   begin
+      This.Iterate_Custom_Fields (Detect_Validation_Errors'Access);   
+   end Validate_Constraints;
 
    -------------------------
    -- Validate_Model_Name --
