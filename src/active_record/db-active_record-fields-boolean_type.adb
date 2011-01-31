@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -30,14 +30,14 @@ package body DB.Active_Record.Fields.Boolean_Type is
         (Left           : in Field'Class;
          Right          : in Boolean) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         if Right then
-            Set_Criteria (Temp, Left, EQUAL, "true");
-         else
-            Set_Criteria (Temp, Left, EQUAL, "false");
-         end if;
-         return Temp;
+         return Temp : Field_Criteria do
+            if Right then
+               Set_Criteria (Temp, Left, EQUAL, "true");
+            else
+               Set_Criteria (Temp, Left, EQUAL, "false");
+            end if;
+         end return;
       end "=";
 
       ----------
@@ -48,14 +48,14 @@ package body DB.Active_Record.Fields.Boolean_Type is
         (Left           : in Field'Class;
          Right          : in Boolean) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         if Right then
-            Set_Criteria (Temp, Left, NOT_EQUAL, "true");
-         else
-            Set_Criteria (Temp, Left, NOT_EQUAL, "false");
-         end if;
-         return Temp;
+         return Temp : Field_Criteria do
+            if Right then
+               Set_Criteria (Temp, Left, NOT_EQUAL, "true");
+            else
+               Set_Criteria (Temp, Left, NOT_EQUAL, "false");
+            end if;
+         end return;
       end "/=";
 
       -----------
@@ -87,14 +87,14 @@ package body DB.Active_Record.Fields.Boolean_Type is
          Has_Default    : in Boolean := True;
          Default_Value  : in Boolean := False) return Field
       is
-         Temp           : Field;
       begin
-         Config_Name (Temp, Name, Display_Name);
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := False;
-         Temp.Has_Default := Has_Default;
-         Temp.Default_Value := Default_Value;
-         return Temp;
+         return Temp : Field do
+            Config_Name (Temp, Name, Display_Name);
+            Temp.Not_Null := Not_Null;
+            Temp.Unique := False;
+            Temp.Has_Default := Has_Default;
+            Temp.Default_Value := Default_Value;
+         end return;
       end Configure;
 
       ---------------
@@ -106,7 +106,7 @@ package body DB.Active_Record.Fields.Boolean_Type is
          Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String
       is
-         Constraints    : constant DB.Types.SQL_String := 
+         Constraints    : constant DB.Types.SQL_String :=
            Constraints_SQL (This);
          Field_Name     : constant String := To_String (This.Field_Name);
       begin
@@ -197,4 +197,3 @@ package body DB.Active_Record.Fields.Boolean_Type is
    end Bool;
 
 end DB.Active_Record.Fields.Boolean_Type;
-

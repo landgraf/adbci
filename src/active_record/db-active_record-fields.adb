@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -52,10 +52,10 @@ package body DB.Active_Record.Fields is
      (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, EQUAL, DB.Types.Object_Id'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, EQUAL, DB.Types.Object_Id'Image (Right));
+      end return;
    end "=";
 
    ----------
@@ -66,10 +66,10 @@ package body DB.Active_Record.Fields is
      (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.Object_Id'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.Object_Id'Image (Right));
+      end return;
    end "/=";
 
    -----------
@@ -80,13 +80,13 @@ package body DB.Active_Record.Fields is
      (Left              : in Field_Criteria;
       Right             : in Field_Criteria) return Field_Criteria
    is
-      New_Tree          : Field_Criteria;
    begin
-      Alloc (New_Tree);
-      New_Tree.Data.Operator := SQL_AND;
-      New_Tree.Data.Left_Subtree := Left;
-      New_Tree.Data.Right_Subtree := Right;
-      return New_Tree;
+      return New_Tree : Field_Criteria do
+         Alloc (New_Tree);
+         New_Tree.Data.Operator := SQL_AND;
+         New_Tree.Data.Left_Subtree := Left;
+         New_Tree.Data.Right_Subtree := Right;
+      end return;
    end "and";
 
    ----------
@@ -97,13 +97,13 @@ package body DB.Active_Record.Fields is
      (Left              : in Field_Criteria;
       Right             : in Field_Criteria) return Field_Criteria
    is
-      New_Tree          : Field_Criteria;
    begin
-      Alloc (New_Tree);
-      New_Tree.Data.Operator := SQL_OR;
-      New_Tree.Data.Left_Subtree := Left;
-      New_Tree.Data.Right_Subtree := Right;
-      return New_Tree;
+      return New_Tree : Field_Criteria do
+         Alloc (New_Tree);
+         New_Tree.Data.Operator := SQL_OR;
+         New_Tree.Data.Left_Subtree := Left;
+         New_Tree.Data.Right_Subtree := Right;
+      end return;
    end "or";
 
    ------------
@@ -177,7 +177,7 @@ package body DB.Active_Record.Fields is
          else
             Set_Unbounded_String (This.Display_Name, Lower_Name);
          end if;
-      end if;      
+      end if;
    end Config_Name;
    pragma Inline (Config_Name);
 
@@ -194,14 +194,14 @@ package body DB.Active_Record.Fields is
       Default_Value     : in DB.Types.Object_Id := DB.Types.Null_Object_Id)
      return Id_Field
    is
-      Temp              : Id_Field;
    begin
-      Config_Name (Temp, Name, Display_Name);
-      Temp.Not_Null := Not_Null;
-      Temp.Unique := Unique;
-      Temp.Has_Default := Has_Default;
-      Temp.Default_Value := Default_Value;
-      return Temp;
+      return Temp : Id_Field do
+         Config_Name (Temp, Name, Display_Name);
+         Temp.Not_Null := Not_Null;
+         Temp.Unique := Unique;
+         Temp.Has_Default := Has_Default;
+         Temp.Default_Value := Default_Value;
+      end return;
    end Configure;
 
    ---------------------
@@ -233,7 +233,7 @@ package body DB.Active_Record.Fields is
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is
-      Constraints       : constant DB.Types.SQL_String := 
+      Constraints       : constant DB.Types.SQL_String :=
         Constraints_SQL (This);
       Field_Name        : constant String := To_String (This.Field_Name);
    begin
@@ -443,7 +443,7 @@ package body DB.Active_Record.Fields is
          );
       else
          return (
-            Ordering => To_Unbounded_String 
+            Ordering => To_Unbounded_String
                           (Order_Field.Get_Full_Name & " DESC")
          );
       end if;
@@ -458,7 +458,7 @@ package body DB.Active_Record.Fields is
       if Ascending then
          if Length (Ordering.Ordering) > 0 then
             return (Ordering => Ordering.Ordering &
-                                To_Unbounded_String 
+                                To_Unbounded_String
                                   (", " & Order_Field.Get_Full_Name));
          else
             return (Ordering => To_Unbounded_String (Order_Field.Get_Full_Name));
@@ -466,10 +466,10 @@ package body DB.Active_Record.Fields is
       else
          if Length (Ordering.Ordering) > 0 then
             return (Ordering => Ordering.Ordering &
-                                To_Unbounded_String 
+                                To_Unbounded_String
                                   (", " & Order_Field.Get_Full_Name & " DESC"));
          else
-            return (Ordering => To_Unbounded_String 
+            return (Ordering => To_Unbounded_String
                                   (Order_Field.Get_Full_Name & " DESC"));
          end if;
       end if;
@@ -588,10 +588,10 @@ package body DB.Active_Record.Fields is
       begin
          case Root.Data.Operator is
             when SQL_AND =>
-               return "(" & Traverse (Root.Data.Left_Subtree, Database) & 
+               return "(" & Traverse (Root.Data.Left_Subtree, Database) &
                  ") AND (" & Traverse (Root.Data.Right_Subtree, Database) & ")";
             when SQL_OR =>
-               return "(" & Traverse (Root.Data.Left_Subtree, Database) & 
+               return "(" & Traverse (Root.Data.Left_Subtree, Database) &
                  ") OR (" & Traverse (Root.Data.Right_Subtree, Database) & ")";
             when others =>
                Included_Tables.Include (Root.Data.Model_Name);
@@ -703,4 +703,3 @@ package body DB.Active_Record.Fields is
    end Validate_Field_Name;
 
 end DB.Active_Record.Fields;
-

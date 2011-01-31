@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -33,10 +33,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, EQUAL, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, EQUAL, Right, True);
+         end return;
       end "=";
 
       ----------
@@ -47,10 +47,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
+         end return;
       end "/=";
 
       ---------
@@ -61,10 +61,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, LESS_THAN, Right, True);
+         end return;
       end "<";
 
       ----------
@@ -75,10 +75,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right, True);
+         end return;
       end "<=";
 
       ----------
@@ -89,10 +89,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right, True);
+         end return;
       end ">=";
 
       ---------
@@ -103,10 +103,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
+         end return;
       end ">";
 
       ------------
@@ -161,16 +161,16 @@ package body DB.Active_Record.Fields.Character_Types is
          Default_Value  : in String := "") return Field
       is
          Lower_Name        : constant String := To_Lower (Name);
-         Temp              : Field;
       begin
-         Config_Name (Temp, Name, Display_Name);
-         Temp.Allow_Blank := Allow_Blank;
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Maximum_Length := Maximum_Length;
-         Set_Unbounded_String (Temp.Default_Value, Default_Value);
-         return Temp;
+         return Temp : Field do
+            Config_Name (Temp, Name, Display_Name);
+            Temp.Allow_Blank := Allow_Blank;
+            Temp.Not_Null := Not_Null;
+            Temp.Unique := Unique;
+            Temp.Has_Default := Has_Default;
+            Temp.Maximum_Length := Maximum_Length;
+            Set_Unbounded_String (Temp.Default_Value, Default_Value);
+         end return;
       end Configure;
 
       ---------------
@@ -182,7 +182,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String
       is
-         Constraints    : constant DB.Types.SQL_String := 
+         Constraints    : constant DB.Types.SQL_String :=
            Constraints_SQL (This);
          Field_Name     : constant String := To_String (This.Field_Name);
          Field_Type     : constant DB.Types.SQL_String :=
@@ -221,10 +221,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, ILIKE, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, ILIKE, Right, True);
+         end return;
       end ILike;
 
       --------------
@@ -244,10 +244,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, ILIKE, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, ILIKE, Right, True);
+         end return;
       end Like;
 
       ---------------
@@ -347,10 +347,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, EQUAL, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, EQUAL, Right, True);
+         end return;
       end "=";
 
       ----------
@@ -361,10 +361,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
+         end return;
       end "/=";
 
       ---------
@@ -375,10 +375,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, LESS_THAN, Right, True);
+         end return;
       end "<";
 
       ----------
@@ -389,10 +389,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Right, True);
+         end return;
       end "<=";
 
       ----------
@@ -403,10 +403,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Right, True);
+         end return;
       end ">=";
 
       ---------
@@ -417,10 +417,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, GREATER_THAN, Right, True);
+         end return;
       end ">";
 
       ------------
@@ -476,16 +476,16 @@ package body DB.Active_Record.Fields.Character_Types is
          Default_Value  : in String := "") return Field
       is
          Lower_Name        : constant String := To_Lower (Name);
-         Temp              : Field;
       begin
-         Config_Name (Temp, Name, Display_Name);
-         Temp.Allow_Blank := Allow_Blank;
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Maximum_Length := Maximum_Length;
-         Set_Unbounded_String (Temp.Default_Value, Default_Value);
-         return Temp;
+         return Temp : Field do
+            Config_Name (Temp, Name, Display_Name);
+            Temp.Allow_Blank := Allow_Blank;
+            Temp.Not_Null := Not_Null;
+            Temp.Unique := Unique;
+            Temp.Has_Default := Has_Default;
+            Temp.Maximum_Length := Maximum_Length;
+            Set_Unbounded_String (Temp.Default_Value, Default_Value);
+         end return;
       end Configure;
 
       ---------------
@@ -497,7 +497,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String
       is
-         Constraints    : constant DB.Types.SQL_String := 
+         Constraints    : constant DB.Types.SQL_String :=
            Constraints_SQL (This);
          Field_Name     : constant String := To_String (This.Field_Name);
          Length_Str     : constant DB.Types.SQL_String :=
@@ -513,7 +513,7 @@ package body DB.Active_Record.Fields.Character_Types is
 
       function Get (This : in Field) return String is
       begin
-         if This.Loaded then 
+         if This.Loaded then
             return To_String (This.Value);
          else
             raise DB.Errors.NOT_LOADED;
@@ -537,10 +537,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, ILIKE, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, ILIKE, Right, True);
+         end return;
       end ILike;
 
       --------------
@@ -560,10 +560,10 @@ package body DB.Active_Record.Fields.Character_Types is
         (Left           : in Field'Class;
          Right          : in String) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, ILIKE, Right, True);
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, ILIKE, Right, True);
+         end return;
       end Like;
 
       ---------------

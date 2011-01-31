@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -29,10 +29,10 @@ package body DB.Active_Record.Fields.Foreign_Keys is
      (Left              : in Field;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, EQUAL, DB.Types.Object_Id'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, EQUAL, DB.Types.Object_Id'Image (Right));
+      end return;
    end "=";
 
    function "="
@@ -41,8 +41,9 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    is
       Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, EQUAL, Right.Get_Id);
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, EQUAL, Right.Get_Id);
+      end return;
    end "=";
 
    ----------
@@ -53,20 +54,20 @@ package body DB.Active_Record.Fields.Foreign_Keys is
      (Left              : in Field;
       Right             : in DB.Types.Object_Id) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.Object_Id'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.Object_Id'Image (Right));
+      end return;
    end "/=";
 
    function "/="
      (Left              : in Field;
       Right             : in Model_Type) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, Right.Get_Id);
-      return Temp;   
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, NOT_EQUAL, Right.Get_Id);
+      end return;
    end "/=";
 
    -----------
@@ -94,25 +95,25 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Cascade_Delete    : in Boolean := False) return Field
    is
       Lower_Name        : constant String := To_Lower (Name);
-      Temp              : Field;
    begin
-      if not Validate_Field_Name (Lower_Name) then
-         raise CONSTRAINT_ERROR with "invalid field name";
-      else
-         Set_Unbounded_String (Temp.Field_Name, Lower_Name);
-         if Display_Name /= "" then
-            Set_Unbounded_String (Temp.Display_Name, Display_Name);
+      return Temp : Field do
+         if not Validate_Field_Name (Lower_Name) then
+            raise CONSTRAINT_ERROR with "invalid field name";
          else
-            Set_Unbounded_String (Temp.Display_Name, Lower_Name);
-         end if;
+            Set_Unbounded_String (Temp.Field_Name, Lower_Name);
+            if Display_Name /= "" then
+               Set_Unbounded_String (Temp.Display_Name, Display_Name);
+            else
+               Set_Unbounded_String (Temp.Display_Name, Lower_Name);
+            end if;
 
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := False;
-         Temp.FK.Clear;
-         Temp.FK_Options.Cascade_Delete := Cascade_Delete;
-         return Temp;
-      end if;
+            Temp.Not_Null := Not_Null;
+            Temp.Unique := Unique;
+            Temp.Has_Default := False;
+            Temp.FK.Clear;
+            Temp.FK_Options.Cascade_Delete := Cascade_Delete;
+         end if;
+      end return;
    end Configure;
 
    ---------------
@@ -124,7 +125,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is
-      Constraints       : constant DB.Types.SQL_String := 
+      Constraints       : constant DB.Types.SQL_String :=
         Constraints_SQL (This);
       Field_Name        : constant String := To_String (This.Field_Name);
       Foreign_Model     : constant DB.Types.SQL_String :=
@@ -284,4 +285,3 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    end To_SQL;
 
 end DB.Active_Record.Fields.Foreign_Keys;
-

@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -30,60 +30,60 @@ package body DB.Active_Record.Fields.Generic_Integer is
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, EQUAL, Integer_Type'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, EQUAL, Integer_Type'Image (Right));
+      end return;
    end "=";
 
    function "/="
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, NOT_EQUAL, Integer_Type'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, NOT_EQUAL, Integer_Type'Image (Right));
+      end return;
    end "/=";
 
    function "<"
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, LESS_THAN, Integer_Type'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, LESS_THAN, Integer_Type'Image (Right));
+      end return;
    end "<";
 
    function "<="
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Integer_Type'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Integer_Type'Image (Right));
+      end return;
    end "<=";
 
    function ">="
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Integer_Type'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Integer_Type'Image (Right));
+      end return;
    end ">=";
 
    function ">"
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
-      Set_Criteria (Temp, Left, GREATER_THAN, Integer_Type'Image (Right));
-      return Temp;
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, GREATER_THAN, Integer_Type'Image (Right));
+      end return;
    end ">";
 
    -----------
@@ -119,14 +119,14 @@ package body DB.Active_Record.Fields.Generic_Integer is
      return Field
    is
       Lower_Name        : constant String := To_Lower (Name);
-      Temp              : Field;
    begin
-      Config_Name (Temp, Name, Display_Name);
-      Temp.Not_Null := Not_Null;
-      Temp.Unique := Unique;
-      Temp.Has_Default := Has_Default;
-      Temp.Default_Value := Default_Value;
-      return Temp;
+      return Temp : Field do
+         Config_Name (Temp, Name, Display_Name);
+         Temp.Not_Null := Not_Null;
+         Temp.Unique := Unique;
+         Temp.Has_Default := Has_Default;
+         Temp.Default_Value := Default_Value;
+      end return;
    end Configure;
 
    ---------------
@@ -138,7 +138,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is
-      Constraints       : constant DB.Types.SQL_String := 
+      Constraints       : constant DB.Types.SQL_String :=
         Constraints_SQL (This);
       Field_Name        : constant String := To_String (This.Field_Name);
    begin
@@ -259,7 +259,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
 
 begin
    --  Pick the smallest integer type that will hold the entire range.
-   
+
    if Integer_Type'First < -2**63 or else Integer_Type'Last >= 2**63 then
       raise CONSTRAINT_ERROR with "can't support more than 64-bit integers";
    elsif Integer_Type'First < -2**31 or else Integer_Type'Last >= 2**31 then

@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -31,10 +31,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Date) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, EQUAL, Date_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, EQUAL, Date_Image (Right));
+         end return;
       end "=";
 
       ----------
@@ -45,10 +45,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Date) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, NOT_EQUAL, Date_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, NOT_EQUAL, Date_Image (Right));
+         end return;
       end "/=";
 
       ---------
@@ -59,10 +59,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Date) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN, Date_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, LESS_THAN, Date_Image (Right));
+         end return;
       end "<";
 
       ----------
@@ -73,10 +73,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Date) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Date_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, LESS_THAN_OR_EQUAL, Date_Image (Right));
+         end return;
       end "<=";
 
       ----------
@@ -87,10 +87,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Date) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Date_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Date_Image (Right));
+         end return;
       end ">=";
 
       ---------
@@ -101,10 +101,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Date) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN, Date_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, GREATER_THAN, Date_Image (Right));
+         end return;
       end ">";
 
       -----------
@@ -140,16 +140,16 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          Has_Default    : in Boolean := True;
          Default_Value  : in DB.Types.DB_Date := Null_Date) return Field
       is
-         Temp           : Field;
       begin
-         Config_Name (Temp, Name, Display_Name);
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Auto_Now := Auto_Now;
-         Temp.Auto_Now_Add := Auto_Now_Add;
-         Temp.Default_Value := Default_Value;
-         return Temp;
+         return Temp : Field do
+            Config_Name (Temp, Name, Display_Name);
+            Temp.Not_Null := Not_Null;
+            Temp.Unique := Unique;
+            Temp.Has_Default := Has_Default;
+            Temp.Auto_Now := Auto_Now;
+            Temp.Auto_Now_Add := Auto_Now_Add;
+            Temp.Default_Value := Default_Value;
+         end return;
       end Configure;
 
       ----------------
@@ -157,7 +157,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
       ----------------
 
       function Date_Image (This : in DB.Types.DB_Date) return String is
-         Img            : constant String := 
+         Img            : constant String :=
            Ada.Calendar.Formatting.Image (This);
       begin
          return Img (Img'First .. Img'First + 9);
@@ -172,7 +172,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String
       is
-         Constraints    : constant DB.Types.SQL_String := 
+         Constraints    : constant DB.Types.SQL_String :=
            Constraints_SQL (This);
          Field_Name     : constant String := To_String (This.Field_Name);
       begin
@@ -274,7 +274,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
       begin
          if not This.Loaded then
             raise DB.Errors.NOT_LOADED;
-         elsif This.Auto_Now or else 
+         elsif This.Auto_Now or else
            (This.Auto_Now_Add and then This.Is_Null) then
             declare
                Value_Str         : constant String :=
@@ -308,10 +308,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Timestamp) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, EQUAL, Timestamp_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, EQUAL, Timestamp_Image (Right));
+         end return;
       end "=";
 
       ----------
@@ -322,10 +322,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Timestamp) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, NOT_EQUAL, Timestamp_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, NOT_EQUAL, Timestamp_Image (Right));
+         end return;
       end "/=";
 
       ---------
@@ -336,10 +336,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Timestamp) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, LESS_THAN, Timestamp_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, LESS_THAN, Timestamp_Image (Right));
+         end return;
       end "<";
 
       ----------
@@ -350,11 +350,11 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Timestamp) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria
-           (Temp, Left, LESS_THAN_OR_EQUAL, Timestamp_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria
+              (Temp, Left, LESS_THAN_OR_EQUAL, Timestamp_Image (Right));
+         end return;
       end "<=";
 
       ----------
@@ -365,11 +365,11 @@ package body DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Timestamp) return Field_Criteria
       is
-         Temp           : Field_Criteria;
       begin
-         Set_Criteria
-           (Temp, Left, GREATER_THAN_OR_EQUAL, Timestamp_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria
+              (Temp, Left, GREATER_THAN_OR_EQUAL, Timestamp_Image (Right));
+         end return;
       end ">=";
 
       ---------
@@ -382,8 +382,9 @@ package body DB.Active_Record.Fields.Date_Time_Types is
       is
          Temp           : Field_Criteria;
       begin
-         Set_Criteria (Temp, Left, GREATER_THAN, Timestamp_Image (Right));
-         return Temp;
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, GREATER_THAN, Timestamp_Image (Right));
+         end return;
       end ">";
 
       -----------
@@ -420,16 +421,16 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          Default_Value  : in DB.Types.DB_Timestamp := Null_Timestamp)
         return Field
       is
-         Temp           : Field;
       begin
-         Config_Name (Temp, Name, Display_Name);
-         Temp.Not_Null := Not_Null;
-         Temp.Unique := Unique;
-         Temp.Has_Default := Has_Default;
-         Temp.Auto_Now := Auto_Now;
-         Temp.Auto_Now_Add := Auto_Now_Add;
-         Temp.Default_Value := Default_Value;
-         return Temp;
+         return Temp : Field do
+            Config_Name (Temp, Name, Display_Name);
+            Temp.Not_Null := Not_Null;
+            Temp.Unique := Unique;
+            Temp.Has_Default := Has_Default;
+            Temp.Auto_Now := Auto_Now;
+            Temp.Auto_Now_Add := Auto_Now_Add;
+            Temp.Default_Value := Default_Value;
+         end return;
       end Configure;
 
       ---------------
@@ -441,7 +442,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String
       is
-         Constraints    : constant DB.Types.SQL_String := 
+         Constraints    : constant DB.Types.SQL_String :=
            Constraints_SQL (This);
          Field_Name     : constant String := To_String (This.Field_Name);
       begin
@@ -553,7 +554,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
       begin
          if not This.Loaded then
             raise DB.Errors.NOT_LOADED;
-         elsif This.Auto_Now or else 
+         elsif This.Auto_Now or else
            (This.Auto_Now_Add and then This.Is_Null) then
             declare
                Value_Str         : constant String :=
