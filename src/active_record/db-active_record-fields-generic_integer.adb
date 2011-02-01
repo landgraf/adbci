@@ -16,7 +16,6 @@
 --    db-active_record-fields-generic_Integer.ads   jvinters   21-January-2011
 --
 
-with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 with DB.Errors;
@@ -118,7 +117,6 @@ package body DB.Active_Record.Fields.Generic_Integer is
       Default_Value     : in Integer_Type := Initialization_Value)
      return Field
    is
-      Lower_Name        : constant String := To_Lower (Name);
    begin
       return Temp : Field do
          Config_Name (Temp, Name, Display_Name);
@@ -138,6 +136,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is
+      pragma Unreferenced (Connection);
       Constraints       : constant DB.Types.SQL_String :=
         Constraints_SQL (This);
       Field_Name        : constant String := To_String (This.Field_Name);
@@ -186,6 +185,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
       Results           : in     DB.Connector.Result_Set;
       Load_Foreign_Keys : in     Boolean := False)
    is
+      pragma Unreferenced (Connection);
       pragma Unreferenced (Load_Foreign_Keys);
       Field_Name        : constant String := This.Get_Name;
    begin

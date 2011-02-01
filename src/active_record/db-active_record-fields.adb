@@ -16,7 +16,6 @@
 --    db-active_record-fields.adb   jvinters   16-January-2011
 --
 
-with Ada.Calendar.Formatting;
 with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Containers.Hashed_Sets;
 with Ada.Strings;                      use Ada.Strings;
@@ -27,7 +26,6 @@ with DB.Errors;
 
 package body DB.Active_Record.Fields is
 
-   pragma Inline (Set_Criteria);
    procedure Set_Criteria
      (This              : in out Field_Criteria;
       Source_Field      : in     Field'Class;
@@ -37,11 +35,11 @@ package body DB.Active_Record.Fields is
    is
    begin
       Alloc (This);
-      This.Data.Model_Name := Source_Field.Model_Name;
-      This.Data.Field_Name := Source_Field.Field_Name;
-      This.Data.Operator := Operator;
-      Set_Unbounded_String (This.Data.SQL_Criteria, Trim (Str, Both));
-      This.Data.Requires_Quoting := Requires_Quoting;
+      This.Data.all.Model_Name := Source_Field.Model_Name;
+      This.Data.all.Field_Name := Source_Field.Field_Name;
+      This.Data.all.Operator := Operator;
+      Set_Unbounded_String (This.Data.all.SQL_Criteria, Trim (Str, Both));
+      This.Data.all.Requires_Quoting := Requires_Quoting;
    end Set_Criteria;
 
    ---------
@@ -83,9 +81,9 @@ package body DB.Active_Record.Fields is
    begin
       return New_Tree : Field_Criteria do
          Alloc (New_Tree);
-         New_Tree.Data.Operator := SQL_AND;
-         New_Tree.Data.Left_Subtree := Left;
-         New_Tree.Data.Right_Subtree := Right;
+         New_Tree.Data.all.Operator := SQL_AND;
+         New_Tree.Data.all.Left_Subtree := Left;
+         New_Tree.Data.all.Right_Subtree := Right;
       end return;
    end "and";
 
@@ -100,9 +98,9 @@ package body DB.Active_Record.Fields is
    begin
       return New_Tree : Field_Criteria do
          Alloc (New_Tree);
-         New_Tree.Data.Operator := SQL_OR;
-         New_Tree.Data.Left_Subtree := Left;
-         New_Tree.Data.Right_Subtree := Right;
+         New_Tree.Data.all.Operator := SQL_OR;
+         New_Tree.Data.all.Left_Subtree := Left;
+         New_Tree.Data.all.Right_Subtree := Right;
       end return;
    end "or";
 
@@ -113,7 +111,7 @@ package body DB.Active_Record.Fields is
    procedure Adjust (This : in out Field_Criteria) is
    begin
       if This.Data /= null then
-         This.Data.Reference_Count := This.Data.Reference_Count + 1;
+         This.Data.all.Reference_Count := This.Data.all.Reference_Count + 1;
       end if;
    end Adjust;
 
@@ -125,7 +123,7 @@ package body DB.Active_Record.Fields is
    begin
       if This.Data = null then
          This.Data := new Field_Criteria_Data;
-         This.Data.Reference_Count := 1;
+         This.Data.all.Reference_Count := 1;
       end if;
    end Alloc;
 
@@ -179,7 +177,6 @@ package body DB.Active_Record.Fields is
          end if;
       end if;
    end Config_Name;
-   pragma Inline (Config_Name);
 
    ---------------
    -- Configure --
@@ -250,8 +247,8 @@ package body DB.Active_Record.Fields is
         (Field_Criteria_Data, Field_Criteria_Access);
    begin
       if This.Data /= null then
-         This.Data.Reference_Count := This.Data.Reference_Count - 1;
-         if This.Data.Reference_Count = 0 then
+         This.Data.all.Reference_Count := This.Data.all.Reference_Count - 1;
+         if This.Data.all.Reference_Count = 0 then
             Unchecked_Free (This.Data);
          end if;
       end if;
@@ -407,6 +404,7 @@ package body DB.Active_Record.Fields is
       Results           : in     DB.Connector.Result_Set;
       Load_Foreign_Keys : in     Boolean := False)
    is
+      pragma Unreferenced (Connection);
       pragma Unreferenced (Load_Foreign_Keys);
       Field_Name        : constant String := This.Get_Name;
    begin
@@ -525,11 +523,11 @@ package body DB.Active_Record.Fields is
    is
       Value             : Unbounded_String;
    begin
-      Value := This.Data.Model_Name;
+      Value := This.Data.all.Model_Name;
       Append (Value, '.');
-      Append (Value, This.Data.Field_Name);
+      Append (Value, This.Data.all.Field_Name);
 
-      case This.Data.Operator is
+      case This.Data.all.Operator is
          when EQUAL =>
             Append (Value, " = ");
          when NOT_EQUAL =>
@@ -550,12 +548,12 @@ package body DB.Active_Record.Fields is
             raise PROGRAM_ERROR with "incorrect usage";
       end case;
 
-      if This.Data.Requires_Quoting then
+      if This.Data.all.Requires_Quoting then
          Append (Value, "'" &
-           String (Database.Quote_Value (To_String (This.Data.SQL_Criteria)))
+           String (Database.Quote_Value (To_String (This.Data.all.SQL_Criteria)))
            & "'");
       else
-         Append (Value, This.Data.SQL_Criteria);
+         Append (Value, This.Data.all.SQL_Criteria);
       end if;
 
       return To_String (Value);
@@ -586,15 +584,15 @@ package body DB.Active_Record.Fields is
          Database       : in     DB.Connector.Connection) return String
       is
       begin
-         case Root.Data.Operator is
+         case Root.Data.all.Operator is
             when SQL_AND =>
-               return "(" & Traverse (Root.Data.Left_Subtree, Database) &
-                 ") AND (" & Traverse (Root.Data.Right_Subtree, Database) & ")";
+               return "(" & Traverse (Root.Data.all.Left_Subtree, Database) &
+                 ") AND (" & Traverse (Root.Data.all.Right_Subtree, Database) & ")";
             when SQL_OR =>
-               return "(" & Traverse (Root.Data.Left_Subtree, Database) &
-                 ") OR (" & Traverse (Root.Data.Right_Subtree, Database) & ")";
+               return "(" & Traverse (Root.Data.all.Left_Subtree, Database) &
+                 ") OR (" & Traverse (Root.Data.all.Right_Subtree, Database) & ")";
             when others =>
-               Included_Tables.Include (Root.Data.Model_Name);
+               Included_Tables.Include (Root.Data.all.Model_Name);
                return To_Extracted_Query (Root, Database);
          end case;
       end Traverse;

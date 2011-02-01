@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -16,10 +16,8 @@
 --    db-active_record-fields-character_types.ads   jvinters   16-January-2011
 --
 
-with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
-with Ada.Finalization;
-with DB.Connector;                     use DB.Connector;
-with DB.Types;                         use DB.Types;
+with DB.Connector;
+with DB.Types;
 
 package DB.Active_Record.Fields.Character_Types is
 

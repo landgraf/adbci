@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -64,7 +64,7 @@ package DB.Driver.PostgreSQL is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.DB_Bigint := 0) 
+      Replacement       : in DB.Types.DB_Bigint := 0)
    return DB.Types.DB_Bigint;
 
    overriding function Get_Data_Boolean
@@ -92,7 +92,7 @@ package DB.Driver.PostgreSQL is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.Object_Id := 0) 
+      Replacement       : in DB.Types.Object_Id := 0)
    return DB.Types.Object_Id;
 
    overriding function Get_Data_Smallint
@@ -100,7 +100,7 @@ package DB.Driver.PostgreSQL is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.DB_Smallint := 0) 
+      Replacement       : in DB.Types.DB_Smallint := 0)
    return DB.Types.DB_Smallint;
 
    overriding function Get_Data_String
@@ -113,7 +113,7 @@ package DB.Driver.PostgreSQL is
    overriding function Get_Foreign_Key_SQL (This : in Driver_Type)
    return DB.Types.SQL_String;
 
-   overriding function Get_Id_SQL (This : in Driver_Type) 
+   overriding function Get_Id_SQL (This : in Driver_Type)
    return DB.Types.SQL_String;
 
    overriding function Get_Inserted_Row_id
@@ -144,7 +144,7 @@ private
 
    type PG_Connection is new System.Address;
 
-   Null_Connection      : constant PG_Connection := 
+   Null_Connection      : constant PG_Connection :=
      PG_Connection (System.Null_Address);
 
    type PG_Result is new System.Address;

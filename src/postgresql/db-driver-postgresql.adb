@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -24,6 +24,8 @@ with DB.Errors;
 with DB.Types;                         use DB.Types;
 with Interfaces.C;                     use Interfaces.C;
 with Interfaces.C.Strings;             use Interfaces.C.Strings;
+
+pragma Elaborate_All (DB.Driver_Manager);
 
 package body DB.Driver.PostgreSQL is
 
@@ -114,14 +116,14 @@ package body DB.Driver.PostgreSQL is
       function PQ_Connect_Db
         (Connect_Str    : in Interfaces.C.Char_Array) return PG_Connection;
       pragma Import (C, PQ_Connect_Db, "PQconnectdb");
-      
+
       Connect_Str       : Unbounded_String;
       Init_Result       : Result_Handle;
    begin
       if Driver.Connection /= Null_Connection then
          Disconnect (Driver);
       end if;
-      
+
       if Hostname'Length = 0 then
          Set_Unbounded_String (Connect_Str, "host=localhost");
       else
@@ -147,7 +149,7 @@ package body DB.Driver.PostgreSQL is
 
       Driver.Connection := PQ_Connect_Db (To_C (To_String (Connect_Str)));
       if Driver.Connection = Null_Connection then
-         raise DB.Errors.CONNECT_ERROR with 
+         raise DB.Errors.CONNECT_ERROR with
            "unable to connect to server -- probably out of memory";
       end if;
 
@@ -198,7 +200,7 @@ package body DB.Driver.PostgreSQL is
         (Connection     : in PG_Connection;
          Query          : in Interfaces.C.Char_Array) return PG_Result;
       pragma Import (C, PQ_Exec, "PQexec");
-      
+
       function PQ_N_Fields
         (Result         : in PG_Result) return Interfaces.C.Int;
       pragma Import (C, PQ_N_Fields, "PQnfields");
@@ -230,7 +232,7 @@ package body DB.Driver.PostgreSQL is
          when PGRES_TUPLES_OK =>
             --  SQL executed OK, and returned a result set.
             declare
-               R        : Result_Access := new Result_Type;
+               R        : constant Result_Access := new Result_Type;
             begin
                R.all.Results := Query_Result;
                R.all.Column_Count := Natural (PQ_N_Fields (Query_Result));
@@ -281,7 +283,7 @@ package body DB.Driver.PostgreSQL is
    is
       procedure Free_Storage is new Ada.Unchecked_Deallocation
         (Result_Type, Result_Access);
-      
+
       procedure PQ_Clear (This : in PG_Result);
       pragma Import (C, PQ_Clear, "PQclear");
    begin
@@ -303,6 +305,7 @@ package body DB.Driver.PostgreSQL is
    function Get_Capabilities
      (This              : in Driver_Type) return Driver_Capabilities
    is
+      pragma Unreferenced (This);
    begin
       return (
          Insert_Id_Func    => False,
@@ -331,10 +334,10 @@ package body DB.Driver.PostgreSQL is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.DB_Bigint := 0) 
+      Replacement       : in DB.Types.DB_Bigint := 0)
      return DB.Types.DB_Bigint
    is
-      S : constant String := String 
+      S : constant String :=
         (Get_Data_String (Result, Tuple, Column, True, ""));
    begin
       if S /= "" then
@@ -360,7 +363,7 @@ package body DB.Driver.PostgreSQL is
       Replacement       : in Boolean := False) return Boolean
    is
       S : constant String := To_Upper
-        (String (Get_Data_String (Result, Tuple, Column, True, "")));
+        (Get_Data_String (Result, Tuple, Column, True, ""));
    begin
       if S /= "" then
          return S = "TRUE" or else S = "T";
@@ -385,8 +388,8 @@ package body DB.Driver.PostgreSQL is
       Replacement       : in DB.Types.DB_Integer := 0)
      return DB.Types.DB_Integer
    is
-      S : constant String := String 
-        (Get_Data_String (Result, Tuple, Column, True, ""));
+      S : constant String :=
+        Get_Data_String (Result, Tuple, Column, True, "");
    begin
       if S /= "" then
          return DB.Types.DB_Integer'Value (S);
@@ -429,10 +432,10 @@ package body DB.Driver.PostgreSQL is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.Object_Id := 0) 
+      Replacement       : in DB.Types.Object_Id := 0)
      return DB.Types.Object_Id
    is
-      S	: constant String := String (Get_Data_String (Result, Tuple, Column));
+      S	: constant String := Get_Data_String (Result, Tuple, Column);
    begin
       if S /= "" then
          return DB.Types.Object_Id'Value (S);
@@ -454,10 +457,10 @@ package body DB.Driver.PostgreSQL is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.DB_Smallint := 0) 
+      Replacement       : in DB.Types.DB_Smallint := 0)
      return DB.Types.DB_Smallint
    is
-      S	: constant String := String (Get_Data_String (Result, Tuple, Column));
+      S	: constant String := Get_Data_String (Result, Tuple, Column);
    begin
       if S /= "" then
          return DB.Types.DB_Smallint'Value (S);
@@ -526,6 +529,7 @@ package body DB.Driver.PostgreSQL is
    function Get_Foreign_Key_SQL (This : in Driver_Type)
      return DB.Types.SQL_String
    is
+      pragma Unreferenced (This);
    begin
       return "BIGINT";
    end Get_Foreign_Key_SQL;
@@ -535,6 +539,7 @@ package body DB.Driver.PostgreSQL is
    ----------------
 
    function Get_Id_SQL (This : in Driver_Type) return DB.Types.SQL_String is
+      pragma Unreferenced (This);
    begin
       return "BIGSERIAL";
    end Get_Id_SQL;
@@ -547,7 +552,7 @@ package body DB.Driver.PostgreSQL is
      (Result            : in Result_Type) return DB.Types.Object_Id
    is
    begin
-      raise DB.Errors.NOT_SUPPORTED with 
+      raise DB.Errors.NOT_SUPPORTED with
         "postgresql doesn't do this -- use a RETURNING clause in your query";
       return 0;
    end Get_Inserted_Row_Id;
@@ -560,6 +565,8 @@ package body DB.Driver.PostgreSQL is
      (This              : in Driver_Type;
       Maximum_Size      : in Natural) return DB.Types.SQL_String
    is
+      pragma Unreferenced (Maximum_Size);
+      pragma Unreferenced (This);
    begin
       return "TEXT";
    end Get_Text_Type;
@@ -666,7 +673,7 @@ package body DB.Driver.PostgreSQL is
          raise STORAGE_ERROR;
       else
          declare
-            QStr        : constant String := 
+            QStr        : constant String :=
               Interfaces.C.Strings.Value (Result);
          begin
             PQ_Free_Mem (Result);

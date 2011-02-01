@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -47,8 +47,8 @@ package body DB.Active_Record.Models.Queries is
          Append (Query_SQL, Object.Get_Name & '.' & Object.Get_Id_Name);
          Append (Query_SQL, ')');
          Append (Query_SQL, String
-           (To_SQL_Criteria (Connection, Criteria, False, False,
-                             Null_Order_Criteria, First, Last, 
+           (To_SQL_Criteria (Connection, Criteria, False,
+                             Null_Order_Criteria, First, Last,
                              No_Order => True)));
          declare
             Query       : constant DB.Types.SQL_String :=
@@ -77,7 +77,6 @@ package body DB.Active_Record.Models.Queries is
      return Query_Result
    is
       use DB.Active_Record.Fields;
-      Order             : constant String := To_String (Ordering);
       Query_SQL         : Unbounded_String;
    begin
       if First > Last then
@@ -93,13 +92,13 @@ package body DB.Active_Record.Models.Queries is
          Set_Unbounded_String (Query_SQL, "SELECT ");
          Append (Query_SQL, Object.Get_Name & '.' & Object.Get_Id_Name);
          Append (Query_SQL, String
-           (To_SQL_Criteria (Connection, Criteria, For_Update, Read_Only,
+           (To_SQL_Criteria (Connection, Criteria, For_Update,
                              Ordering, First, Last)));
 
          return SQL_Query
-           (Connection, 
-            DB.Types.SQL_String (To_String (Query_SQL)), 
-            Lazy_Fetch     => True, 
+           (Connection,
+            DB.Types.SQL_String (To_String (Query_SQL)),
+            Lazy_Fetch     => True,
             Read_Only      => Read_Only);
       end if;
    end Find;
@@ -162,9 +161,9 @@ package body DB.Active_Record.Models.Queries is
       else
          if This.Lazy_Fetched then
             Id := This.Items.Get_Object_Id_At
-              (Column_Id, 
-               Tuple_Index (Index) + Tuple_Index (This.First), 
-               True, 
+              (Column_Id,
+               Tuple_Index (Index) + Tuple_Index (This.First),
+               True,
                0);
             if Id /= 0 then
                Temp.Get (Connection, Id, Load_Foreign_Keys);
@@ -175,8 +174,8 @@ package body DB.Active_Record.Models.Queries is
             declare
                R        : DB.Connector.Result_Set := This.Items;
             begin
-               Temp.Load_From (Connection, 
-                               R, 
+               Temp.Load_From (Connection,
+                               R,
                                Tuple_Index (Index) + Tuple_Index (This.First));
             end;
          end if;
@@ -244,7 +243,6 @@ package body DB.Active_Record.Models.Queries is
      (Connection        : in DB.Connector.Connection;
       Criteria          : in DB.Active_Record.Fields.Field_Criteria;
       For_Update        : in Boolean := False;
-      Read_Only         : in Boolean := False;
       Ordering          : in DB.Active_Record.Fields.Order_Criteria :=
                             DB.Active_Record.Fields.Null_Order_Criteria;
       First             : in DB.Types.Object_Id := 0;
@@ -291,13 +289,13 @@ package body DB.Active_Record.Models.Queries is
                --  requires Last > First (see check at top of routine)
                Row_Count   : constant DB.Types.Object_Id := (Last - First) + 1;
             begin
-               Append (Query_SQL, " LIMIT" & 
+               Append (Query_SQL, " LIMIT" &
                                   DB.Types.Object_Id'IMage (Row_Count));
             end;
          end if;
 
          if First > 0 then
-            Append (Query_SQL, " OFFSET" & 
+            Append (Query_SQL, " OFFSET" &
                                DB.Types.Object_Id'Image (First - 1));
          end if;
 

@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -134,7 +134,7 @@ package DB.Driver is
       Tuple             : in Tuple_Index;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.DB_Smallint := 0) 
+      Replacement       : in DB.Types.DB_Smallint := 0)
    return DB.Types.DB_Smallint is abstract;
    --  Returns SMALLINT data at specified tuple and column, or raises
    --  an exception.
@@ -145,19 +145,19 @@ package DB.Driver is
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
       Replacement       : in String := "") return String is abstract;
-   --  Returns string (CHAR/TEXT/VARCHAR) data at specified tuple and column, 
+   --  Returns string (CHAR/TEXT/VARCHAR) data at specified tuple and column,
    --  or raises an exception.
 
    function Get_Foreign_Key_SQL (This : in Abstract_Driver_Type)
    return DB.Types.SQL_String is abstract;
    --  Returns the SQL Data type used to reference foreign keys.
 
-   function Get_Id_SQL (This : in Abstract_Driver_Type) 
+   function Get_Id_SQL (This : in Abstract_Driver_Type)
    return DB.Types.SQL_String is abstract;
    --  Returns the SQL Data type used to identify objects.
 
    function Get_Inserted_Row_id
-     (Result            : in Abstract_Result_Type) 
+     (Result            : in Abstract_Result_Type)
    return DB.Types.Object_Id is abstract;
    --  For databases which support getting the inserted row id via a function,
    --  returns the inserted row id.

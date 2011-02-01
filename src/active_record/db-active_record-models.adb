@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -20,7 +20,6 @@ with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 with Ada.Tags;
-with DB.Active_Record.Fields;
 with DB.Active_Record.Fields.Model_Operations;
 with DB.Driver;
 with DB.Errors;
@@ -113,7 +112,8 @@ package body DB.Active_Record.Models is
      (This              : in out Model'Class;
       Connection        : in out DB.Connector.Connection)
    is
-      Command           : DB.Types.SQL_String := This.Create_SQL (Connection);
+      Command           : constant DB.Types.SQL_String :=
+        This.Create_SQL (Connection);
       Temp_Result       : constant DB.Connector.Result_Set :=
         Connection.Execute (Command);
    begin
@@ -130,9 +130,9 @@ package body DB.Active_Record.Models is
      return DB.Types.SQL_String
    is
       Current_Field     : Natural := 0;
-      Field_Count       : constant Natural := This.Field_Count;
+      Field_Count       : constant Natural := This.all.Field_Count;
       Generated_SQL     : Unbounded_String;
-      
+
       procedure Generate_Field (F : in out DB.Active_Record.Fields.Field'Class)
       is
       begin
@@ -147,11 +147,11 @@ package body DB.Active_Record.Models is
       end Generate_Field;
    begin
       Set_Unbounded_String (Generated_SQL, "CREATE TABLE ");
-      Append (Generated_SQL, This.Model_Name);
+      Append (Generated_SQL, This.all.Model_Name);
       Append (Generated_SQL, " (" & ASCII.LF);
-      This.Iterate_Fields (Generate_Field'Access);
+      This.all.Iterate_Fields (Generate_Field'Access);
       Append (Generated_SQL, ");");
-      return DB.Types.SQL_String (To_String (Generated_SQL));   
+      return DB.Types.SQL_String (To_String (Generated_SQL));
    end Create_SQL;
 
    ------------
@@ -188,7 +188,8 @@ package body DB.Active_Record.Models is
      (This              : in out Model'Class;
       Connection        : in out DB.Connector.Connection)
    is
-      Command           : DB.Types.SQL_String := This.Drop_SQL (Connection);
+      Command           : constant DB.Types.SQL_String :=
+        This.Drop_SQL (Connection);
       Temp_Result       : constant DB.Connector.Result_Set :=
         Connection.Execute (Command);
    begin
@@ -204,9 +205,10 @@ package body DB.Active_Record.Models is
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is
+      pragma Unreferenced (Connection);
    begin
-      return "DROP TABLE " & DB.Types.SQL_String (To_String (This.Model_Name) &
-        ';');
+      return "DROP TABLE "
+        & DB.Types.SQL_String (To_String (This.all.Model_Name) & ';');
    end Drop_SQL;
 
    ---------
@@ -220,7 +222,7 @@ package body DB.Active_Record.Models is
       For_Update        : in     Boolean := False;
       Load_Foreign_Keys : in     Boolean := True)
    is
-      For_Update_Str    : constant DB.Types.SQL_String := 
+      For_Update_Str    : constant DB.Types.SQL_String :=
         DB.Types.SQL_String (For_Update_Strings (For_Update).all);
       Id_Name           : constant String := To_String (This.Id_Name);
       Id_Str            : constant String :=
@@ -240,7 +242,7 @@ package body DB.Active_Record.Models is
    begin
       This.Clear;
       if Query_Result.Count /= 1 then
-         raise DB.Errors.OBJECT_NOT_FOUND with 
+         raise DB.Errors.OBJECT_NOT_FOUND with
            Model_Name & " with id '" & Id_Str & "' not found";
       else
          This.Store := STORE_UPDATE;
@@ -309,7 +311,7 @@ package body DB.Active_Record.Models is
       if not This.Initialized then
          for i in reverse Expanded_Name'Range loop
             if Expanded_Name (i) = '.' then
-               This.Set_Name (To_Lower 
+               This.Set_Name (To_Lower
                  (Expanded_Name (i + 1 .. Expanded_Name'Last)));
                exit;
             end if;
@@ -559,7 +561,7 @@ package body DB.Active_Record.Models is
       Conn_Driver       : constant DB.Driver.Driver_Handle :=
         Connection.Get_Driver;
       Driver_Caps       : constant DB.Driver.Driver_Capabilities :=
-        Conn_Driver.Get_Capabilities;
+        Conn_Driver.all.Get_Capabilities;
       Insert_SQL        : Unbounded_String;
       Field_Count       : Natural := 1;
       Field_List        : Unbounded_String;
@@ -644,7 +646,7 @@ package body DB.Active_Record.Models is
            Connection.Execute (SQL_Command);
       begin
          This.Store := STORE_UPDATE;
-      end;   
+      end;
    end Save_Update;
 
    -----------------
@@ -720,7 +722,7 @@ package body DB.Active_Record.Models is
          end if;
       end Detect_Validation_Errors;
    begin
-      This.Iterate_Custom_Fields (Detect_Validation_Errors'Access);   
+      This.Iterate_Custom_Fields (Detect_Validation_Errors'Access);
    end Validate_Constraints;
 
    -------------------------

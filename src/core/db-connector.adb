@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -32,14 +32,15 @@ package body DB.Connector is
    procedure Adjust (This : in out Connection) is
    begin
       if This.Data /= null then
-         This.Data.Reference_Count := This.Data.Reference_Count + 1;
+         This.Data.all.Reference_Count := This.Data.all.Reference_Count + 1;
       end if;
    end Adjust;
 
    procedure Adjust (This : in out Result_Set) is
    begin
       if This.Results /= null then
-         This.Results.Reference_Count := This.Results.Reference_Count + 1;
+         This.Results.all.Reference_Count :=
+           This.Results.all.Reference_Count + 1;
       end if;
    end Adjust;
 
@@ -59,12 +60,12 @@ package body DB.Connector is
       Result            : Connection;
    begin
       Reqd_Driver := DB.Driver_Manager.Get_Driver (Driver);
-      Reqd_Driver.Connect (Hostname, Database, Username, Password, Options);
+      Reqd_Driver.all.Connect (Hostname, Database, Username, Password, Options);
 
       Result.Data := new Connection_Record;
-      Result.Data.Driver := Reqd_Driver;
-      Result.Data.In_Transaction := False;
-      Result.Data.Reference_Count := 1;
+      Result.Data.all.Driver := Reqd_Driver;
+      Result.Data.all.In_Transaction := False;
+      Result.Data.all.Reference_Count := 1;
       return Result;
    end Connect;
 
@@ -74,8 +75,8 @@ package body DB.Connector is
 
    function Count (This : in Result_Set) return Natural is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Tuple_Count;
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Tuple_Count;
       else
          return 0;
       end if;
@@ -87,9 +88,9 @@ package body DB.Connector is
 
    procedure Disconnect (This : in out Connection) is
    begin
-      if This.Data /= null and then This.Data.Driver /= null then
-         This.Data.Driver.Disconnect;
-         DB.Driver.Free_Driver (This.Data.Driver);
+      if This.Data /= null and then This.Data.all.Driver /= null then
+         This.Data.all.Driver.all.Disconnect;
+         DB.Driver.Free_Driver (This.Data.all.Driver);
       end if;
    end Disconnect;
 
@@ -109,14 +110,14 @@ package body DB.Connector is
          raise DB.Errors.NOT_CONNECTED;
       end if;
 
-      This.Data.Driver.Execute_SQL (R, SQL);
+      This.Data.all.Driver.all.Execute_SQL (R, SQL);
 
       Result_Rec := new Result_Record;
-      Result_Rec.Data := R;
-      Result_Rec.Driver := This.Data.Driver;
-      Result_Rec.Reference_Count := 1;
+      Result_Rec.all.Data := R;
+      Result_Rec.all.Driver := This.Data.all.Driver;
+      Result_Rec.all.Reference_Count := 1;
 
-      if R /= null and then R.Get_Tuple_Count > 0 then
+      if R /= null and then R.all.Get_Tuple_Count > 0 then
          Tuple := 1;
       end if;
 
@@ -135,9 +136,9 @@ package body DB.Connector is
         (Connection_Record, Connection_Record_Access);
    begin
       if This.Data /= null then
-         if This.Data.Reference_Count > 0 then
-            This.Data.Reference_Count := This.Data.Reference_Count - 1;
-            if This.Data.Reference_Count = 0 then
+         if This.Data.all.Reference_Count > 0 then
+            This.Data.all.Reference_Count := This.Data.all.Reference_Count - 1;
+            if This.Data.all.Reference_Count = 0 then
                Disconnect (This);
                Unchecked_Free (This.Data);
             end if;
@@ -150,12 +151,12 @@ package body DB.Connector is
         (Result_Record, Result_Record_Access);
    begin
       if This.Results /= null then
-         if This.Results.Reference_Count > 0 then
-            This.Results.Reference_Count := 
-              This.Results.Reference_Count - 1;
-            if This.Results.Reference_Count = 0 then
+         if This.Results.all.Reference_Count > 0 then
+            This.Results.all.Reference_Count :=
+              This.Results.all.Reference_Count - 1;
+            if This.Results.all.Reference_Count = 0 then
                DB.Driver.Free_Result
-                 (This.Results.Driver.all, This.Results.Data);
+                 (This.Results.all.Driver.all, This.Results.all.Data);
                Unchecked_Free (This.Results);
             end if;
          end if;
@@ -174,8 +175,8 @@ package body DB.Connector is
      return DB.Types.DB_Bigint
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Data_Bigint
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Data_Bigint
            (This.Tuple, Column, Replace_Null, Replacement);
       else
          raise DB.Errors.END_OF_RESULT_SET;
@@ -190,12 +191,12 @@ package body DB.Connector is
      return DB.Types.DB_Bigint
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
+      if This.Results /= null and then This.Results.all.Data /= null then
          declare
             Reqd_Column : constant Column_Index :=
-              This.Results.Data.Find_Column_By_Name (Column);
+              This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            return This.Results.Data.Get_Data_Bigint
+            return This.Results.all.Data.all.Get_Data_Bigint
               (This.Tuple, Reqd_Column, Replace_Null, Replacement);
          end;
       else
@@ -214,8 +215,8 @@ package body DB.Connector is
       Replacement       : in Boolean := False) return Boolean
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Data_Boolean
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Data_Boolean
            (This.Tuple, Column, Replace_Null, Replacement);
       else
          raise DB.Errors.END_OF_RESULT_SET;
@@ -229,12 +230,12 @@ package body DB.Connector is
       Replacement       : in Boolean := False) return Boolean
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
+      if This.Results /= null and then This.Results.all.Data /= null then
          declare
             Reqd_Column : constant Column_Index :=
-              This.Results.Data.Find_Column_By_Name (Column);
+              This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            return This.Results.Data.Get_Data_Boolean
+            return This.Results.all.Data.all.Get_Data_Boolean
               (This.Tuple, Reqd_Column, Replace_Null, Replacement);
          end;
       else
@@ -253,7 +254,7 @@ package body DB.Connector is
       if This.Data = null then
          raise DB.Errors.NOT_CONNECTED;
       else
-         return This.Data.Driver;
+         return This.Data.all.Driver;
       end if;
    end Get_Driver;
 
@@ -269,8 +270,8 @@ package body DB.Connector is
      return DB.Types.DB_Integer
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Data_Integer
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Data_Integer
            (This.Tuple, Column, Replace_Null, Replacement);
       else
          raise DB.Errors.END_OF_RESULT_SET;
@@ -285,12 +286,12 @@ package body DB.Connector is
      return DB.Types.DB_Integer
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
+      if This.Results /= null and then This.Results.all.Data /= null then
          declare
             Reqd_Column : constant Column_Index :=
-              This.Results.Data.Find_Column_By_Name (Column);
+              This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            return This.Results.Data.Get_Data_Integer
+            return This.Results.all.Data.all.Get_Data_Integer
               (This.Tuple, Reqd_Column, Replace_Null, Replacement);
          end;
       else
@@ -307,8 +308,8 @@ package body DB.Connector is
       Column            : in Column_Index) return Boolean
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Data_Is_Null (This.Tuple, Column);
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Data_Is_Null (This.Tuple, Column);
       else
          raise DB.Errors.END_OF_RESULT_SET;
       end if;
@@ -319,12 +320,12 @@ package body DB.Connector is
       Column            : in String) return Boolean
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
+      if This.Results /= null and then This.Results.all.Data /= null then
          declare
             Reqd_Column : constant Column_Index :=
-              This.Results.Data.Find_Column_By_Name (Column);
+              This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            return This.Results.Data.Get_Data_Is_Null
+            return This.Results.all.Data.all.Get_Data_Is_Null
               (This.Tuple, Reqd_Column);
          end;
       else
@@ -344,8 +345,8 @@ package body DB.Connector is
      return DB.Types.Object_Id
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Data_Object_Id
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Data_Object_Id
            (This.Tuple, Column, Replace_Null, Replacement);
       else
          raise DB.Errors.END_OF_RESULT_SET;
@@ -360,12 +361,12 @@ package body DB.Connector is
      return DB.Types.Object_Id
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
+      if This.Results /= null and then This.Results.all.Data /= null then
          declare
             Reqd_Column : constant Column_Index :=
-              This.Results.Data.Find_Column_By_Name (Column);
+              This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            return This.Results.Data.Get_Data_Object_Id
+            return This.Results.all.Data.all.Get_Data_Object_Id
               (This.Tuple, Reqd_Column, Replace_Null, Replacement);
          end;
       else
@@ -386,8 +387,8 @@ package body DB.Connector is
      return DB.Types.Object_Id
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Data_Object_Id
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Data_Object_Id
            (Tuple, Column, Replace_Null, Replacement);
       else
          raise DB.Errors.END_OF_RESULT_SET;
@@ -403,12 +404,12 @@ package body DB.Connector is
      return DB.Types.Object_Id
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
+      if This.Results /= null and then This.Results.all.Data /= null then
          declare
             Reqd_Column : constant Column_Index :=
-              This.Results.Data.Find_Column_By_Name (Column);
+              This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            return This.Results.Data.Get_Data_Object_Id
+            return This.Results.all.Data.all.Get_Data_Object_Id
               (Tuple, Reqd_Column, Replace_Null, Replacement);
          end;
       else
@@ -428,8 +429,8 @@ package body DB.Connector is
      return DB.Types.DB_Smallint
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Data_Smallint
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Data_Smallint
            (This.Tuple, Column, Replace_Null, Replacement);
       else
          raise DB.Errors.END_OF_RESULT_SET;
@@ -444,12 +445,12 @@ package body DB.Connector is
      return DB.Types.DB_Smallint
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
+      if This.Results /= null and then This.Results.all.Data /= null then
          declare
             Reqd_Column : constant Column_Index :=
-              This.Results.Data.Find_Column_By_Name (Column);
+              This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            return This.Results.Data.Get_Data_Smallint
+            return This.Results.all.Data.all.Get_Data_Smallint
               (This.Tuple, Reqd_Column, Replace_Null, Replacement);
          end;
       else
@@ -468,8 +469,8 @@ package body DB.Connector is
       Replacement       : in String := "") return String
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
-         return This.Results.Data.Get_Data_String
+      if This.Results /= null and then This.Results.all.Data /= null then
+         return This.Results.all.Data.all.Get_Data_String
            (This.Tuple, Column, Replace_Null, Replacement);
       else
          raise DB.Errors.END_OF_RESULT_SET;
@@ -483,12 +484,12 @@ package body DB.Connector is
       Replacement       : in String := "") return String
    is
    begin
-      if This.Results /= null and then This.Results.Data /= null then
+      if This.Results /= null and then This.Results.all.Data /= null then
          declare
             Reqd_Column : constant Column_Index :=
-              This.Results.Data.Find_Column_By_Name (Column);
+              This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            return This.Results.Data.Get_Data_String
+            return This.Results.all.Data.all.Get_Data_String
               (This.Tuple, Reqd_Column, Replace_Null, Replacement);
          end;
       else
@@ -513,18 +514,16 @@ package body DB.Connector is
      (This              : in out Result_Set;
       Tuple             : in     Tuple_Index)
    is
-      Tuple_Count       : constant Tuple_Index :=
-        Tuple_Index (This.Results.Data.Get_Tuple_Count);
    begin
       if Tuple = This.Tuple + 1 then
          Next_Tuple (This);
       elsif Tuple = This.Tuple - 1 then
          Previous_Tuple (This);
       else
-         if This.Results.Data.Is_Random_Access then
+         if This.Results.all.Data.all.Is_Random_Access then
             declare
                Tuple_Count : constant Tuple_Index :=
-                 Tuple_Index (This.Results.Data.Get_Tuple_Count);
+                 Tuple_Index (This.Results.all.Data.all.Get_Tuple_Count);
             begin
                if Tuple >= 1 and then Tuple < Tuple_Count then
                   This.Tuple := Tuple;
@@ -544,7 +543,7 @@ package body DB.Connector is
 
    procedure Next_Tuple (This : in out Result_Set) is
       Tuple_Count       : constant Tuple_Index :=
-        Tuple_Index (This.Results.Data.Get_Tuple_Count);
+        Tuple_Index (This.Results.all.Data.all.Get_Tuple_Count);
    begin
       if This.Tuple /= INVALID_TUPLE and then This.Tuple < Tuple_Count then
          This.Tuple := This.Tuple + 1;
@@ -558,10 +557,8 @@ package body DB.Connector is
    --------------------
 
    procedure Previous_Tuple (This : in out Result_Set) is
-      Tuple_Count       : constant Tuple_Index :=
-        Tuple_Index (This.Results.Data.Get_Tuple_Count);
    begin
-      if This.Results.Data.Is_Random_Access then
+      if This.Results.all.Data.all.Is_Random_Access then
          if This.Tuple /= INVALID_TUPLE and then This.Tuple > 1 then
             This.Tuple := This.Tuple - 1;
          else
@@ -581,10 +578,10 @@ package body DB.Connector is
       Identifier        : in String) return DB.Types.SQL_String
    is
    begin
-      if This.Data = null or else This.Data.Driver = Null then
+      if This.Data = null or else This.Data.all.Driver = Null then
          raise DB.Errors.NOT_CONNECTED;
       else
-         return This.Data.Driver.Quote_Identifier (Identifier);
+         return This.Data.all.Driver.all.Quote_Identifier (Identifier);
       end if;
    end Quote_Identifier;
 
@@ -597,12 +594,11 @@ package body DB.Connector is
       Value             : in String) return DB.Types.SQL_String
    is
    begin
-      if This.Data = null or else This.Data.Driver = Null then
+      if This.Data = null or else This.Data.all.Driver = Null then
          raise DB.Errors.NOT_CONNECTED;
       else
-         return This.Data.Driver.Quote_Value (Value);
+         return This.Data.all.Driver.all.Quote_Value (Value);
       end if;
    end Quote_Value;
 
 end DB.Connector;
-

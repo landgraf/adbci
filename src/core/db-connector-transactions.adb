@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -26,13 +26,13 @@ package body DB.Connector.Transactions is
 
    procedure Begin_Transaction (This : in out Connection'Class) is
    begin
-      if This.Data.In_Transaction then
+      if This.Data.all.In_Transaction then
          raise DB.Errors.TRANSACTION_ERROR with "already in transaction";
       else
          declare
-            Temp        : Result_Set := This.Execute ("BEGIN");
+            Temp        : constant Result_Set := This.Execute ("BEGIN");
          begin
-            This.Data.In_Transaction := True;
+            This.Data.all.In_Transaction := True;
          end;
       end if;
    end Begin_Transaction;
@@ -43,13 +43,13 @@ package body DB.Connector.Transactions is
 
    procedure Commit_Transaction (This : in out Connection'Class) is
    begin
-      if not This.Data.In_Transaction then
+      if not This.Data.all.In_Transaction then
          raise DB.Errors.TRANSACTION_ERROR with "not in transaction";
       else
-         This.Data.In_Transaction := False;
+         This.Data.all.In_Transaction := False;
 
          declare
-            Temp        : Result_Set := This.Execute ("COMMIT");
+            Temp        : constant Result_Set := This.Execute ("COMMIT");
          begin
             null;
          end;
@@ -62,13 +62,13 @@ package body DB.Connector.Transactions is
 
    procedure Rollback_Transaction (This : in out Connection'Class) is
    begin
-      if not This.Data.In_Transaction then
+      if not This.Data.all.In_Transaction then
          raise DB.Errors.TRANSACTION_ERROR with "not in transaction";
       else
-         This.Data.In_Transaction := False;
+         This.Data.all.In_Transaction := False;
 
          declare
-            Temp        : Result_Set := This.Execute ("ROLLBACK");
+            Temp        : constant Result_Set := This.Execute ("ROLLBACK");
          begin
             null;
          end;
@@ -76,4 +76,3 @@ package body DB.Connector.Transactions is
    end Rollback_Transaction;
 
 end DB.Connector.Transactions;
-

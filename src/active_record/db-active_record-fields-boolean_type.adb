@@ -106,6 +106,7 @@ package body DB.Active_Record.Fields.Boolean_Type is
          Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String
       is
+         pragma Unreferenced (Connector);
          Constraints    : constant DB.Types.SQL_String :=
            Constraints_SQL (This);
          Field_Name     : constant String := To_String (This.Field_Name);
@@ -136,6 +137,7 @@ package body DB.Active_Record.Fields.Boolean_Type is
          Results           : in     DB.Connector.Result_Set;
          Load_Foreign_Keys : in     Boolean := False)
       is
+         pragma Unreferenced (Connection);
          pragma Unreferenced (Load_Foreign_Keys);
          Field_Name     : constant String := This.Get_Name;
       begin
@@ -180,6 +182,7 @@ package body DB.Active_Record.Fields.Boolean_Type is
          Connection     : in DB.Connector.Connection)
         return DB.Types.SQL_String
       is
+         pragma Unreferenced (Connection);
       begin
          if not This.Loaded then
             raise DB.Errors.NOT_LOADED;

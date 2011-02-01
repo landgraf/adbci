@@ -16,7 +16,6 @@
 --    db-active_record-fields-character_fields.ads   jvinters   16-January-2011
 --
 
-with Ada.Characters.Handling;          use Ada.Characters.Handling;
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 with DB.Errors;
@@ -160,7 +159,6 @@ package body DB.Active_Record.Fields.Character_Types is
          Has_Default    : in Boolean := True;
          Default_Value  : in String := "") return Field
       is
-         Lower_Name        : constant String := To_Lower (Name);
       begin
          return Temp : Field do
             Config_Name (Temp, Name, Display_Name);
@@ -186,7 +184,7 @@ package body DB.Active_Record.Fields.Character_Types is
            Constraints_SQL (This);
          Field_Name     : constant String := To_String (This.Field_Name);
          Field_Type     : constant DB.Types.SQL_String :=
-            Connector.Get_Driver.Get_Text_Type (This.Maximum_Length);
+            Connector.Get_Driver.all.Get_Text_Type (This.Maximum_Length);
       begin
          return DB.Types.SQL_String (Field_Name & ' ') & Field_Type & Constraints;
       end Field_SQL;
@@ -260,6 +258,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Results           : in     DB.Connector.Result_Set;
          Load_Foreign_Keys : in     Boolean := False)
       is
+         pragma Unreferenced (Connection);
          pragma Unreferenced (Load_Foreign_Keys);
          Field_Name     : constant String := This.Get_Name;
       begin
@@ -475,7 +474,6 @@ package body DB.Active_Record.Fields.Character_Types is
          Has_Default    : in Boolean := True;
          Default_Value  : in String := "") return Field
       is
-         Lower_Name        : constant String := To_Lower (Name);
       begin
          return Temp : Field do
             Config_Name (Temp, Name, Display_Name);
@@ -497,6 +495,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Connector      : in DB.Connector.Connection)
         return DB.Types.SQL_String
       is
+         pragma Unreferenced (Connector);
          Constraints    : constant DB.Types.SQL_String :=
            Constraints_SQL (This);
          Field_Name     : constant String := To_String (This.Field_Name);
@@ -576,6 +575,7 @@ package body DB.Active_Record.Fields.Character_Types is
          Results           : in     DB.Connector.Result_Set;
          Load_Foreign_Keys : in     Boolean := False)
       is
+         pragma Unreferenced (Connection);
          pragma Unreferenced (Load_Foreign_Keys);
          Field_Name     : constant String := This.Get_Name;
       begin

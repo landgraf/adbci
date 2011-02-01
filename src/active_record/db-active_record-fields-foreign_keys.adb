@@ -39,7 +39,6 @@ package body DB.Active_Record.Fields.Foreign_Keys is
      (Left              : in Field;
       Right             : in Model_Type) return Field_Criteria
    is
-      Temp              : Field_Criteria;
    begin
       return Temp : Field_Criteria do
          Set_Criteria (Temp, Left, EQUAL, Right.Get_Id);
@@ -131,7 +130,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Foreign_Model     : constant DB.Types.SQL_String :=
         DB.Types.SQL_String (This.FK.Get_Name);
       Id_SQL            : constant DB.Types.SQL_String :=
-        Connection.Get_Driver.Get_Foreign_Key_SQL;
+        Connection.Get_Driver.all.Get_Foreign_Key_SQL;
       Result            : constant DB.Types.SQL_String :=
         DB.Types.SQL_String (Field_Name & ' ') &
         Id_SQL & " REFERENCES " & Foreign_Model & "(" &
@@ -265,6 +264,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String
    is
+      pragma Unreferenced (Connection);
       Id                : DB.Types.Object_Id;
    begin
       if This.Loaded then
