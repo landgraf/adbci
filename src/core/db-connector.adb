@@ -159,7 +159,7 @@ package body DB.Connector is
             Data_Ptr.all.Reference_Count := Data_Ptr.all.Reference_Count - 1;
             if Data_Ptr.all.Reference_Count = 0 then
                DB.Driver.Free_Result
-                 (Data_Ptr.Driver.all, This.Results.all.Data);
+                 (Data_Ptr.Driver.all, Data_Ptr.all.Data);
                Unchecked_Free (Data_Ptr);
             end if;
          end if;
