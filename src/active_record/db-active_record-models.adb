@@ -715,7 +715,7 @@ package body DB.Active_Record.Models is
         (F : in out DB.Active_Record.Fields.Field'Class)
       is
       begin
-         if F.Is_Not_Null and then F.Is_Null then
+         if F.Is_Not_Null and then not F.Is_Not_Null_Or_Default then
             F.Set_Validation_Failed (F.Get_Display_Name & " can't be empty");
          elsif F.Is_Blank and then not F.Is_Allow_Blank then
             F.Set_Validation_Failed (F.Get_Display_Name & " can't be empty");

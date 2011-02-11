@@ -202,6 +202,19 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          end if;
       end Get;
 
+      ----------------------------
+      -- Is_Not_Null_Or_Default --
+      ----------------------------
+
+      function Is_Not_Null_Or_Default (This : in Field) return Boolean is
+      begin
+         if not This.Is_Null or else This.Auto_Now or else This.Auto_Now_Add then
+            return True;
+         else
+            return False;
+         end if;
+      end Is_Not_Null_Or_Default;
+
       ---------------
       -- Load_From --
       ---------------
@@ -472,6 +485,19 @@ package body DB.Active_Record.Fields.Date_Time_Types is
             raise DB.Errors.NOT_LOADED;
          end if;
       end Get;
+
+      ----------------------------
+      -- Is_Not_Null_Or_Default --
+      ----------------------------
+
+      function Is_Not_Null_Or_Default (This : in Field) return Boolean is
+      begin
+         if not This.Is_Null or else This.Auto_Now or else This.Auto_Now_Add then
+            return True;
+         else
+            return False;
+         end if;
+      end Is_Not_Null_Or_Default;
 
       ---------------
       -- Load_From --

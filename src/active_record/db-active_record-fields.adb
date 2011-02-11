@@ -372,11 +372,20 @@ package body DB.Active_Record.Fields is
       return This.Not_Null;
    end Is_Not_Null;
 
+   ----------------------------
+   -- Is_Not_Null_Or_Default --
+   ----------------------------
+
+   function Is_Not_Null_Or_Default (This : in Field) return Boolean is
+   begin
+      return not This.Is_Null;
+   end Is_Not_Null_Or_Default;
+
    -------------
    -- Is_Null --
    -------------
 
-   function Is_Null (This : in Field'Class) return Boolean is
+   function Is_Null (This : in Field) return Boolean is
    begin
       if This.Loaded then
          return This.Is_Null;

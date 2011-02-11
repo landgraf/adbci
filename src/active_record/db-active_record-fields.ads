@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -89,7 +89,10 @@ package DB.Active_Record.Fields is
    function Is_Not_Null (This : in Field'Class) return Boolean;
    --  Returns true if the field has a NOT NULL constraint.
 
-   function Is_Null (This : in Field'Class) return Boolean;
+   function Is_Not_Null_Or_Default (This : in Field) return Boolean;
+   --  Returns true if field is not null, or provides a default value.
+
+   function Is_Null (This : in Field) return Boolean;
    --  Returns true if field is NULL.
 
    function Is_Unique (This : in Field'Class) return Boolean;

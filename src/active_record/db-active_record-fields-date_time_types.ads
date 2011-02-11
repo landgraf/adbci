@@ -78,6 +78,9 @@ package DB.Active_Record.Fields.Date_Time_Types is
       function Get (This : in Field) return String;
       --  alternative - converts date to string before returning.
 
+      overriding function Is_Not_Null_Or_Default
+        (This		: in Field) return Boolean;
+
       overriding procedure Load_From
         (This              : in out Field;
          Connection        : in     DB.Connector.Connection;
@@ -162,6 +165,9 @@ package DB.Active_Record.Fields.Date_Time_Types is
       function Get (This : in Field) return DB.Types.DB_Timestamp;
 
       function Get (This : in Field) return String;
+
+      overriding function Is_Not_Null_Or_Default
+        (This		: in Field) return Boolean;
 
       overriding procedure Load_From
         (This              : in out Field;
