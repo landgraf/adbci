@@ -134,13 +134,15 @@ package body DB.Connector is
    procedure Finalize (This : in out Connection) is
       procedure Unchecked_Free is new Ada.Unchecked_Deallocation
         (Connection_Record, Connection_Record_Access);
+      Data_Ptr		: Connection_Record_Access := This.Data;
    begin
-      if This.Data /= null then
-         if This.Data.all.Reference_Count > 0 then
-            This.Data.all.Reference_Count := This.Data.all.Reference_Count - 1;
-            if This.Data.all.Reference_Count = 0 then
+      This.Data := null;
+      if Data_Ptr /= null then
+         if Data_Ptr.all.Reference_Count > 0 then
+            Data_Ptr.all.Reference_Count := Data_Ptr.all.Reference_Count - 1;
+            if Data_Ptr.all.Reference_Count = 0 then
                Disconnect (This);
-               Unchecked_Free (This.Data);
+               Unchecked_Free (Data_Ptr);
             end if;
          end if;
       end if;
@@ -149,15 +151,16 @@ package body DB.Connector is
    procedure Finalize (This : in out Result_Set) is
       procedure Unchecked_Free is new Ada.Unchecked_Deallocation
         (Result_Record, Result_Record_Access);
+      Data_Ptr		: Result_Record_Access := This.Results;
    begin
-      if This.Results /= null then
-         if This.Results.all.Reference_Count > 0 then
-            This.Results.all.Reference_Count :=
-              This.Results.all.Reference_Count - 1;
-            if This.Results.all.Reference_Count = 0 then
+      This.Results := null;
+      if Data_Ptr /= null then
+         if Data_Ptr.all.Reference_Count > 0 then
+            Data_Ptr.all.Reference_Count := Data_Ptr.all.Reference_Count - 1;
+            if Data_Ptr.all.Reference_Count = 0 then
                DB.Driver.Free_Result
-                 (This.Results.all.Driver.all, This.Results.all.Data);
-               Unchecked_Free (This.Results);
+                 (Data_Ptr.Driver.all, This.Results.all.Data);
+               Unchecked_Free (Data_Ptr);
             end if;
          end if;
       end if;
