@@ -56,6 +56,15 @@ package body DB.Connector.Transactions is
       end if;
    end Commit_Transaction;
 
+   --------------------
+   -- In_Transaction --
+   --------------------
+
+   function In_Transaction (This : in Connection'Class) return Boolean is
+   begin
+      return This.Data.all.In_Transaction;
+   end In_Transaction;
+
    --------------------------
    -- Rollback_Transaction --
    --------------------------

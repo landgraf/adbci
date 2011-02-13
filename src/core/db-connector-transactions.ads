@@ -24,6 +24,9 @@ package DB.Connector.Transactions is
    procedure Commit_Transaction (This : in out Connection'Class);
    --  Commits a transaction.
 
+   function In_Transaction (This : in Connection'Class) return Boolean;
+   --  Returns true if we are currently in a transaction.
+
    procedure Rollback_Transaction (This : in out Connection'Class);
    --  Rolls back a transaction.
 
