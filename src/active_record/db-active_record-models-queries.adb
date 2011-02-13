@@ -270,10 +270,6 @@ package body DB.Active_Record.Models.Queries is
             Append (Query_SQL, Object.Get_Name);
          end if;
 
-         if For_Update then
-            Append (Query_SQL, "FOR UPDATE");
-         end if;
-
          if No_Order = False then
             Append (Query_SQL, " ORDER BY ");
             if Order'Length = 0 then
@@ -297,6 +293,10 @@ package body DB.Active_Record.Models.Queries is
          if First > 0 then
             Append (Query_SQL, " OFFSET" &
                                DB.Types.Object_Id'Image (First - 1));
+         end if;
+
+         if For_Update then
+            Append (Query_SQL, " FOR UPDATE");
          end if;
 
          return DB.Types.SQL_String (To_String (Query_SQL));
