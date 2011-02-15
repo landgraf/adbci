@@ -204,6 +204,10 @@ package DB.Connector is
    --  Quotes a value for use in an SQL query.  The value returned WITHOUT
    --  enclosing quotes.
 
+   procedure Set_Debug
+     (This		: in out Connection'Class;
+      Value		: in     Boolean);
+
 private
 
    type Connection_Record is record
@@ -216,6 +220,7 @@ private
 
    type Connection is new Ada.Finalization.Controlled with record
       Data              : Connection_Record_Access := null;
+      Debug		: Boolean := False;
    end record;
 
    overriding procedure Adjust (This : in out Connection);

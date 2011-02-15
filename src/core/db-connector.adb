@@ -19,6 +19,7 @@
 with Ada.Unchecked_Deallocation;
 with DB.Driver_Manager;
 with DB.Errors;
+with GNAT.IO;
 
 package body DB.Connector is
 
@@ -108,6 +109,10 @@ package body DB.Connector is
    begin
       if This.Data = null then
          raise DB.Errors.NOT_CONNECTED;
+      end if;
+
+      if This.Debug then
+         GNAT.IO.Put_Line (String (SQL));
       end if;
 
       This.Data.all.Driver.all.Execute_SQL (R, SQL);
@@ -603,5 +608,17 @@ package body DB.Connector is
          return This.Data.all.Driver.all.Quote_Value (Value);
       end if;
    end Quote_Value;
+
+   ---------------
+   -- Set_Debug --
+   ---------------
+
+   procedure Set_Debug
+     (This		: in out Connection'Class;
+      Value		: in     Boolean)
+   is
+   begin
+      This.Debug := Value;
+   end Set_Debug;
 
 end DB.Connector;
