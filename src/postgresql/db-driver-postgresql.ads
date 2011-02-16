@@ -119,6 +119,8 @@ package DB.Driver.PostgreSQL is
    overriding function Get_Inserted_Row_id
      (Result            : in Result_Type) return DB.Types.Object_Id;
 
+   overriding function Get_Server_Version (This : in Driver_Type) return String;
+
    function Get_Text_Type
      (This              : in Driver_Type;
       Maximum_Size      : in Natural) return DB.Types.SQL_String;

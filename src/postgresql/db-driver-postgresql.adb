@@ -16,14 +16,14 @@
 --    db-driver-postgresql.adb   jvinters   15-January-2011
 --
 
-with Ada.Characters.Handling;          use Ada.Characters.Handling;
-with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
+with Ada.Characters.Handling;		use Ada.Characters.Handling;
+with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with Ada.Unchecked_Deallocation;
 with DB.Driver_Manager;
 with DB.Errors;
-with DB.Types;                         use DB.Types;
-with Interfaces.C;                     use Interfaces.C;
-with Interfaces.C.Strings;             use Interfaces.C.Strings;
+with DB.Types;				use DB.Types;
+with Interfaces.C;			use Interfaces.C;
+with Interfaces.C.Strings;		use Interfaces.C.Strings;
 
 pragma Elaborate_All (DB.Driver_Manager);
 
@@ -556,6 +556,28 @@ package body DB.Driver.PostgreSQL is
         "postgresql doesn't do this -- use a RETURNING clause in your query";
       return 0;
    end Get_Inserted_Row_Id;
+
+   ------------------------
+   -- Get_Server_Version --
+   ------------------------
+
+   function Get_Server_Version (This : in Driver_Type) return String is
+      Version_Result	: Result_Handle;
+   begin
+      Execute_SQL (This, Version_Result, "SELECT version()");
+      declare
+         Version_String	: constant String :=
+           Get_Data_String
+             (Result       => Result_Type (Version_Result.all),
+              Tuple        => 1,
+              Column       => 1,
+              Replace_Null => True,
+              Replacement  => "");
+      begin
+         Free_Result (This, Version_Result);
+         return Version_String;
+      end;
+   end Get_Server_Version;
 
    -------------------
    -- Get_Text_Type --

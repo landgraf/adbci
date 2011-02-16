@@ -162,6 +162,11 @@ package DB.Driver is
    --  For databases which support getting the inserted row id via a function,
    --  returns the inserted row id.
 
+   function Get_Server_Version (This : in Abstract_Driver_Type)
+                                return String is abstract;
+   --  Returns a string representing the server version (if available; if not,
+   --  returns an empty string).
+
    function Get_Text_Type
      (This              : in Abstract_Driver_Type;
       Maximum_Size      : in Natural) return DB.Types.SQL_String is abstract;
