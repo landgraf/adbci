@@ -295,7 +295,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
                Value_Str         : constant String :=
                  Date_Image (Ada.Calendar.Clock);
             begin
-               return "'" & Connection.Quote_Value (Value_Str) & "'";
+               return Connection.Quote_Value (Value_Str);
             end;
          else
             if This.Is_Null then
@@ -304,7 +304,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
                declare
                   Value_Str      : constant String := Date_Image (This.Value);
                begin
-                  return "'" & Connection.Quote_Value (Value_Str) & "'";
+                  return Connection.Quote_Value (Value_Str);
                end;
             end if;
          end if;
@@ -589,7 +589,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
                Value_Str         : constant String :=
                  Timestamp_Image (Ada.Calendar.Clock);
             begin
-               return "'" & Connection.Quote_Value (Value_Str) & "'";
+               return Connection.Quote_Value (Value_Str);
             end;
          else
             if This.Is_Null then
@@ -599,7 +599,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
                   Value_Str      : constant String :=
                     Timestamp_Image (This.Value);
                begin
-                  return "'" & Connection.Quote_Value (Value_Str) & "'";
+                  return Connection.Quote_Value (Value_Str);
                end;
             end if;
          end if;

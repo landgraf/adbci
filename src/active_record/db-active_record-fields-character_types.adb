@@ -329,7 +329,7 @@ package body DB.Active_Record.Fields.Character_Types is
          elsif This.Is_Null then
             return "NULL";
          else
-            return "'" & Connection.Quote_Value (To_String (This.Value)) & "'";
+            return Connection.Quote_Value (To_String (This.Value));
          end if;
       end To_SQL;
 
@@ -645,7 +645,7 @@ package body DB.Active_Record.Fields.Character_Types is
          elsif This.Is_Null then
             return "NULL";
          else
-            return "'" & Connection.Quote_Value (To_String (This.Value)) & "'";
+            return Connection.Quote_Value (To_String (This.Value));
          end if;
       end To_SQL;
 

@@ -558,9 +558,9 @@ package body DB.Active_Record.Fields is
       end case;
 
       if This.Data.all.Requires_Quoting then
-         Append (Value, "'" &
-           String (Database.Quote_Value (To_String (This.Data.all.SQL_Criteria)))
-           & "'");
+         Append
+          (Value,
+           String (Database.Quote_Value (To_String (This.Data.all.SQL_Criteria))));
       else
          Append (Value, This.Data.all.SQL_Criteria);
       end if;
@@ -640,7 +640,7 @@ package body DB.Active_Record.Fields is
             Value_Str         : constant String :=
               Trim (DB.Types.Object_Id'Image (This.Value), Both);
          begin
-            return "'" & Connection.Quote_Value (Value_Str) & "'";
+            return Connection.Quote_Value (Value_Str);
          end;
       end if;
    end To_SQL;

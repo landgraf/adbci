@@ -663,8 +663,11 @@ package body DB.Driver.PostgreSQL is
      (Driver            : in Driver_Type;
       Identifier        : in String) return DB.Types.SQL_String
    is
+      Temp		: DB.Types.SQL_String := Quote_Value (Driver, Identifier);
    begin
-      return Driver.Quote_Value (Identifier);
+      Temp (Temp'First) := '"';
+      Temp (Temp'Last) := '"';
+      return Temp;
    end Quote_Identifier;
 
    -----------------
@@ -675,36 +678,31 @@ package body DB.Driver.PostgreSQL is
      (Driver            : in Driver_Type;
       Value             : in String) return DB.Types.SQL_String
    is
-      function PQ_Escape_Bytea_Conn
-        (Connection     : in PG_Connection;
-         From           : in Interfaces.C.Char_Array;
-         From_Length    : in Interfaces.C.Size_t;
-         To_Length      : in System.Address)
-        return Interfaces.C.Strings.Chars_Ptr;
-      pragma Import (C, PQ_Escape_Bytea_Conn, "PQescapeByteaConn");
+      function PQ_Escape_String_Conn
+        (Connection	: in PG_Connection;
+         To		: in System.Address;
+         From		: in Interfaces.C.Char_Array;
+         Length		: in Interfaces.C.Size_t;
+         Error		: in System.Address)
+        return Interfaces.C.Size_t;
+      pragma Import (C, PQ_Escape_String_Conn, "PQescapeStringConn");
 
       procedure PQ_Free_Mem (This : in Interfaces.C.Strings.Chars_Ptr);
       pragma Import (C, PQ_Free_Mem, "PQfreemem");
 
-      Result            : Interfaces.C.Strings.Chars_Ptr;
-      Result_Length     : aliased Interfaces.C.Size_t;
+      Error		: aliased Interfaces.C.Int := 0;
+      Result		: Interfaces.C.Size_t;
+      To		: aliased String (1 .. (Value'Length * 2) + 1);
    begin
-      Result := PQ_Escape_Bytea_Conn
-        (Driver.Connection, To_C (Value), Value'Length, Result_Length'Address);
-      if Result = Interfaces.C.Strings.Null_Ptr then
+      Result := PQ_Escape_String_Conn
+        (Driver.Connection, To (1)'Address, To_C (Value), To'Length, Error'Address);
+      if Error /= 0 then
          raise STORAGE_ERROR;
       else
-         declare
-            QStr        : constant String :=
-              Interfaces.C.Strings.Value (Result);
-         begin
-            PQ_Free_Mem (Result);
-            return DB.Types.SQL_String (QStr);
-         end;
+         return ''' & DB.Types.SQL_String (To (1 .. Natural (Result))) & ''';
       end if;
    end Quote_Value;
 
 begin
    DB.Driver_Manager.Register_Driver ("postgresql", Alloc'Access);
 end DB.Driver.PostgreSQL;
-

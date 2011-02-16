@@ -194,7 +194,7 @@ package DB.Driver is
      (Driver            : in Abstract_Driver_Type;
       Value             : in String) return DB.Types.SQL_String is abstract;
    --  Quotes a string so that it may be safely used as part of an SQL query.
-   --  NOTE: the returned string will NOT be enclosed in quotes.
+   --  NOTE: the returned string WILL be enclosed in single quotes.
 
    procedure Free_Driver is new Ada.Unchecked_Deallocation
      (Abstract_Driver_Type'Class, Driver_Handle);
