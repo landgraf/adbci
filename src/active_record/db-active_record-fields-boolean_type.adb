@@ -16,6 +16,7 @@
 --    db-active_record-fields-boolean_type.adb   jvinters   22-January-2011
 --
 
+with Ada.Characters.Handling;		use Ada.Characters.Handling;
 with DB.Errors;
 
 package body DB.Active_Record.Fields.Boolean_Type is
@@ -114,6 +115,54 @@ package body DB.Active_Record.Fields.Boolean_Type is
          return DB.Types.SQL_String (Field_Name & " BOOLEAN") & Constraints;
       end Field_SQL;
 
+      -----------------
+      -- From_String --
+      -----------------
+
+      procedure From_String
+        (This             : in out Field;
+         Value            : in     String;
+         Empty_As_Default : in     Boolean := True)
+      is
+      begin
+         if Value = "" then
+            if This.Has_Default then
+               This.Value := This.Default_Value;
+               This.Is_Null := False;
+            else
+               This.Is_Null := True;
+               Set_Validation_Failed (This, "Invalid Boolean");
+            end if;
+         else
+            declare
+               Up_Value	: constant String := To_Lower (Value);
+            begin
+               This.Is_Null := True;
+               if Up_Value = "yes"
+                 or else Up_Value = "y"
+                 or else Up_Value = "true"
+                 or else Up_Value = "t"
+                 or else Up_Value = "1"
+                 or else Up_Value = "set"
+               then
+                  This.Value := True;
+                  This.Is_Null := False;
+               elsif Up_Value = "no"
+                 or else Up_Value = "n"
+                 or else Up_Value = "false"
+                 or else Up_Value = "f"
+                 or else Up_Value = "0"
+                 or else Up_Value = "unset"
+               then
+                  This.Value := False;
+                  This.Is_Null := False;
+               else
+                  Set_Validation_Failed (This, "Invalid Boolean");
+               end if;
+            end;
+         end if;
+      end From_String;
+
       ---------
       -- Get --
       ---------
@@ -196,6 +245,25 @@ package body DB.Active_Record.Fields.Boolean_Type is
             end if;
          end if;
       end To_SQL;
+
+      ---------------
+      -- To_String --
+      ---------------
+
+      function To_String (This : in Field) return String is
+      begin
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         elsif This.Is_Null then
+            return "";
+         else
+            if This.Value then
+               return "true";
+            else
+               return "false";
+            end if;
+         end if;
+      end To_String;
 
    end Bool;
 

@@ -254,6 +254,34 @@ package body DB.Active_Record.Fields is
       end if;
    end Finalize;
 
+   -----------------
+   -- From_String --
+   -----------------
+
+   procedure From_String
+     (This		: in out Id_Field;
+      Value		: in     String;
+      Empty_As_Default	: in     Boolean := True)
+   is
+   begin
+      if Value = "" then
+         if Empty_As_Default and then This.Has_Default then
+            This.Value := This.Default_Value;
+            This.Is_Null := True;
+         else
+            Set_Validation_Failed (This, "Invalid Object id");
+            This.Is_Null := True;
+         end if;
+      else
+         This.Is_Null := True;
+         This.Value := DB.Types.Object_Id'Value (Value);
+         This.Is_Null := False;
+      end if;
+   exception
+      when CONSTRAINT_ERROR =>
+         Set_Validation_Failed (This, "Invalid Object id");
+   end From_String;
+
    ---------
    -- Get --
    ---------
@@ -644,6 +672,23 @@ package body DB.Active_Record.Fields is
          end;
       end if;
    end To_SQL;
+
+   ---------------
+   -- To_String --
+   ---------------
+
+   function To_String (This : in Id_Field) return String is
+   begin
+      if not This.Loaded then
+         raise DB.Errors.NOT_LOADED;
+      end if;
+
+      if This.Is_Null then
+         return "";
+      else
+         return Trim (DB.Types.Object_Id'Image (This.Value), Both);
+      end if;
+   end To_String;
 
    ---------------
    -- To_String --

@@ -146,6 +146,34 @@ package body DB.Active_Record.Fields.Generic_Fixed is
         Constraints;
    end Field_SQL;
 
+   -----------------
+   -- From_String --
+   -----------------
+
+   procedure From_String
+     (This             : in out Field;
+      Value            : in     String;
+      Empty_As_Default : in     Boolean := True)
+   is
+   begin
+      if Value = "" then
+         if This.Has_Default then
+            This.Value := This.Default_Value;
+            This.Is_Null := False;
+         else
+            This.Is_Null := True;
+            Set_Validation_Failed (This, "Invalid Fixed Point");
+         end if;
+      else
+         This.Is_Null := True;
+         This.Value := Fixed_Type'Value (Value);
+         This.Is_Null := False;
+      end if;
+   exception
+      when CONSTRAINT_ERROR =>
+         Set_Validation_Failed (This, "Invalid Fixed Point");
+   end From_String;
+
    ---------
    -- Get --
    ---------
@@ -251,5 +279,20 @@ package body DB.Active_Record.Fields.Generic_Fixed is
          end;
       end if;
    end To_SQL;
+
+   ---------------
+   -- To_String --
+   ---------------
+
+   function To_String (This : in Field) return String is
+   begin
+      if not This.Loaded then
+         raise DB.Errors.NOT_LOADED;
+      elsif This.Is_Null then
+         return "";
+      else
+         return Trim (Fixed_Type'Image (This.Value), Both);
+      end if;
+   end To_String;
 
 end DB.Active_Record.Fields.Generic_Fixed;

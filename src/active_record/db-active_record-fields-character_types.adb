@@ -189,6 +189,22 @@ package body DB.Active_Record.Fields.Character_Types is
          return DB.Types.SQL_String (Field_Name & ' ') & Field_Type & Constraints;
       end Field_SQL;
 
+      -----------------
+      -- From_String --
+      -----------------
+
+      procedure From_String
+        (This              : in out Field;
+         Value             : in     String;
+         Empty_As_Default  : in     Boolean := True)
+      is
+         pragma Unreferenced (Empty_As_Default);
+      begin
+         This.Is_Null := True;
+         Set_Unbounded_String (This.Value, Value);
+         This.Is_Null := False;
+      end From_String;
+
       ---------
       -- Get --
       ---------
@@ -332,6 +348,21 @@ package body DB.Active_Record.Fields.Character_Types is
             return Connection.Quote_Value (To_String (This.Value));
          end if;
       end To_SQL;
+
+      ---------------
+      -- To_String --
+      ---------------
+
+      function To_String (This : in Field) return String is
+      begin
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         elsif This.Is_Null then
+            return "";
+         else
+            return To_String (This.Value);
+         end if;
+      end To_String;
 
    end Text;
 
@@ -506,6 +537,22 @@ package body DB.Active_Record.Fields.Character_Types is
            Length_Str & ")" & Constraints;
       end Field_SQL;
 
+      -----------------
+      -- From_String --
+      -----------------
+
+      procedure From_String
+        (This              : in out Field;
+         Value             : in     String;
+         Empty_As_Default  : in     Boolean := True)
+      is
+         pragma Unreferenced (Empty_As_Default);
+      begin
+         This.Is_Null := True;
+         Set_Unbounded_String (This.Value, Value);
+         This.Is_Null := False;
+      end From_String;
+
       ---------
       -- Get --
       ---------
@@ -649,7 +696,21 @@ package body DB.Active_Record.Fields.Character_Types is
          end if;
       end To_SQL;
 
+      ---------------
+      -- To_String --
+      ---------------
+
+      function To_String (This : in Field) return String is
+      begin
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         elsif This.Is_Null then
+            return "";
+         else
+            return To_String (This.Value);
+         end if;
+      end To_String;
+
    end Varchar;
 
 end DB.Active_Record.Fields.Character_Types;
-

@@ -151,6 +151,34 @@ package body DB.Active_Record.Fields.Generic_Integer is
       end case;
    end Field_SQL;
 
+   -----------------
+   -- From_String --
+   -----------------
+
+   procedure From_String
+     (This              : in out Field;
+      Value             : in     String;
+      Empty_As_Default  : in     Boolean := True)
+   is
+   begin
+      if Value = "" then
+         if Empty_As_Default and then This.Has_Default then
+            This.Value := This.Default_Value;
+            This.Is_Null := False;
+         else
+            Set_Validation_Failed (This, "Invalid Integer");
+            This.Is_Null := True;
+         end if;
+      else
+         This.Is_Null := True;
+         This.Value := Integer_Type'Value (Value);
+         This.Is_Null := False;
+      end if;
+   exception
+      when CONSTRAINT_ERROR =>
+         Set_Validation_Failed (This, "Invalid Integer");
+   end From_String;
+
    ---------
    -- Get --
    ---------
@@ -256,6 +284,21 @@ package body DB.Active_Record.Fields.Generic_Integer is
          end;
       end if;
    end To_SQL;
+
+   ---------------
+   -- To_String --
+   ---------------
+
+   function To_String (This : in Field) return String is
+   begin
+      if not This.Loaded then
+         raise DB.Errors.NOT_LOADED;
+      elsif This.Is_Null then
+         return "";
+      else
+         return Trim (Integer_Type'Image (This.Value), Both);
+      end if;
+   end To_String;
 
 begin
    --  Pick the smallest integer type that will hold the entire range.

@@ -56,6 +56,15 @@ package DB.Active_Record.Fields is
      return DB.Types.SQL_String is abstract;
    --  Returns the SQL to define the field.
 
+   procedure From_String
+     (This		: in out Field;
+      Value		: in     String;
+      Empty_As_Default	: in     Boolean := True) is abstract;
+   --  Loads field content from string.  If the string doesn't contain a valid
+   --  value, then the field will be set to have failed validation.
+   --  If Empty_As_Default is true, then an empty string will result in the
+   --  field being set to the default value (if any), or NULL (if none).
+
    function Get_Display_Name (This : in Field'Class) return String;
    --  Returns the display (human-readable) name of the field.
 
@@ -135,6 +144,10 @@ package DB.Active_Record.Fields is
    --  Returns the SQL representation of the current field value.  The value
    --  if not NULL, is enclosed by single quotes.
 
+   function To_String (This : in Field) return String is abstract;
+   --  Converts the field value to a string.  NULLs are returned as an empty
+   --  string.
+
    function To_String
      (This              : in Order_Criteria) return String;
 
@@ -186,6 +199,11 @@ package DB.Active_Record.Fields is
       Connector         : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
+   procedure From_String
+     (This		: in out Id_Field;
+      Value		: in     String;
+      Empty_As_Default	: in     Boolean := True);
+
    function Get (This : in Id_Field) return DB.Types.Object_Id;
 
    overriding procedure Load_From
@@ -218,6 +236,8 @@ package DB.Active_Record.Fields is
      (This              : in Id_Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
+
+   overriding function To_String (This : in Id_Field) return String;
 
 private
 

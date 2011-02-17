@@ -70,6 +70,11 @@ package DB.Active_Record.Fields.Character_Types is
          Connector         : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
+      procedure From_String
+        (This              : in out Field;
+         Value             : in     String;
+         Empty_As_Default  : in     Boolean := True);
+
       function Get (This : in Field) return String;
 
       function Get (This : in Field) return Unbounded_String;
@@ -102,6 +107,8 @@ package DB.Active_Record.Fields.Character_Types is
         (This              : in Field;
          Connection        : in DB.Connector.Connection)
         return DB.Types.SQL_String;
+
+      overriding function To_String (This : in Field) return String;
 
    private
 
@@ -162,6 +169,11 @@ package DB.Active_Record.Fields.Character_Types is
          Connector         : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
+      overriding procedure From_String
+        (This              : in out Field;
+         Value             : in     String;
+         Empty_As_Default  : in     Boolean := True);
+
       function Get (This : in Field) return String;
 
       function Get (This : in Field) return Unbounded_String;
@@ -194,6 +206,8 @@ package DB.Active_Record.Fields.Character_Types is
         (This              : in Field;
          Connection        : in DB.Connector.Connection)
         return DB.Types.SQL_String;
+
+      overriding function To_String (This : in Field) return String;
 
    private
 

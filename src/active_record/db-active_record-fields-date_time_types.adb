@@ -180,6 +180,34 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          return DB.Types.SQL_String (Field_Name & " DATE") & Constraints;
       end Field_SQL;
 
+      -----------------
+      -- From_String --
+      -----------------
+
+      procedure From_String
+        (This             : in out Field;
+         Value            : in     String;
+         Empty_As_Default : in     Boolean := True)
+      is
+      begin
+         if Value = "" then
+            if This.Has_Default then
+               This.Value := This.Default_Value;
+               This.Is_Null := False;
+            else
+               This.Is_Null := True;
+               Set_Validation_Failed (This, "Invalid Date");
+            end if;
+         else
+            This.Is_Null := True;
+            This.Value := Ada.Calendar.Formatting.Value (Value & " 12:00:00");
+            This.Is_Null := False;
+         end if;
+      exception
+         when CONSTRAINT_ERROR =>
+            Set_Validation_Failed (This, "Invalid Date");
+      end From_String;
+
       ---------
       -- Get --
       ---------
@@ -309,6 +337,23 @@ package body DB.Active_Record.Fields.Date_Time_Types is
             end if;
          end if;
       end To_SQL;
+
+      ---------------
+      -- To_String --
+      ---------------
+
+      function To_String (This : in Field) return String is
+      begin
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         else
+            if This.Is_Null then
+               return "";
+            else
+               return Date_Image (This.Value);
+            end if;
+         end if;
+      end To_String;
 
    end Date;
 
@@ -464,6 +509,34 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          return DB.Types.SQL_String (Field_Name & " TIMESTAMP") & Constraints;
       end Field_SQL;
 
+      -----------------
+      -- From_String --
+      -----------------
+
+      procedure From_String
+        (This             : in out Field;
+         Value            : in     String;
+         Empty_As_Default : in     Boolean := True)
+      is
+      begin
+         if Value = "" then
+            if This.Has_Default then
+               This.Value := This.Default_Value;
+               This.Is_Null := False;
+            else
+               This.Is_Null := True;
+               Set_Validation_Failed (This, "Invalid Timestamp");
+            end if;
+         else
+            This.Is_Null := True;
+            This.Value := Ada.Calendar.Formatting.Value (Value);
+            This.Is_Null := False;
+         end if;
+      exception
+         when CONSTRAINT_ERROR =>
+            Set_Validation_Failed (This, "Invalid Timestamp");
+      end From_String;
+
       ---------
       -- Get --
       ---------
@@ -605,7 +678,23 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          end if;
       end To_SQL;
 
+      ---------------
+      -- To_String --
+      ---------------
+
+      function To_String (This : in Field) return String is
+      begin
+         if not This.Loaded then
+            raise DB.Errors.NOT_LOADED;
+         else
+            if This.Is_Null then
+               return "";
+            else
+               return Timestamp_Image (This.Value);
+            end if;
+         end if;
+      end To_String;
+
    end Timestamp;
 
 end DB.Active_Record.Fields.Date_Time_Types;
-

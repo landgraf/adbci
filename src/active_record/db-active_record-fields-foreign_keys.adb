@@ -143,6 +143,30 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       end if;
    end Field_SQL;
 
+   -----------------
+   -- From_String --
+   -----------------
+
+   procedure From_String
+     (This             : in out Field;
+      Value            : in     String;
+      Empty_As_Default : in     Boolean := True)
+   is
+   begin
+      if Value = "" then
+         This.FK_Options.FK_Id := 0;
+         This.Is_Null := True;
+      else
+         This.Is_Null := True;
+         This.Loaded := False;
+         This.FK_Options.FK_Id := DB.Types.Object_Id'Value (Value);
+         This.Is_Null := False;
+      end if;
+   exception
+      when CONSTRAINT_ERROR =>
+         Set_Validation_Failed (This, "Invalid Object id");
+   end From_String;
+
    ---------
    -- Get --
    ---------
@@ -283,5 +307,25 @@ package body DB.Active_Record.Fields.Foreign_Keys is
          return "NULL";
       end if;
    end To_SQL;
+
+   ---------------
+   -- To_String --
+   ---------------
+
+   function To_String (This : in Field) return String is
+      Id                : DB.Types.Object_Id;
+   begin
+      if This.Loaded then
+         Id := This.FK.Get_Id;
+      else
+         Id := This.FK_Options.FK_Id;
+      end if;
+
+      if Id /= 0 then
+         return This.FK.Get_Id;
+      else
+         return "";
+      end if;
+   end To_String;
 
 end DB.Active_Record.Fields.Foreign_Keys;

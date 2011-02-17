@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -67,6 +67,11 @@ package DB.Active_Record.Fields.Generic_Integer is
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
 
+   overriding procedure From_String
+     (This              : in out Field;
+      Value             : in     String;
+      Empty_As_Default  : in     Boolean := True);
+
    function Get
      (This              : in Field) return Integer_Type;
 
@@ -91,6 +96,8 @@ package DB.Active_Record.Fields.Generic_Integer is
      (This              : in Field;
       Connection        : in DB.Connector.Connection)
      return DB.Types.SQL_String;
+
+   overriding function To_String (This : in Field) return String;
 
 private
 

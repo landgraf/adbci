@@ -46,6 +46,11 @@ package DB.Active_Record.Fields.Boolean_Type is
          Connector         : in DB.Connector.Connection)
         return DB.Types.SQL_String;
 
+      overriding procedure From_String
+        (This             : in out Field;
+         Value            : in     String;
+         Empty_As_Default : in     Boolean := True);
+
       function Get (This : in Field) return Boolean;
 
       overriding procedure Load_From
@@ -62,6 +67,8 @@ package DB.Active_Record.Fields.Boolean_Type is
         (This              : in Field;
          Connection        : in DB.Connector.Connection)
         return DB.Types.SQL_String;
+
+      overriding function To_String (This : in Field) return String;
 
    private
 
