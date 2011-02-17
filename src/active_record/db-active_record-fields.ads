@@ -28,6 +28,7 @@ package DB.Active_Record.Fields is
    type Field_Criteria is private;
    type Order_Criteria is private;
 
+   Null_Field_Criteria	: constant Field_Criteria;
    Null_Order_Criteria  : constant Order_Criteria;
 
    type SQL_Operator is
@@ -284,6 +285,9 @@ private
 
    function Validate_Field_Name (This : in String) return Boolean;
    --  Validates field name - returns true if valid, false if invalid.
+
+   Null_Field_Criteria	: constant Field_Criteria :=
+     (Ada.Finalization.Controlled with Data => null);
 
 end DB.Active_Record.Fields;
 
