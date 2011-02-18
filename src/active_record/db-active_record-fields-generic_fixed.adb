@@ -157,7 +157,7 @@ package body DB.Active_Record.Fields.Generic_Fixed is
    is
    begin
       if Value = "" then
-         if This.Has_Default then
+         if Empty_As_Default and then This.Has_Default then
             This.Value := This.Default_Value;
             This.Is_Null := False;
          else

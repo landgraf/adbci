@@ -154,8 +154,12 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    is
    begin
       if Value = "" then
-         This.FK_Options.FK_Id := 0;
-         This.Is_Null := True;
+         if Empty_As_Default then
+            This.FK_Options.FK_Id := 0;
+            This.Is_Null := True;
+         else
+            raise CONSTRAINT_ERROR;
+         end if;
       else
          This.Is_Null := True;
          This.Loaded := False;
