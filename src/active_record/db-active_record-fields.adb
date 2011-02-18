@@ -26,21 +26,17 @@ with DB.Errors;
 
 package body DB.Active_Record.Fields is
 
-   procedure Set_Criteria
-     (This              : in out Field_Criteria;
-      Source_Field      : in     Field'Class;
-      Operator          : in     SQL_Operator;
-      Str               : in     String;
-      Requires_Quoting  : in     Boolean := False)
-   is
+   -----------
+   -- Alloc --
+   -----------
+
+   procedure Alloc (This : in out Field_Criteria) is
    begin
-      Alloc (This);
-      This.Data.all.Model_Name := Source_Field.Model_Name;
-      This.Data.all.Field_Name := Source_Field.Field_Name;
-      This.Data.all.Operator := Operator;
-      Set_Unbounded_String (This.Data.all.SQL_Criteria, Trim (Str, Both));
-      This.Data.all.Requires_Quoting := Requires_Quoting;
-   end Set_Criteria;
+      if This.Data = null then
+         This.Data := new Field_Criteria_Data;
+         This.Data.all.Reference_Count := 1;
+      end if;
+   end Alloc;
 
    ---------
    -- "=" --
@@ -114,18 +110,6 @@ package body DB.Active_Record.Fields is
          This.Data.all.Reference_Count := This.Data.all.Reference_Count + 1;
       end if;
    end Adjust;
-
-   -----------
-   -- Alloc --
-   -----------
-
-   procedure Alloc (This : in out Field_Criteria) is
-   begin
-      if This.Data = null then
-         This.Data := new Field_Criteria_Data;
-         This.Data.all.Reference_Count := 1;
-      end if;
-   end Alloc;
 
    -----------
    -- Clear --
@@ -524,6 +508,26 @@ package body DB.Active_Record.Fields is
       This.Is_Null := False;
       This.Loaded := True;
    end Set;
+
+   ------------------
+   -- Set_Criteria --
+   ------------------
+
+   procedure Set_Criteria
+     (This              : in out Field_Criteria;
+      Source_Field      : in     Field'Class;
+      Operator          : in     SQL_Operator;
+      Str               : in     String;
+      Requires_Quoting  : in     Boolean := False)
+   is
+   begin
+      Alloc (This);
+      This.Data.all.Model_Name := Source_Field.Model_Name;
+      This.Data.all.Field_Name := Source_Field.Field_Name;
+      This.Data.all.Operator := Operator;
+      Set_Unbounded_String (This.Data.all.SQL_Criteria, Trim (Str, Both));
+      This.Data.all.Requires_Quoting := Requires_Quoting;
+   end Set_Criteria;
 
    ----------------
    -- Set_Loaded --

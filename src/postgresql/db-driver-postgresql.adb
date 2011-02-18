@@ -687,9 +687,6 @@ package body DB.Driver.PostgreSQL is
         return Interfaces.C.Size_t;
       pragma Import (C, PQ_Escape_String_Conn, "PQescapeStringConn");
 
-      procedure PQ_Free_Mem (This : in Interfaces.C.Strings.Chars_Ptr);
-      pragma Import (C, PQ_Free_Mem, "PQfreemem");
-
       Error		: aliased Interfaces.C.Int := 0;
       Result		: Interfaces.C.Size_t;
       To		: aliased String (1 .. (Value'Length * 2) + 1);

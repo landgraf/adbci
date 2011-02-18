@@ -114,10 +114,10 @@ package body DB.Active_Record.Models is
    is
       Command           : constant DB.Types.SQL_String :=
         This.Create_SQL (Connection);
-      Temp_Result       : constant DB.Connector.Result_Set :=
-        Connection.Execute (Command);
+      Temp_Result       : DB.Connector.Result_Set;
+      pragma Unreferenced (Temp_Result);
    begin
-      null;
+      Temp_Result := Connection.Execute (Command);
    end Create;
 
    ----------------
@@ -172,10 +172,11 @@ package body DB.Active_Record.Models is
             SQL         : constant DB.Types.SQL_String :=
               DB.Types.SQL_String ("DELETE FROM " & Model_Name & " WHERE " &
                                    Id_Name & "=") & This.Id.To_SQL (Connection);
-            Result      : constant DB.Connector.Result_Set :=
-              Connection.Execute (SQL);
+            Result      : DB.Connector.Result_Set;
+            pragma Unreferenced (Result);
          begin
             This.Clear;
+            Result := Connection.Execute (SQL);
          end;
       end if;
    end Delete;
@@ -189,11 +190,11 @@ package body DB.Active_Record.Models is
       Connection        : in out DB.Connector.Connection)
    is
       Command           : constant DB.Types.SQL_String :=
-        This.Drop_SQL (Connection);
-      Temp_Result       : constant DB.Connector.Result_Set :=
-        Connection.Execute (Command);
+        This.Create_SQL (Connection);
+      Temp_Result       : DB.Connector.Result_Set;
+      pragma Unreferenced (Temp_Result);
    begin
-      null;
+      Temp_Result := Connection.Execute (Command);
    end Drop;
 
    --------------
@@ -642,8 +643,7 @@ package body DB.Active_Record.Models is
       declare
          SQL_Command    : constant DB.Types.SQL_String :=
            DB.Types.SQL_String (To_String (Update_SQL));
-         Results        : constant DB.Connector.Result_Set :=
-           Connection.Execute (SQL_Command);
+         pragma Unreferenced (SQL_Command);
       begin
          This.Store := STORE_UPDATE;
       end;

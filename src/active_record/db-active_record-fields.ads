@@ -222,7 +222,6 @@ package DB.Active_Record.Fields is
       Operator          : in     SQL_Operator;
       Str               : in     String;
       Requires_Quoting  : in     Boolean := False);
-   pragma Inline (Set_Criteria);
 
    procedure To_Query
      (This              : in     Field_Criteria;

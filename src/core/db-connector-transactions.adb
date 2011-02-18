@@ -30,9 +30,11 @@ package body DB.Connector.Transactions is
          raise DB.Errors.TRANSACTION_ERROR with "already in transaction";
       else
          declare
-            Temp        : constant Result_Set := This.Execute ("BEGIN");
+            Temp        : Result_Set;
+            pragma Unreferenced (Temp);
          begin
             This.Data.all.In_Transaction := True;
+            Temp := This.Execute ("BEGIN");
          end;
       end if;
    end Begin_Transaction;
@@ -49,9 +51,10 @@ package body DB.Connector.Transactions is
          This.Data.all.In_Transaction := False;
 
          declare
-            Temp        : constant Result_Set := This.Execute ("COMMIT");
+            Temp        : Result_Set;
+            pragma Unreferenced (Temp);
          begin
-            null;
+            Temp := This.Execute ("COMMIT");
          end;
       end if;
    end Commit_Transaction;
@@ -77,9 +80,10 @@ package body DB.Connector.Transactions is
          This.Data.all.In_Transaction := False;
 
          declare
-            Temp        : constant Result_Set := This.Execute ("ROLLBACK");
+            Temp        : Result_Set;
+            pragma Unreferenced (Temp);
          begin
-            null;
+            Temp := This.Execute ("ROLLBACK");
          end;
       end if;
    end Rollback_Transaction;
