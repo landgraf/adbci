@@ -29,9 +29,17 @@ package DB.Active_Record.Fields.Character_Types is
         (Left              : in Field'Class;
          Right             : in String) return Field_Criteria;
 
+      function "="
+        (Left              : in Field'Class;
+         Right             : in Null_Value_Type) return Field_Criteria;
+
       function "/="
         (Left              : in Field'Class;
          Right             : in String) return Field_Criteria;
+
+      function "/="
+        (Left              : in Field'Class;
+         Right             : in Null_Value_Type) return Field_Criteria;
 
       function "<"
         (Left              : in Field'Class;
@@ -128,9 +136,17 @@ package DB.Active_Record.Fields.Character_Types is
         (Left              : in Field'Class;
          Right             : in String) return Field_Criteria;
 
+      function "="
+        (Left              : in Field'Class;
+         Right             : in Null_Value_Type) return Field_Criteria;
+
       function "/="
         (Left              : in Field'Class;
          Right             : in String) return Field_Criteria;
+
+      function "/="
+        (Left              : in Field'Class;
+         Right             : in Null_Value_Type) return Field_Criteria;
 
       function "<"
         (Left              : in Field'Class;
@@ -220,4 +236,3 @@ package DB.Active_Record.Fields.Character_Types is
    end Varchar;
 
 end DB.Active_Record.Fields.Character_Types;
-

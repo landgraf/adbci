@@ -33,9 +33,17 @@ package DB.Active_Record.Fields.Date_Time_Types is
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Date) return Field_Criteria;
 
+      function "="
+        (Left           : in Field'Class;
+         Right          : in Null_Value_Type) return Field_Criteria;
+
       function "/="
         (Left           : in Field'Class;
          Right          : in DB.Types.DB_Date) return Field_Criteria;
+
+      function "/="
+        (Left           : in Field'Class;
+         Right          : in Null_Value_Type) return Field_Criteria;
 
       function "<"
         (Left           : in Field'Class;
@@ -131,9 +139,17 @@ package DB.Active_Record.Fields.Date_Time_Types is
         (Left              : in Field'Class;
          Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
 
+      function "="
+        (Left              : in Field'Class;
+         Right             : in Null_Value_Type) return Field_Criteria;
+
       function "/="
         (Left              : in Field'Class;
          Right             : in DB.Types.DB_Timestamp) return Field_Criteria;
+
+      function "/="
+        (Left              : in Field'Class;
+         Right             : in Null_Value_Type) return Field_Criteria;
 
       function "<"
         (Left              : in Field'Class;

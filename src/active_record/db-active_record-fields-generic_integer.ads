@@ -31,9 +31,17 @@ package DB.Active_Record.Fields.Generic_Integer is
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria;
 
+   function "="
+     (Left              : in Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria;
+
    function "/="
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria;
+
+   function "/="
+     (Left              : in Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria;
 
    function "<"
      (Left              : in Field'Class;

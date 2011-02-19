@@ -45,6 +45,17 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       end return;
    end "=";
 
+   function "="
+     (Left              : in Field;
+      Right             : in Null_Value_Type) return Field_Criteria
+   is
+      pragma Unreferenced (Right);
+   begin
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, IS_OPERATOR, "NULL", False);
+      end return;
+   end "=";
+
    ----------
    -- "/=" --
    ----------
@@ -66,6 +77,17 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    begin
       return Temp : Field_Criteria do
          Set_Criteria (Temp, Left, NOT_EQUAL, Right.Get_Id);
+      end return;
+   end "/=";
+
+   function "/="
+     (Left              : in Field;
+      Right             : in Null_Value_Type) return Field_Criteria
+   is
+      pragma Unreferenced (Right);
+   begin
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, IS_NOT_OPERATOR, "NULL", False);
       end return;
    end "/=";
 
@@ -328,7 +350,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       if Id /= 0 then
          return This.FK.Get_Id;
       else
-         return "";
+         return "null";
       end if;
    end To_String;
 

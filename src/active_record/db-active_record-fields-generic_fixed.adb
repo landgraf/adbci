@@ -22,6 +22,10 @@ with DB.Errors;
 
 package body DB.Active_Record.Fields.Generic_Fixed is
 
+   ---------
+   -- "=" --
+   ---------
+
    function "="
      (Left              : in Field'Class;
       Right             : in Fixed_Type) return Field_Criteria
@@ -31,6 +35,21 @@ package body DB.Active_Record.Fields.Generic_Fixed is
          Set_Criteria (Temp, Left, EQUAL, Fixed_Type'Image (Right));
       end return;
    end "=";
+
+   function "="
+     (Left              : in Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria
+   is
+      pragma Unreferenced (Right);
+   begin
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, IS_OPERATOR, "NULL", False);
+      end return;
+   end "=";
+
+   ----------
+   -- "/=" --
+   ----------
 
    function "/="
      (Left              : in Field'Class;
@@ -42,6 +61,21 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       end return;
    end "/=";
 
+   function "/="
+     (Left              : in Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria
+   is
+      pragma Unreferenced (Right);
+   begin
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, IS_NOT_OPERATOR, "NULL", False);
+      end return;
+   end "/=";
+
+   ---------
+   -- "<" --
+   ---------
+
    function "<"
      (Left              : in Field'Class;
       Right             : in Fixed_Type) return Field_Criteria
@@ -51,6 +85,10 @@ package body DB.Active_Record.Fields.Generic_Fixed is
          Set_Criteria (Temp, Left, LESS_THAN, Fixed_Type'Image (Right));
       end return;
    end "<";
+
+   ----------
+   -- "<=" --
+   ----------
 
    function "<="
      (Left              : in Field'Class;
@@ -62,6 +100,10 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       end return;
    end "<=";
 
+   ----------
+   -- ">=" --
+   ----------
+
    function ">="
      (Left              : in Field'Class;
       Right             : in Fixed_Type) return Field_Criteria
@@ -71,6 +113,10 @@ package body DB.Active_Record.Fields.Generic_Fixed is
          Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Fixed_Type'Image (Right));
       end return;
    end ">=";
+
+   ---------
+   -- ">" --
+   ---------
 
    function ">"
      (Left              : in Field'Class;

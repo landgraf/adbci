@@ -28,9 +28,17 @@ package DB.Active_Record.Fields.Boolean_Type is
         (Left              : in Field'Class;
          Right             : in Boolean) return Field_Criteria;
 
+      function "="
+        (Left              : in Field'Class;
+         Right             : in Null_Value_Type) return Field_Criteria;
+
       function "/="
         (Left              : in Field'Class;
          Right             : in Boolean) return Field_Criteria;
+
+      function "/="
+        (Left              : in Field'Class;
+         Right             : in Null_Value_Type) return Field_Criteria;
 
       overriding procedure Clear (This : in out Field);
 

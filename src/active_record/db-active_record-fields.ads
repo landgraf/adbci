@@ -31,6 +31,10 @@ package DB.Active_Record.Fields is
    Null_Field_Criteria	: constant Field_Criteria;
    Null_Order_Criteria  : constant Order_Criteria;
 
+   type Null_Value_Type is private;
+
+   NULL_VALUE		: constant Null_Value_Type;
+
    type SQL_Operator is
      (EQUAL,                                    --  =
       NOT_EQUAL,                                --  <>
@@ -41,7 +45,9 @@ package DB.Active_Record.Fields is
       LIKE,                                     --  LIKE
       ILIKE,                                    --  ILIKE
       SQL_AND,                                  --  AND (requires subtrees)
-      SQL_OR);                                  --  OR (requires subtrees)
+      SQL_OR,                                   --  OR (requires subtrees)
+      IS_OPERATOR,				--  IS
+      IS_NOT_OPERATOR);				--  IS NOT
 
    procedure Clear (This : in out Field) is abstract;
    --  Clears the field - if the field has a default, sets the field to the
@@ -165,9 +171,17 @@ package DB.Active_Record.Fields is
      (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
 
+   function "="
+     (Left              : in Id_Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria;
+
    function "/="
      (Left              : in Id_Field'Class;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
+
+   function "/="
+     (Left              : in Id_Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria;
 
    function "and"
      (Left              : in Field_Criteria;
@@ -239,6 +253,9 @@ package DB.Active_Record.Fields is
    overriding function To_String (This : in Id_Field) return String;
 
 private
+
+   type Null_Value_Type is null record;
+   NULL_VALUE		: constant Null_Value_Type := (null record);
 
    type Field is abstract tagged record
       Allow_Blank       : Boolean := True;      --  Allow blank content?

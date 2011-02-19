@@ -41,6 +41,17 @@ package body DB.Active_Record.Fields.Boolean_Type is
          end return;
       end "=";
 
+      function "="
+        (Left           : in Field'Class;
+         Right          : in Null_Value_Type) return Field_Criteria
+      is
+         pragma Unreferenced (Right);
+      begin
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, IS_OPERATOR, "NULL", False);
+         end return;
+      end "=";
+
       ----------
       -- "/=" --
       ----------
@@ -56,6 +67,17 @@ package body DB.Active_Record.Fields.Boolean_Type is
             else
                Set_Criteria (Temp, Left, NOT_EQUAL, "false");
             end if;
+         end return;
+      end "/=";
+
+      function "/="
+        (Left           : in Field'Class;
+         Right          : in Null_Value_Type) return Field_Criteria
+      is
+         pragma Unreferenced (Right);
+      begin
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, IS_NOT_OPERATOR, "NULL");
          end return;
       end "/=";
 

@@ -25,6 +25,10 @@ package body DB.Active_Record.Fields.Generic_Integer is
    type Field_Size_Type is (BITS_16, BITS_32, BITS_64);
    Field_Size           : Field_Size_Type := BITS_16;
 
+   ---------
+   -- "=" --
+   ---------
+
    function "="
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
@@ -34,6 +38,21 @@ package body DB.Active_Record.Fields.Generic_Integer is
          Set_Criteria (Temp, Left, EQUAL, Integer_Type'Image (Right));
       end return;
    end "=";
+
+   function "="
+     (Left              : in Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria
+   is
+      pragma Unreferenced (Right);
+   begin
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, IS_OPERATOR, "NULL", False);
+      end return;
+   end "=";
+
+   ----------
+   -- "/=" --
+   ----------
 
    function "/="
      (Left              : in Field'Class;
@@ -45,6 +64,21 @@ package body DB.Active_Record.Fields.Generic_Integer is
       end return;
    end "/=";
 
+   function "/="
+     (Left              : in Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria
+   is
+      pragma Unreferenced (Right);
+   begin
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, IS_NOT_OPERATOR, "NULL", False);
+      end return;
+   end "/=";
+
+   ---------
+   -- "<" --
+   ---------
+
    function "<"
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
@@ -54,6 +88,10 @@ package body DB.Active_Record.Fields.Generic_Integer is
          Set_Criteria (Temp, Left, LESS_THAN, Integer_Type'Image (Right));
       end return;
    end "<";
+
+   ----------
+   -- "<=" --
+   ----------
 
    function "<="
      (Left              : in Field'Class;
@@ -65,6 +103,10 @@ package body DB.Active_Record.Fields.Generic_Integer is
       end return;
    end "<=";
 
+   ----------
+   -- ">=" --
+   ----------
+
    function ">="
      (Left              : in Field'Class;
       Right             : in Integer_Type) return Field_Criteria
@@ -74,6 +116,10 @@ package body DB.Active_Record.Fields.Generic_Integer is
          Set_Criteria (Temp, Left, GREATER_THAN_OR_EQUAL, Integer_Type'Image (Right));
       end return;
    end ">=";
+
+   ---------
+   -- ">" --
+   ---------
 
    function ">"
      (Left              : in Field'Class;

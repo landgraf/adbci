@@ -38,6 +38,17 @@ package body DB.Active_Record.Fields.Character_Types is
          end return;
       end "=";
 
+      function "="
+        (Left           : in Field'Class;
+         Right          : in Null_Value_Type) return Field_Criteria
+      is
+         pragma Unreferenced (Right);
+      begin
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, IS_OPERATOR, "NULL", False);
+         end return;
+      end "=";
+
       ----------
       -- "/=" --
       ----------
@@ -49,6 +60,17 @@ package body DB.Active_Record.Fields.Character_Types is
       begin
          return Temp : Field_Criteria do
             Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
+         end return;
+      end "/=";
+
+      function "/="
+        (Left           : in Field'Class;
+         Right          : in Null_Value_Type) return Field_Criteria
+      is
+         pragma Unreferenced (Right);
+      begin
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, IS_NOT_OPERATOR, "NULL", False);
          end return;
       end "/=";
 
@@ -383,6 +405,17 @@ package body DB.Active_Record.Fields.Character_Types is
          end return;
       end "=";
 
+      function "="
+        (Left           : in Field'Class;
+         Right          : in Null_Value_Type) return Field_Criteria
+      is
+         pragma Unreferenced (Right);
+      begin
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, IS_OPERATOR, "NULL", False);
+         end return;
+      end "=";
+
       ----------
       -- "/=" --
       ----------
@@ -394,6 +427,17 @@ package body DB.Active_Record.Fields.Character_Types is
       begin
          return Temp : Field_Criteria do
             Set_Criteria (Temp, Left, NOT_EQUAL, Right, True);
+         end return;
+      end "/=";
+
+      function "/="
+        (Left           : in Field'Class;
+         Right          : in Null_Value_Type) return Field_Criteria
+      is
+         pragma Unreferenced (Right);
+      begin
+         return Temp : Field_Criteria do
+            Set_Criteria (Temp, Left, IS_NOT_OPERATOR, "NULL", False);
          end return;
       end "/=";
 

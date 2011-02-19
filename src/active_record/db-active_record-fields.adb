@@ -52,6 +52,21 @@ package body DB.Active_Record.Fields is
       end return;
    end "=";
 
+   ---------
+   -- "=" --
+   ---------
+
+   function "="
+     (Left              : in Id_Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria
+   is
+      pragma Unreferenced (Right);
+   begin
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, IS_OPERATOR, "NULL", False);
+      end return;
+   end "=";
+
    ----------
    -- "/=" --
    ----------
@@ -63,6 +78,21 @@ package body DB.Active_Record.Fields is
    begin
       return Temp : Field_Criteria do
          Set_Criteria (Temp, Left, NOT_EQUAL, DB.Types.Object_Id'Image (Right));
+      end return;
+   end "/=";
+
+   ----------
+   -- "/=" --
+   ----------
+
+   function "/="
+     (Left              : in Id_Field'Class;
+      Right             : in Null_Value_Type) return Field_Criteria
+   is
+      pragma Unreferenced (Right);
+   begin
+      return Temp : Field_Criteria do
+         Set_Criteria (Temp, Left, IS_NOT_OPERATOR, "NULL", False);
       end return;
    end "/=";
 
@@ -585,6 +615,10 @@ package body DB.Active_Record.Fields is
             Append (Value, " ILIKE ");
          when LIKE =>
             Append (Value, " LIKE ");
+         when IS_OPERATOR =>
+            Append (Value, " IS ");
+         when IS_NOT_OPERATOR =>
+            Append (Value, " IS NOT ");
          when others =>
             raise PROGRAM_ERROR with "incorrect usage";
       end case;

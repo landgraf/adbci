@@ -40,6 +40,10 @@ package DB.Active_Record.Fields.Foreign_Keys is
      (Left              : in Field;
       Right             : in Model_Type) return Field_Criteria;
 
+   function "="
+     (Left              : in Field;
+      Right             : in Null_Value_Type) return Field_Criteria;
+
    function "/="
      (Left              : in Field;
       Right             : in DB.Types.Object_Id) return Field_Criteria;
@@ -47,6 +51,10 @@ package DB.Active_Record.Fields.Foreign_Keys is
    function "/="
      (Left              : in Field;
       Right             : in Model_Type) return Field_Criteria;
+
+   function "/="
+     (Left              : in Field;
+      Right             : in Null_Value_Type) return Field_Criteria;
 
    overriding procedure Clear (This : in out Field);
 
