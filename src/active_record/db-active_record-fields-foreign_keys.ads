@@ -99,6 +99,10 @@ package DB.Active_Record.Fields.Foreign_Keys is
      (This              : in out Field;
       Value             : in     Model_Type);
 
+   procedure Set_Id
+     (This		: in out Field;
+      Value		: in     DB.Types.Object_Id);
+
    overriding function To_SQL
      (This              : in Field;
       Connection        : in DB.Connector.Connection)

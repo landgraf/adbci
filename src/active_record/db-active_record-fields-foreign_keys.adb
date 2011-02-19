@@ -16,10 +16,14 @@
 --    db-active_record-fields-foreign_keys.adb   jvinters   17-January-2011
 --
 
-with Ada.Characters.Handling;          use Ada.Characters.Handling;
+with Ada.Characters.Handling;		use Ada.Characters.Handling;
+with Ada.Strings.Fixed;			use Ada.Strings.Fixed;
+with DB.Active_Record.Models;
 with DB.Errors;
 
 package body DB.Active_Record.Fields.Foreign_Keys is
+
+   use Ada.Strings;
 
    ---------
    -- "=" --
@@ -251,6 +255,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
             This.FK.Get (Connection, Item_FK, Load_Foreign_Keys);
             This.FK_Options.FK_Id := Item_FK;
             This.Loaded := True;
+            This.Is_Null := False;
          end;
       else
          if not Is_Null then
@@ -262,9 +267,11 @@ package body DB.Active_Record.Fields.Foreign_Keys is
                DB.Active_Record.Models.Iterate_Fields
                  (This.FK, Set_Not_Loaded'Access);
                This.FK_Options.FK_Id := Item_FK;
+               This.Is_Null := False;
             end;
          else
             This.FK.Clear;
+            This.Is_Null := True;
          end if;
       end if;
    end Load_From;
@@ -305,6 +312,22 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       This.Loaded := True;
    end Set;
 
+   procedure Set_Id
+     (This		: in out Field;
+      Value		: in     DB.Types.Object_Id)
+   is
+   begin
+      DB.Active_Record.Models.Clear (This.FK);
+      This.FK_Options.FK_Id := Value;
+      This.Changed := True;
+      if Value /= 0 then
+         This.Is_Null := False;
+      else
+         This.Is_Null := True;
+      end if;
+      This.Loaded := False;
+   end Set_Id;
+
    ------------
    -- To_SQL --
    ------------
@@ -325,9 +348,10 @@ package body DB.Active_Record.Fields.Foreign_Keys is
 
       if Id /= 0 then
          declare
-            Id          : constant String := This.FK.Get_Id;
+            Id_Str      : constant String :=
+              Trim (DB.Types.Object_Id'Image (Id), Both);
          begin
-            return DB.Types.SQL_String (Id);
+            return DB.Types.SQL_String (Id_Str);
          end;
       else
          return "NULL";
