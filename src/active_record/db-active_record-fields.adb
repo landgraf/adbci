@@ -369,11 +369,7 @@ package body DB.Active_Record.Fields is
 
    function Is_Changed (This : in Field'Class) return Boolean is
    begin
-      if This.Loaded then
-         return This.Changed;
-      else
-         raise DB.Errors.NOT_LOADED;
-      end if;
+      return This.Changed;
    end Is_Changed;
 
    --------------
