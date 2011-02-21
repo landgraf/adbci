@@ -18,7 +18,6 @@
 
 with Ada.Characters.Handling;		use Ada.Characters.Handling;
 with Ada.Strings.Fixed;			use Ada.Strings.Fixed;
-with DB.Active_Record.Models;
 with DB.Errors;
 
 package body DB.Active_Record.Fields.Foreign_Keys is
@@ -45,7 +44,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    is
    begin
       return Temp : Field_Criteria do
-         Set_Criteria (Temp, Left, EQUAL, Right.Get_Id);
+         Set_Criteria (Temp, Left, EQUAL, Right.Get_Id_String);
       end return;
    end "=";
 
@@ -80,7 +79,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    is
    begin
       return Temp : Field_Criteria do
-         Set_Criteria (Temp, Left, NOT_EQUAL, Right.Get_Id);
+         Set_Criteria (Temp, Left, NOT_EQUAL, Right.Get_Id_String);
       end return;
    end "/=";
 
@@ -104,7 +103,6 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       This.Changed := True;
       This.Is_Null := True;
       This.FK.Clear;
-      This.FK_Options.FK_Id := 0;
       This.Loaded := True;
    end Clear;
 
@@ -181,7 +179,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    begin
       if Value = "" then
          if Empty_As_Default then
-            This.FK_Options.FK_Id := 0;
+            This.FK.Clear;
             This.Is_Null := True;
          else
             raise CONSTRAINT_ERROR;
@@ -189,7 +187,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       else
          This.Is_Null := True;
          This.Loaded := False;
-         This.FK_Options.FK_Id := DB.Types.Object_Id'Value (Value);
+         This.FK.Set_Id (DB.Types.Object_Id'Value (Value));
          This.Is_Null := False;
       end if;
    exception
@@ -210,10 +208,23 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       end if;
    end Get;
 
-   function Get (This : in Field) return DB.Types.Object_Id is
+   ----------------
+   -- Get_String --
+   ----------------
+
+   function Get_String (This : in Field) return String is
    begin
-      return This.FK_Options.FK_Id;
-   end Get;
+      return To_String (This);
+   end Get_String;
+
+   ------------
+   -- Get_Id --
+   ------------
+
+   function Get_Id (This : in Field) return DB.Types.Object_Id is
+   begin
+      return This.FK.Get_Id;
+   end Get_Id;
 
    --------------------
    -- Is_Foreign_Key --
@@ -245,7 +256,10 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Field_Name        : constant String := This.Get_Name;
       Is_Null           : constant Boolean := Results.Get_Is_Null (Field_Name);
    begin
+      This.FK.Clear;
+      This.Is_Null := True;
       This.Loaded := False;
+
       if not Is_Null and then Load_Foreign_Keys then
          declare
             Item_FK     : constant DB.Types.Object_Id :=
@@ -253,7 +267,6 @@ package body DB.Active_Record.Fields.Foreign_Keys is
          begin
             This.FK_Options.Results := DB.Connector.Null_Result_Set;
             This.FK.Get (Connection, Item_FK, Load_Foreign_Keys);
-            This.FK_Options.FK_Id := Item_FK;
             This.Loaded := True;
             This.Is_Null := False;
          end;
@@ -266,12 +279,9 @@ package body DB.Active_Record.Fields.Foreign_Keys is
                This.FK_Options.Results := Results;
                DB.Active_Record.Models.Iterate_Fields
                  (This.FK, Set_Not_Loaded'Access);
-               This.FK_Options.FK_Id := Item_FK;
+               This.FK.Set_Id (Item_FK);
                This.Is_Null := False;
             end;
-         else
-            This.FK.Clear;
-            This.Is_Null := True;
          end if;
       end if;
    end Load_From;
@@ -291,7 +301,6 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    begin
       if This.FK_Options.Results /= DB.Connector.Null_Result_Set then
          This.FK.Get (Connection, Item_FK, Recurse);
-         This.FK_Options.FK_Id := Item_FK;
          This.Loaded := True;
       end if;
    end Load_Now;
@@ -306,7 +315,6 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    is
    begin
       This.FK := Value;
-      This.FK_Options.FK_Id := This.FK.Get_Id;
       This.Changed := True;
       This.Is_Null := False;
       This.Loaded := True;
@@ -318,7 +326,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    is
    begin
       DB.Active_Record.Models.Clear (This.FK);
-      This.FK_Options.FK_Id := Value;
+      This.FK.Set_Id (Value);
       This.Changed := True;
       if Value /= 0 then
          This.Is_Null := False;
@@ -340,11 +348,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       pragma Unreferenced (Connection);
       Id                : DB.Types.Object_Id;
    begin
-      if This.Loaded then
-         Id := This.FK.Get_Id;
-      else
-         Id := This.FK_Options.FK_Id;
-      end if;
+      Id := This.FK.Get_Id;
 
       if Id /= 0 then
          declare
@@ -363,16 +367,10 @@ package body DB.Active_Record.Fields.Foreign_Keys is
    ---------------
 
    function To_String (This : in Field) return String is
-      Id                : DB.Types.Object_Id;
+      Id_Str		: constant String := This.FK.Get_Id_String;
    begin
-      if This.Loaded then
-         Id := This.FK.Get_Id;
-      else
-         Id := This.FK_Options.FK_Id;
-      end if;
-
-      if Id /= 0 then
-         return This.FK.Get_Id;
+      if Id_Str /= "0" then
+         return Id_Str;
       else
          return "null";
       end if;

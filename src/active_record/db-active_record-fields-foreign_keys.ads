@@ -77,7 +77,9 @@ package DB.Active_Record.Fields.Foreign_Keys is
 
    function Get (This : in Field) return Model_Type;
 
-   function Get (This : in Field) return DB.Types.Object_Id;
+   function Get_Id (This : in Field) return DB.Types.Object_Id;
+
+   function Get_String (This : in Field) return String;
 
    overriding function Is_Foreign_Key
      (This              : in Field) return Boolean;
@@ -114,7 +116,6 @@ private
 
    type Options is record
       Cascade_Delete    : Boolean := False;
-      FK_Id             : DB.Types.Object_Id := 0;
       Results           : DB.Connector.Result_Set :=
                             DB.Connector.Null_Result_Set;
    end record;
