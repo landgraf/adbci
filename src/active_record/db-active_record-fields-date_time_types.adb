@@ -243,14 +243,18 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          end if;
       end Get;
 
-      function Get (This : in Field) return String is
+      ----------------
+      -- Get_String --
+      ----------------
+
+      function Get_String (This : in Field) return String is
       begin
          if This.Loaded then
             return Date_Image (This.Value);
          else
             raise DB.Errors.NOT_LOADED;
          end if;
-      end Get;
+      end Get_String;
 
       ----------------------------
       -- Is_Not_Null_Or_Default --
@@ -594,14 +598,18 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          end if;
       end Get;
 
-      function Get (This : in Field) return String is
+      ----------------
+      -- Get_String --
+      ----------------
+
+      function Get_String (This : in Field) return String is
       begin
          if This.Loaded then
             return Timestamp_Image (This.Value);
          else
             raise DB.Errors.NOT_LOADED;
          end if;
-      end Get;
+      end Get_String;
 
       ----------------------------
       -- Is_Not_Null_Or_Default --

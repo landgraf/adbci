@@ -233,7 +233,11 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       end if;
    end Get;
 
-   function Get (This : in Field) return String is
+   ----------------
+   -- Get_String --
+   ----------------
+
+   function Get_String (This : in Field) return String is
       Temp              : constant String :=
         Trim (Fixed_Type'Image (This.Value), Both);
    begin
@@ -242,7 +246,7 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       else
          raise DB.Errors.NOT_LOADED;
       end if;
-   end Get;
+   end Get_String;
 
    ---------------
    -- Load_From --
@@ -332,12 +336,10 @@ package body DB.Active_Record.Fields.Generic_Fixed is
 
    function To_String (This : in Field) return String is
    begin
-      if not This.Loaded then
-         raise DB.Errors.NOT_LOADED;
-      elsif This.Is_Null then
+      if This.Is_Null then
          return "";
       else
-         return Trim (Fixed_Type'Image (This.Value), Both);
+         return Get_String (This);
       end if;
    end To_String;
 

@@ -82,7 +82,7 @@ package DB.Active_Record.Fields.Generic_Fixed is
    function Get
      (This              : in Field) return Fixed_Type;
 
-   function Get
+   function Get_String
      (This              : in Field) return String;
 
    overriding procedure Load_From

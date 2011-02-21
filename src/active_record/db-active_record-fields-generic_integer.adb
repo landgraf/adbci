@@ -238,7 +238,11 @@ package body DB.Active_Record.Fields.Generic_Integer is
       end if;
    end Get;
 
-   function Get (This : in Field) return String is
+   ----------------
+   -- Get_String --
+   ----------------
+
+   function Get_String (This : in Field) return String is
       Temp              : constant String :=
         Trim (Integer_Type'Image (This.Value), Both);
    begin
@@ -247,7 +251,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
       else
          raise DB.Errors.NOT_LOADED;
       end if;
-   end Get;
+   end Get_String;
 
    ---------------
    -- Load_From --

@@ -83,7 +83,7 @@ package DB.Active_Record.Fields.Generic_Integer is
    function Get
      (This              : in Field) return Integer_Type;
 
-   function Get
+   function Get_String
      (This              : in Field) return String;
 
    overriding procedure Load_From
