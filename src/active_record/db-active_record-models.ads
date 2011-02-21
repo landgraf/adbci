@@ -84,11 +84,11 @@ package DB.Active_Record.Models is
    function Get_Id (This : in Model'Class) return DB.Types.Object_Id;
    --  Gets Model Id (or 0 if none).
 
-   function Get_Id (This : in Model'Class) return String;
-   --  Gets Model Id as string (or "0" if none).
-
    function Get_Id_Name (This : in Model'Class) return String;
    --  Returns the name of the id field.
+
+   function Get_Id_String (This : in Model'Class) return String;
+   --  Gets Model Id as string (or "0" if none).
 
    function Get_Name (This : in Model'Class) return String;
    --  Returns the model name.
@@ -101,6 +101,9 @@ package DB.Active_Record.Models is
 
    procedure Initialize_Model (This : in out Model);
    --  Initializes the model.
+
+   function Is_Changed (This : in Model'Class) return Boolean;
+   --  Returns true if the model has changed.
 
    procedure Iterate_Custom_Fields
      (This              : in out Model;
@@ -153,6 +156,11 @@ package DB.Active_Record.Models is
    --  Saves the model to the database, using either an INSERT or an
    --  UPDATE.  If Force_Save is true, then the save will be done regardless
    --  of whether there appears to be any changes in the model.
+
+   procedure Set_Id
+     (This		: in out Model'Class;
+      Id		: in     DB.Types.Object_Id);
+   --  Sets object id - for internal use only!
 
    procedure Set_Id_Name
      (This              : in out Model'Class;

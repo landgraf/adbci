@@ -190,7 +190,7 @@ package body DB.Active_Record.Models is
       Connection        : in out DB.Connector.Connection)
    is
       Command           : constant DB.Types.SQL_String :=
-        This.Create_SQL (Connection);
+        This.Drop_SQL (Connection);
       Temp_Result       : DB.Connector.Result_Set;
       pragma Unreferenced (Temp_Result);
    begin
@@ -260,11 +260,6 @@ package body DB.Active_Record.Models is
       return This.Id.Get;
    end Get_Id;
 
-   function Get_Id (This : in Model'Class) return String is
-   begin
-      return Trim (DB.Types.Object_Id'Image (This.Id.Get), Both);
-   end Get_Id;
-
    -----------------
    -- Get_Id_Name --
    -----------------
@@ -273,6 +268,15 @@ package body DB.Active_Record.Models is
    begin
       return To_String (This.Id_Name);
    end Get_Id_Name;
+
+   -------------------
+   -- Get_Id_String --
+   -------------------
+
+   function Get_Id_String (This : in Model'Class) return String is
+   begin
+      return Trim (DB.Types.Object_Id'Image (This.Id.Get), Both);
+   end Get_Id_String;
 
    --------------
    -- Get_Name --
@@ -325,6 +329,15 @@ package body DB.Active_Record.Models is
          This.On_After_Initialize;
       end if;
    end Initialize;
+
+   ----------------
+   -- Is_Changed --
+   ----------------
+
+   function Is_Changed (This : in Model'Class) return Boolean is
+   begin
+      return This.Changed;
+   end Is_Changed;
 
    ----------------------
    -- Initialize_Model --
@@ -509,7 +522,7 @@ package body DB.Active_Record.Models is
       --  First, check to see if item is read only.
       if This.Read_Only then
          raise DB.Errors.OBJECT_READ_ONLY with
-           "object '" & This.Get_Name & "' with id '" & This.Get_Id &
+           "object '" & This.Get_Name & "' with id '" & This.Get_Id_String &
            "' is read only";
       end if;
 
@@ -643,11 +656,24 @@ package body DB.Active_Record.Models is
       declare
          SQL_Command    : constant DB.Types.SQL_String :=
            DB.Types.SQL_String (To_String (Update_SQL));
-         pragma Unreferenced (SQL_Command);
+         Results        : constant DB.Connector.Result_Set :=
+           Connection.Execute (SQL_Command);
       begin
          This.Store := STORE_UPDATE;
       end;
    end Save_Update;
+
+   ------------
+   -- Set_Id --
+   ------------
+
+   procedure Set_Id
+     (This		: in out Model'Class;
+      Id		: in     DB.Types.Object_Id)
+   is
+   begin
+      This.Id.Set (Id);
+   end Set_Id;
 
    -----------------
    -- Set_Id_Name --
