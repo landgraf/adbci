@@ -518,6 +518,13 @@ package body DB.Active_Record.Models is
             raise DB.Errors.VALIDATION_ERROR with F.Validation_Error;
          end if;
       end Detect_Validation_Errors;
+
+      procedure Pre_Save_Prepare
+        (F : in out DB.Active_Record.Fields.Field'Class)
+      is
+      begin
+         F.Pre_Save;
+      end Pre_Save_Prepare;
    begin
       --  First, check to see if item is read only.
       if This.Read_Only then
@@ -539,6 +546,7 @@ package body DB.Active_Record.Models is
       --  as having failed validation if required.  VALIDATION_ERROR will
       --  be raised if any of the custom fields in the model have errors.
       This.Iterate_Custom_Fields (Clear_Validation_Errors'Access);
+      This.Iterate_Custom_Fields (Pre_Save_Prepare'Access);
       This.Validate_Constraints;
       This.Validate (Connection);
       This.Iterate_Custom_Fields (Detect_Validation_Errors'Access);

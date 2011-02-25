@@ -100,6 +100,8 @@ package DB.Active_Record.Fields.Date_Time_Types is
          Results           : in     DB.Connector.Result_Set;
          Load_Foreign_Keys : in     Boolean := False);
 
+      overriding procedure Pre_Save (This : in out Field);
+
       procedure Set
         (This           : in out Field;
          Value          : in     Ada.Calendar.Time);
@@ -202,6 +204,8 @@ package DB.Active_Record.Fields.Date_Time_Types is
          Connection        : in     DB.Connector.Connection;
          Results           : in     DB.Connector.Result_Set;
          Load_Foreign_Keys : in     Boolean := False);
+
+      overriding procedure Pre_Save (This : in out Field);
 
       procedure Set
         (This              : in out Field;

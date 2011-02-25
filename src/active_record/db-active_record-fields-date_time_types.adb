@@ -305,6 +305,19 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          This.Loaded := True;
       end Load_From;
 
+      --------------
+      -- Pre_Save --
+      --------------
+
+      procedure Pre_Save (This : in out Field) is
+      begin
+         if This.Auto_Now or else
+           (This.Auto_Now_Add and then This.Is_Null) then
+            This.Value := Ada.Calendar.Clock;
+            This.Is_Null := False;
+         end if;
+      end Pre_Save;
+
       ---------
       -- Set --
       ---------
@@ -343,24 +356,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
       begin
          if not This.Loaded then
             raise DB.Errors.NOT_LOADED;
-         elsif This.Auto_Now or else
-           (This.Auto_Now_Add and then This.Is_Null) then
-            declare
-               Value_Str         : constant String :=
-                 Date_Image (Ada.Calendar.Clock);
-            begin
-               return Connection.Quote_Value (Value_Str);
-            end;
+         elsif This.Is_Null then
+            return "NULL";
          else
-            if This.Is_Null then
-               return "NULL";
-            else
-               declare
-                  Value_Str      : constant String := Date_Image (This.Value);
-               begin
-                  return Connection.Quote_Value (Value_Str);
-               end;
-            end if;
+            return Connection.Quote_Value (Date_Image (This.Value));
          end if;
       end To_SQL;
 
@@ -659,6 +658,19 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          This.Loaded := True;
       end Load_From;
 
+      --------------
+      -- Pre_Save --
+      --------------
+
+      procedure Pre_Save (This : in out Field) is
+      begin
+         if This.Auto_Now or else
+           (This.Auto_Now_Add and then This.Is_Null) then
+            This.Value := Ada.Calendar.Clock;
+            This.Is_Null := False;
+         end if;
+      end Pre_Save;
+
       ---------
       -- Set --
       ---------
@@ -708,25 +720,10 @@ package body DB.Active_Record.Fields.Date_Time_Types is
       begin
          if not This.Loaded then
             raise DB.Errors.NOT_LOADED;
-         elsif This.Auto_Now or else
-           (This.Auto_Now_Add and then This.Is_Null) then
-            declare
-               Value_Str         : constant String :=
-                 Timestamp_Image (Ada.Calendar.Clock);
-            begin
-               return Connection.Quote_Value (Value_Str);
-            end;
+         elsif This.Is_Null then
+            return "NULL";
          else
-            if This.Is_Null then
-               return "NULL";
-            else
-               declare
-                  Value_Str      : constant String :=
-                    Timestamp_Image (This.Value);
-               begin
-                  return Connection.Quote_Value (Value_Str);
-               end;
-            end if;
+            return Connection.Quote_Value (Timestamp_Image (This.Value));
          end if;
       end To_SQL;
 

@@ -520,6 +520,16 @@ package body DB.Active_Record.Fields is
       end if;
    end Order_By;
 
+   --------------
+   -- Pre_Save --
+   --------------
+
+   procedure Pre_Save (This : in out Field) is
+      pragma Unreferenced (This);
+   begin
+      null;
+   end Pre_Save;
+
    ---------
    -- Set --
    ---------

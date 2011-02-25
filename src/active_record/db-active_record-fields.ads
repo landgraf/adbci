@@ -132,6 +132,10 @@ package DB.Active_Record.Fields is
       Order_Field       : in Field'Class;
       Ascending         : in Boolean := True) return Order_Criteria;
 
+   procedure Pre_Save
+     (This		: in out Field);
+   --  Called to prepare field for saving.
+
    procedure Set_Loaded
      (This              : in out Field'Class;
       Value             : in     Boolean);
