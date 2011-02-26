@@ -666,6 +666,7 @@ package body DB.Active_Record.Models is
            DB.Types.SQL_String (To_String (Update_SQL));
          Results        : constant DB.Connector.Result_Set :=
            Connection.Execute (SQL_Command);
+         pragma Unreferenced (Results);
       begin
          This.Store := STORE_UPDATE;
       end;

@@ -9,7 +9,7 @@ project ADBCI is
    for Library_Version use "libadbci.so.1";
 
    package Compiler is
-      for Default_Switches ("ada") use ("-gnat05");
+      for Default_Switches ("ada") use ("-gnatwa", "-gnat05", "-gnatf");
    end Compiler;
 
 end ADBCI;
