@@ -30,3 +30,16 @@ them referencing the same data in memory.
 The Active Record implementation requires that result sets be random access.
 Don't access connections or results across tasks.
 
+Example
+-------
+
+There is a very simple example included.  It expects to have access to a
+database on localhost called "adbci", owned by the user "adbci" with the
+password "adbci".
+
+The example can be built by:
+
+    make examples
+
+The output binary is "examples/active_record/bin/active_record".
+
