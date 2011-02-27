@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -55,7 +55,7 @@ begin
    Customer_1.Credit_Limit.Set (1000.00);
    Customer_1.Save (Database);
 
-   Put_Line ("Customer record was inserted with id: " & Customer_1.Get_Id);
+   Put_Line ("Customer record was inserted with id: " & Customer_1.Get_Id_String);
 
    --  Fetch customer using the Id
    Customer_2.Get (Database, Customer_1.Get_Id);
@@ -71,7 +71,7 @@ begin
 
    --  Try some queries...
    declare
-      Q     : Field_Criteria := 
+      Q     : Field_Criteria :=
         (Customer_1.Customer_Name.ILike ("%customer%") and
          Customer_1.Address_1.ILike ("Address Line%"));
       R     : Customer_Finder.Query_Result;
@@ -83,7 +83,7 @@ begin
       Put_Line ("Found Customer Name: " & Item.Customer_Name.Get);
       Put_Line ("Credit Limit:" &
         Currency_Type'Image (Item.Credit_Limit.Get));
-      Put_Line ("Last Saved: " & Item.Last_Updated.Get);
+      Put_Line ("Last Saved: " & Item.Last_Updated.Get_String);
    end;
 
    declare
