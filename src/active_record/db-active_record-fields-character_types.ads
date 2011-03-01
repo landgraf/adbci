@@ -85,7 +85,7 @@ package DB.Active_Record.Fields.Character_Types is
 
       function Get (This : in Field) return String;
 
-      function Get (This : in Field) return Unbounded_String;
+      function Get_Unbounded (This : in Field) return Unbounded_String;
 
       function ILike
         (Left              : in Field'Class;
@@ -192,7 +192,7 @@ package DB.Active_Record.Fields.Character_Types is
 
       function Get (This : in Field) return String;
 
-      function Get (This : in Field) return Unbounded_String;
+      function Get_Unbounded (This : in Field) return Unbounded_String;
 
       function ILike
         (Left              : in Field'Class;

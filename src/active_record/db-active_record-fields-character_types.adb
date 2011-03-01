@@ -240,14 +240,18 @@ package body DB.Active_Record.Fields.Character_Types is
          end if;
       end Get;
 
-      function Get (This : in Field) return Unbounded_String is
+      -------------------
+      -- Get_Unbounded --
+      -------------------
+
+      function Get_Unbounded (This : in Field) return Unbounded_String is
       begin
          if This.Loaded then
             return This.Value;
          else
             raise DB.Errors.NOT_LOADED;
          end if;
-      end Get;
+      end Get_Unbounded;
 
       -----------
       -- ILike --
@@ -610,14 +614,18 @@ package body DB.Active_Record.Fields.Character_Types is
          end if;
       end Get;
 
-      function Get (This : in Field) return Unbounded_String is
+      -------------------
+      -- Get_Unbounded --
+      -------------------
+
+      function Get_Unbounded (This : in Field) return Unbounded_String is
       begin
          if This.Loaded then
             return This.Value;
          else
             raise DB.Errors.NOT_LOADED;
          end if;
-      end Get;
+      end Get_Unbounded;
 
       -----------
       -- ILike --
