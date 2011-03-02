@@ -1,4 +1,4 @@
-DESTDIR	= /usr/local/lib/adbci
+DESTDIR	?= /usr/local/lib/adbci
 # Default destination directory
 
 default: directories
