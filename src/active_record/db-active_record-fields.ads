@@ -49,6 +49,11 @@ package DB.Active_Record.Fields is
       IS_OPERATOR,				--  IS
       IS_NOT_OPERATOR);				--  IS NOT
 
+   function "&"
+     (Left		: in Order_Criteria;
+      Right		: in Order_Criteria) return Order_Criteria;
+   --  Combines two ordering criteria.
+
    procedure Clear (This : in out Field) is abstract;
    --  Clears the field - if the field has a default, sets the field to the
    --  default value, otherwise sets it to NULL.

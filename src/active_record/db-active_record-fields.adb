@@ -96,6 +96,22 @@ package body DB.Active_Record.Fields is
       end return;
    end "/=";
 
+   ---------
+   -- "&" --
+   ---------
+
+   function "&"
+     (Left		: in Order_Criteria;
+      Right		: in Order_Criteria) return Order_Criteria
+   is
+      Temp		: Order_Criteria;
+   begin
+      Set_Unbounded_String (Temp.Ordering, To_String (Left.Ordering));
+      Append (Temp.Ordering, ", ");
+      Append (Temp.Ordering, To_String (Right.Ordering));
+      return Temp;
+   end "&";
+
    -----------
    -- "and" --
    -----------

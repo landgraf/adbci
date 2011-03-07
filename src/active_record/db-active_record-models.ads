@@ -84,6 +84,10 @@ package DB.Active_Record.Models is
    function Get_Id (This : in Model'Class) return DB.Types.Object_Id;
    --  Gets Model Id (or 0 if none).
 
+   function Get_Id_Field (This : in Model'Class)
+                          return DB.Active_Record.Fields.Id_Field;
+   --  Returns a copy of the id field (for ordering etc).
+
    function Get_Id_Name (This : in Model'Class) return String;
    --  Returns the name of the id field.
 

@@ -260,6 +260,17 @@ package body DB.Active_Record.Models is
       return This.Id.Get;
    end Get_Id;
 
+   ------------------
+   -- Get_Id_Field --
+   ------------------
+
+   function Get_Id_Field (This : in Model'Class)
+                          return DB.Active_Record.Fields.Id_Field
+   is
+   begin
+      return This.Id;
+   end Get_Id_Field;
+
    -----------------
    -- Get_Id_Name --
    -----------------
