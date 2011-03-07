@@ -303,4 +303,17 @@ package body DB.Active_Record.Models.Queries is
       end if;
    end To_SQL_Criteria;
 
+   -------------------------
+   -- Unconstrained_Count --
+   -------------------------
+
+   function Unconstrained_Count
+     (Connection        : in DB.Connector.Connection;
+      Criteria          : in DB.Active_Record.Fields.Field_Criteria)
+     return Natural
+   is
+   begin
+      return Count (Connection, Criteria, 0, 0);
+   end Unconstrained_Count;
+
 end DB.Active_Record.Models.Queries;

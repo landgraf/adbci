@@ -92,6 +92,13 @@ package DB.Active_Record.Models.Queries is
    --  object fields.
    --  The result is optionally read-only.
 
+   function Unconstrained_Count
+     (Connection        : in DB.Connector.Connection;
+      Criteria          : in DB.Active_Record.Fields.Field_Criteria)
+     return Natural;
+   --  Returns the number of results that would be returned by a query.
+   --  Executes using an SQL COUNT instead of fetching all rows.
+
 private
 
    type Query_Result is record
