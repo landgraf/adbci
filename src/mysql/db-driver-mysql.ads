@@ -68,13 +68,15 @@ package DB.Driver.MySQL is
          Identifier        : in String) return DB.Types.SQL_String;
 
 private
+        type MYSQL is new System.Address; 
+
+        Null_Connection      : constant MySQL :=
+            MySQL (System.Null_Address);
+
         type Driver_Type is new Abstract_Driver_Type with record
-          Connection        :  MySQL_Access := Null_Connection;
+          Connection        :  MySQL:= Null_Connection;
         end record;
 
-        type MYSQL is limited null record; 
-        type MySQL_Access is access all MYSQL;
-        pragma Convention (C, MYSQL_Access);
 
         -- MySQL_Options 
         type MySQL_Options is (MYSQL_OPT_CONNECT_TIMEOUT, MYSQL_OPT_COMPRESS, MYSQL_OPT_NAMED_PIPE,
@@ -94,5 +96,9 @@ private
         subtype Port is Integer range 1..2**16;
         type Socket is new Interfaces.C.Strings.chars_ptr;
         type Socket_Access is access Interfaces.C.Strings.chars_ptr;
+
+        function Get_Result(
+            MySQL : Driver_Type
+            ) return  Result_Handle;
 
 end DB.Driver.MySQL;

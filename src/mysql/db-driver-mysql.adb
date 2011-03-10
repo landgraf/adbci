@@ -34,7 +34,7 @@ package body DB.Driver.MySQL is
                     DB_Port  : in Interfaces.C.unsigned;
                     MySQL_Socket   : Socket_Access;
                     Flag     : in Interfaces.C.unsigned_long
-                ) return Mysql_Access;
+                ) return MySQL;
                  pragma Import (C, Real_Connect, "mysql_real_connect");
             -- int mysql_options(MYSQL *mysql, enum mysql_option option, const char *arg)
             function Get_Options
@@ -62,8 +62,17 @@ package body DB.Driver.MySQL is
                 Result  : out Result_Handle;
                 Query   : in  DB.Types.SQL_String
             ) is 
+       function mysql_real_query(
+            MySQL    : Driver_Type;
+            q_c      : char_array;
+            length_C : Integer) return Integer;
+            pragma Import (C, mysql_real_query, "mysql_real_query");
+        query_c         : constant char_array   := To_C(String(Query));
+        Length          : constant Integer      := query_c'Length;
+        Query_Result    : Integer;
         begin
-            null;
+            Query_Result := mysql_real_query(Driver, query_c, Length);
+            Result  := Get_Result(Driver); 
     end Execute_SQL;
 
     overriding procedure Free_Result
@@ -125,5 +134,15 @@ package body DB.Driver.MySQL is
             return new DB.Types.SQL_String;
    end Quote_Identifier;
 
+    function Get_Result(
+        MySQL : Driver_Type
+        ) return  Result_Handle is
+            function mysql_store_result(Mysql : Driver_Type) return Result_Handle;
+                pragma Import (C,mysql_store_result,"mysql_store_result");
+            Result      : Result_Handle;
+    begin
+            Result      := mysql_store_result(MySQL);
+            return Result;
+    end Get_Result;
 
 end DB.Driver.MySQL;
