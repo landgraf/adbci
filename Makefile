@@ -1,7 +1,7 @@
 DESTDIR	?= /usr/local/lib/adbci
 # Default destination directory
 
-default: directories
+default: directories examples 
 	@gnatmake -P adbci.gpr
 
 clean:

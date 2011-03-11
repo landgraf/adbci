@@ -1,104 +1,170 @@
+--
+--  (c) Copyright 2011, John Vinters
+--
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
+--
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+--  FOR A PARTICULAR PURPOSE.
+--
+--  You should have received a copy of the GNU Lesser General Public License
+--  along with this library; if not, see <http://www.gnu.org/licenses/>
+--
+--    db-driver-MySQL.ads   jvinters   15-January-2011
+--
+
 with System;
-with DB.Types;              use DB.Types;
-with Ada.Characters.Handling;       use Ada.Characters.Handling;
-with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
-with Ada.Unchecked_Deallocation;
-with DB.Driver_Manager;
-with DB.Errors;
-with DB.Types;              use DB.Types;
-with Interfaces.C;          use Interfaces.C;
-with Interfaces.C.Strings;      use Interfaces.C.Strings;
 
 package DB.Driver.MySQL is
 
-   pragma Linker_Options ("-lpq");
-   pragma Linker_Options ("-L/usr/lib/mysql"); -- FIXME 64bit
-   type Driver_Type is new Abstract_Driver_Type with private;
+    pragma Linker_Options ("-mysql");
+    pragma Linker_Options ("-L/usr/lib");
+
+    type Driver_Type is new Abstract_Driver_Type with private;
+    type Result_Type is new Abstract_Result_Type with private;
+    type Result_Access is access all Result_Type;
+
+    function Alloc return Driver_Handle;
 
     overriding procedure Connect
-        (
-              Driver            : in out Driver_Type;
-              Hostname          : in     String;
-              Database          : in     String;
-              Username          : in     String := "";
-              Password          : in     String := "";
-              Options           : in     String := ""
-        );
+        (Driver            : in out Driver_Type;
+        Hostname          : in     String;
+        Database          : in     String;
+        Username          : in     String := "";
+        Password          : in     String := "";
+        Options           : in     String := "");
 
     overriding procedure Disconnect
-        (
-            Driver            : in out Driver_Type
-        );
+        (Driver            : in out Driver_Type);
 
     overriding procedure Execute_SQL
-        (
-            Driver  : in  Driver_Type;
-            Result  : out Result_Handle;
-            Query   : in  DB.Types.SQL_String
-        );
+        (Driver            : in     Driver_Type;
+    Result            :    out Result_Handle;
+    Query             : in     DB.Types.SQL_String);
 
-   overriding procedure Free_Result
-        (
-            Driver            : in     Driver_Type;
-            Result            : in out Result_Handle
-        );
-   overriding function Get_Capabilities
-        (
-            This              : in Driver_Type
-        ) return Driver_Capabilities;
-   overriding function Get_Foreign_Key_SQL 
-           (
-               This : in Driver_Type
-           ) return DB.Types.SQL_String;
-   overriding function Get_Id_SQL 
-       (
-          This : in Driver_Type
-       ) return DB.Types.SQL_String;
-   overriding function Get_Server_Version 
-       (
-            This : in Driver_Type
-       ) return String;
-   function Get_Text_Type
-            (This              : in Driver_Type;
-             Maximum_Size      : in Natural) return DB.Types.SQL_String;
-   overriding function Is_Connected
+    overriding function Find_Column_By_Name
+        (Result            : in Result_Type;
+    Name              : in String) return Column_Index;
+
+    overriding procedure Free_Result
+        (Driver            : in     Driver_Type;
+    Result            : in out Result_Handle);
+
+    overriding function Get_Capabilities
+        (This              : in Driver_Type) return Driver_Capabilities;
+
+    overriding function Get_Column_Count
+        (Result            : in Result_Type) return Natural;
+
+    overriding function Get_Data_Bigint
+        (Result            : in Result_Type;
+        Tuple             : in Tuple_Index;
+        Column            : in Column_Index;
+        Replace_Null      : in Boolean := False;
+        Replacement       : in DB.Types.DB_Bigint := 0)
+        return DB.Types.DB_Bigint;
+
+    overriding function Get_Data_Boolean
+        (Result            : in Result_Type;
+        Tuple             : in Tuple_Index;
+        Column            : in Column_Index;
+        Replace_Null      : in Boolean := False;
+        Replacement       : in Boolean := False) return Boolean;
+
+    overriding function Get_Data_Integer
+        (Result            : in Result_Type;
+        Tuple             : in Tuple_Index;
+        Column            : in Column_Index;
+        Replace_Null      : in Boolean := False;
+        Replacement       : in DB.Types.DB_Integer := 0)
+    return DB.Types.DB_Integer;
+
+    overriding function Get_Data_Is_Null
+        (Result            : in Result_Type;
+        Tuple             : in Tuple_Index;
+        Column            : in Column_Index) return Boolean;
+
+    overriding function Get_Data_Object_Id
+        (Result            : in Result_Type;
+        Tuple             : in Tuple_Index;
+        Column            : in Column_Index;
+        Replace_Null      : in Boolean := False;
+        Replacement       : in DB.Types.Object_Id := 0)
+    return DB.Types.Object_Id;
+
+    overriding function Get_Data_Smallint
+        (Result            : in Result_Type;
+        Tuple             : in Tuple_Index;
+        Column            : in Column_Index;
+        Replace_Null      : in Boolean := False;
+        Replacement       : in DB.Types.DB_Smallint := 0)
+    return DB.Types.DB_Smallint;
+
+    overriding function Get_Data_String
+        (Result            : in Result_Type;
+        Tuple             : in Tuple_Index;
+        Column            : in Column_Index;
+        Replace_Null      : in Boolean := False;
+        Replacement       : in String := "") return String;
+
+    overriding function Get_Foreign_Key_SQL (This : in Driver_Type)
+    return DB.Types.SQL_String;
+
+    overriding function Get_Id_SQL (This : in Driver_Type)
+    return DB.Types.SQL_String;
+
+    overriding function Get_Inserted_Row_id
+        (Result            : in Result_Type) return DB.Types.Object_Id;
+
+    overriding function Get_Server_Version (This : in Driver_Type) return String;
+
+    overriding function Get_Tuple_Count
+        (Result            : in Result_Type) return Natural;
+
+    overriding function Is_Connected
         (Driver            : in Driver_Type) return Boolean;
-   overriding function Quote_Identifier
+
+    overriding function Is_Random_Access
+        (Result            : in Result_Type) return Boolean;
+
+    overriding function Quote_Identifier
         (Driver            : in Driver_Type;
-         Identifier        : in String) return DB.Types.SQL_String;
+        Identifier        : in String) return DB.Types.SQL_String;
 
-private
-        type MYSQL is new System.Address; 
+    overriding function Quote_Value
+        (Driver            : in Driver_Type;
+        Value             : in String) return DB.Types.SQL_String;
 
-        Null_Connection      : constant MySQL :=
-            MySQL (System.Null_Address);
+    function Get_Text_Type
+        (This              : in Driver_Type;
+        Maximum_Size      : in Natural) return DB.Types.SQL_String;
 
-        type Driver_Type is new Abstract_Driver_Type with record
-          Connection        :  MySQL:= Null_Connection;
-        end record;
+    private
 
+    type MySQL_Connection is new System.Address;
 
-        -- MySQL_Options 
-        type MySQL_Options is (MYSQL_OPT_CONNECT_TIMEOUT, MYSQL_OPT_COMPRESS, MYSQL_OPT_NAMED_PIPE,
-                MYSQL_INIT_COMMAND, MYSQL_READ_DEFAULT_FILE, MYSQL_READ_DEFAULT_GROUP,
-                MYSQL_SET_CHARSET_DIR, MYSQL_SET_CHARSET_NAME, MYSQL_OPT_LOCAL_INFILE,
-                MYSQL_OPT_PROTOCOL, MYSQL_SHARED_MEMORY_BASE_NAME, MYSQL_OPT_READ_TIMEOUT,
-                MYSQL_OPT_WRITE_TIMEOUT, MYSQL_OPT_USE_RESULT,
-                MYSQL_OPT_USE_REMOTE_CONNECTION, MYSQL_OPT_USE_EMBEDDED_CONNECTION,
-                MYSQL_OPT_GUESS_CONNECTION, MYSQL_SET_CLIENT_IP, MYSQL_SECURE_AUTH,
-                MYSQL_REPORT_DATA_TRUNCATION, MYSQL_OPT_RECONNECT,
-                MYSQL_OPT_SSL_VERIFY_SERVER_CERT);
-        for MySQL_Options'Size use Interfaces.C.Int'Size;
-        pragma Convention (C, MYSQL_Options);
+    Null_Connection      : constant MySQL_Connection :=
+        MySQL_Connection (System.Null_Address);
 
+        type MySQL_Result is new System.Address;
 
+    Null_Result          : constant MySQL_Result := MySQL_Result (System.Null_Address);
 
-        subtype Port is Integer range 1..2**16;
-        type Socket is new Interfaces.C.Strings.chars_ptr;
-        type Socket_Access is access Interfaces.C.Strings.chars_ptr;
+    type Driver_Type is new Abstract_Driver_Type with record
+        Connection        : MySQL_Connection := Null_Connection;
+    end record;
 
-        function Get_Result(
-            MySQL : Driver_Type
-            ) return  Result_Handle;
+    type Result_Type is new Abstract_Result_Type with record
+        Column_Count      : Natural := 0;
+        Results           : MySQL_Result := Null_Result;
+        Tuple_Count       : Natural := 0;
+    end record;
+
+    function Last_Error (Driver : in Driver_Type) return String;
+    --  Returns the last driver error as a string.
 
 end DB.Driver.MySQL;
+
