@@ -133,6 +133,7 @@ package body DB.Driver.MySQL is
           Free_Result(Driver,Result);
       end if;
       Result := Null;
+      put_line("Execute: " &  String(Query));
       Result_Code   := MySQL_Real_Query(Driver.Connection, C.To_C(String(Query)) , Length);
       if Integer(Result_Code) /= 0
       then
@@ -447,14 +448,15 @@ package body DB.Driver.MySQL is
    -------------------------
 
    overriding function Get_Inserted_Row_id
-     (Result            : in Result_Type)
+     (Driver           : in Driver_Type)
       return DB.Types.Object_Id
    is
+       Id : Integer;
+       function MySQL_Insert_Id(MySQL : MySQL_Access) return Integer;
+            pragma Import (C, MySQL_Insert_Id,"mysql_insert_id");
    begin
       -- FIXME Check it
-      raise DB.Errors.NOT_SUPPORTED with
-        "MySQL doesn't do this -- use a RETURNING clause in your query";
-      return 0;
+      return DB_Bigserial(MySQL_Insert_Id(Driver.Connection));
    end Get_Inserted_Row_id;
 
    ------------------------

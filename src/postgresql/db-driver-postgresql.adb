@@ -549,7 +549,7 @@ package body DB.Driver.PostgreSQL is
    -------------------------
 
    function Get_Inserted_Row_id
-     (Result            : in Result_Type) return DB.Types.Object_Id
+     (Driver            : in Driver_Type) return DB.Types.Object_Id
    is
    begin
       raise DB.Errors.NOT_SUPPORTED with

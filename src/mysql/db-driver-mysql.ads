@@ -1,6 +1,7 @@
 with System;
 with Interfaces.C; use Interfaces.C;
 with Interfaces.C.Pointers;
+with Ada.Text_io; use Ada.Text_IO;
 with Interfaces.C.Strings;use Interfaces.C.Strings;
 with DB.Errors;
 with DB.Driver_Manager; use DB.Driver_Manager;
@@ -108,7 +109,7 @@ package DB.Driver.MySQL is
    return DB.Types.SQL_String;
 
    overriding function Get_Inserted_Row_id
-     (Result            : in Result_Type) return DB.Types.Object_Id;
+     (Driver            : in Driver_Type) return DB.Types.Object_Id;
 
    overriding function Get_Server_Version (This : in Driver_Type) return String;
 

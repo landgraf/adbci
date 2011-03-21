@@ -157,7 +157,7 @@ package DB.Driver is
    --  Returns the SQL Data type used to identify objects.
 
    function Get_Inserted_Row_id
-     (Result            : in Abstract_Result_Type)
+     (Driver            : in Abstract_Driver_Type)
    return DB.Types.Object_Id is abstract;
    --  For databases which support getting the inserted row id via a function,
    --  returns the inserted row id.
