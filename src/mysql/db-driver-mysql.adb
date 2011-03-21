@@ -1,3 +1,5 @@
+with DB.Driver_Manager; use DB.Driver_Manager;
+pragma Elaborate_All (DB.Driver_Manager);
 package body DB.Driver.MySQL is
 
    -----------
@@ -6,10 +8,7 @@ package body DB.Driver.MySQL is
 
    function Alloc return Driver_Handle is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Alloc unimplemented");
-      raise Program_Error with "Unimplemented function Alloc";
-      return Alloc;
+       return new Driver_Type;
    end Alloc;
 
    -------------
@@ -24,10 +23,65 @@ package body DB.Driver.MySQL is
       Password          : in     String := "";
       Options           : in     String := "")
    is
+       -- MySQL               : MySQL_Access             := Driver.Connection;
+       CLIENT_COMPRESS     : constant Interfaces.C.unsigned_long := 32;
+       Opt_status          : Integer;
+       MySQL_Socket        : Socket_Access;
+       Init_Result         : Result_Handle;
+       function MySQL_Init(MySQL : MySQL_Access) return MySQL_Access;
+           pragma Import (C,MySQL_Init,"mysql_init");
+       -- int mysql_options(MYSQL *mysql, enum mysql_option option, const char *arg)
+       function Get_Options
+           (MySQL : MySQL_Access;
+            Options      : MySQL_Options ;
+            args         : Interfaces.C.Char_Array
+           ) return Integer;
+       pragma Import (C, Get_Options, "mysql_options");
+       function Real_Connect
+           (MySQL :  MySQL_Access;
+           HostName     : in Interfaces.C.Char_Array;
+           Username         : in Interfaces.C.Char_Array;
+           Password     : in Interfaces.C.Char_Array;
+           Database     : in Interfaces.C.Char_Array;
+           DB_Port      : in Interfaces.C.unsigned := 3306;
+           MySQL_Socket : Socket_Access;
+           Flag         : in Interfaces.C.unsigned_long) return Mysql_Access;
+           pragma Import (C, Real_Connect, "mysql_real_connect");
+
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Connect unimplemented");
-      raise Program_Error with "Unimplemented procedure Connect";
+       if Driver.Connection /= Null_Connection
+       then
+           Disconnect(Driver);
+       end if;
+       -- FIXME Add some checks here
+       Driver.Connection := MySQL_Init(Driver.Connection);
+       Opt_status  := Get_Options
+           (
+               MySQL   => Driver.Connection,
+               Options => MYSQL_READ_DEFAULT_FILE,
+               args    => "odbc"
+               );
+       Opt_status  := Get_Options
+           (
+               MySQL   => Driver.Connection,
+               Options => MYSQL_READ_DEFAULT_GROUP,
+               args    => "odbc"
+               );
+       Driver.Connection    := Real_Connect
+           (
+               MySQL       => Driver.Connection,
+               HostName    => C.To_C(HostName),
+               Username    => C.To_C(Username),
+               Password    => C.To_C(Password),
+               Database    => C.To_C(Database),
+               MySQL_Socket => MySQL_Socket ,
+               Flag        => CLIENT_COMPRESS
+               );
+       if Driver.Connection = Null
+       then
+           raise DB.Errors.CONNECT_ERROR with Last_Error (Driver);
+       end if;
+       Free_Result(Driver,Init_Result);
    end Connect;
 
    ----------------
@@ -37,10 +91,14 @@ package body DB.Driver.MySQL is
    overriding procedure Disconnect
      (Driver            : in out Driver_Type)
    is
+     procedure MySQL_Close(MySQL : MySQL_Access);
+         pragma Import (C,MySQL_Close,"mysql_close");
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Disconnect unimplemented");
-      raise Program_Error with "Unimplemented procedure Disconnect";
+       if Driver.Connection /= Null
+       then
+           MySQL_Close(Driver.Connection);
+           Driver.Connection := Null_Connection;
+       end if;
    end Disconnect;
 
    -----------------
@@ -52,15 +110,52 @@ package body DB.Driver.MySQL is
       Result            :    out Result_Handle;
       Query             : in     DB.Types.SQL_String)
    is
+        function mysql_real_query(
+            MySQL    : MySQL_Access;
+            q_c      : C.char_array;
+            length_C : C.Unsigned_long) return C.Unsigned_Long;
+            pragma Import (C, mysql_real_query, "mysql_real_query");
+        function mysql_use_result(Mysql : Mysql_Access) return Mysql_Result_Access;
+            pragma Import (C,mysql_use_result,"mysql_use_result");
+        function mysql_num_fields (Result : Mysql_Result_Access) return Natural;
+            pragma Import (C,mysql_num_fields,"mysql_num_fields");
+        function mysql_num_rows (Result : Mysql_Result_Access) return Natural;
+            pragma Import (C,mysql_num_rows,"mysql_num_rows");
+        function Mysql_Affected_Rows(MySQL : MySQL_Access) return Integer;
+            pragma Import (C,mysql_affected_rows,"mysql_affected_rows");
+        Query_Result    : MySQL_Result_Access;
+        Result_Code     : C.Unsigned_Long;
+        Length          : C.Unsigned_Long := Query'Length;
+        Tmp             : Natural;
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Execute_SQL unimplemented");
-      raise Program_Error with "Unimplemented procedure Execute_SQL";
+      if Result /= Null
+      then
+          Free_Result(Driver,Result);
+      end if;
+      Result := Null;
+      Result_Code   := MySQL_Real_Query(Driver.Connection, C.To_C(String(Query)) , Length);
+      if Integer(Result_Code) /= 0
+      then
+          raise DB.Errors.CONNECT_ERROR with Last_Error (Driver);
+      end if;
+      if MySQL_Affected_Rows(Driver.Connection) = -1 then
+          declare
+              R : constant Result_Access := new Result_Type;
+          begin
+              Query_Result := MySQL_Use_Result(Driver.Connection);
+              R.all.Results := Query_Result;
+              R.all.Field_Count := mysql_num_fields(Query_Result);
+              R.all.Row_Count    := mysql_num_rows(Query_Result);
+              Result := Result_Handle (R);
+          end;
+      else
+          Result := null;
+      end if;
    end Execute_SQL;
 
-   -------------------------
+   ------------------------
    -- Find_Column_By_Name --
-   -------------------------
+   ------------------------
 
    overriding function Find_Column_By_Name
      (Result            : in Result_Type;
@@ -81,11 +176,20 @@ package body DB.Driver.MySQL is
    overriding procedure Free_Result
      (Driver            : in     Driver_Type;
       Result            : in out Result_Handle)
-   is
-   begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Free_Result unimplemented");
-      raise Program_Error with "Unimplemented procedure Free_Result";
+      is
+          procedure Free_Storage is new Ada.Unchecked_Deallocation
+              (Result_Type, Result_Access);
+          procedure MySQL_Free_Result(result : in MySQL_Result_Access);
+              pragma Import (C,MySQL_Free_Result,"mysql_free_result");
+      begin
+          pragma Unreferenced (Driver);
+          if Result /= null then
+              if Result_Type (Result.all).Results /= Null_Result then
+                  MySQL_Free_Result(Result_Type (Result.all).Results);
+                  Result_Type (Result.all).Results := Null_Result;
+              end if;
+              Free_Storage (Result_Access (Result));
+          end if;
    end Free_Result;
 
    ----------------------
@@ -96,26 +200,26 @@ package body DB.Driver.MySQL is
      (This              : in Driver_Type)
       return Driver_Capabilities
    is
+      pragma Unreferenced (This);
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Capabilities unimplemented");
-      raise Program_Error with "Unimplemented function Get_Capabilities";
-      return Get_Capabilities (This);
+       -- FIXME Check this shit
+      return (
+         Insert_Id_Func    => False,
+         Random_Access     => False,
+         Returning_Clause  => False
+      );
    end Get_Capabilities;
 
-   ----------------------
+   ---------------------
    -- Get_Column_Count --
-   ----------------------
+   ---------------------
 
    overriding function Get_Column_Count
      (Result            : in Result_Type)
       return Natural
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Column_Count unimplemented");
-      raise Program_Error with "Unimplemented function Get_Column_Count";
-      return Get_Column_Count (Result);
+      return Result.Field_Count;
    end Get_Column_Count;
 
    ---------------------
@@ -123,19 +227,27 @@ package body DB.Driver.MySQL is
    ---------------------
 
    overriding function Get_Data_Bigint
-     (Result            : in Result_Type;
-      Tuple             : in Tuple_Index;
-      Column            : in Column_Index;
-      Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.DB_Bigint := 0)
-      return DB.Types.DB_Bigint
-   is
-   begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Data_Bigint unimplemented");
-      raise Program_Error with "Unimplemented function Get_Data_Bigint";
-      return Get_Data_Bigint (Result, Tuple, Column, Replace_Null, Replacement);
-   end Get_Data_Bigint;
+       (
+           Result          : in Result_Type;
+           Row             : in Tuple_Index;
+           Field           : in Column_Index;
+           Replace_Null    : in Boolean := False;
+           Replacement     : in DB.Types.DB_Bigint := 0
+       ) return DB.Types.DB_Bigint
+    is
+        S : constant String :=
+            (Get_Data_String (Result, Row, Field, True, ""));
+    begin
+        if S /= "" then
+            return DB.Types.DB_Bigint'Value (S);
+        else
+            if Replace_Null then
+                return Replacement;
+            else
+                raise DB.Errors.COLUMN_IS_NULL;
+            end if;
+        end if;
+    end Get_Data_Bigint;
 
    ----------------------
    -- Get_Data_Boolean --
@@ -143,18 +255,24 @@ package body DB.Driver.MySQL is
 
    overriding function Get_Data_Boolean
      (Result            : in Result_Type;
-      Tuple             : in Tuple_Index;
-      Column            : in Column_Index;
+      Row             : in Tuple_Index;
+      Field            : in Column_Index;
       Replace_Null      : in Boolean := False;
       Replacement       : in Boolean := False)
       return Boolean
    is
+      S : constant String := To_Upper
+        (Get_Data_String (Result, Row, Field, True, ""));
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Data_Boolean unimplemented");
-      raise Program_Error with "Unimplemented function Get_Data_Boolean";
-      return Get_Data_Boolean (Result, Tuple, Column, Replace_Null,
-         Replacement);
+      if S /= "" then
+         return S = "TRUE" or else S = "T";
+      else
+         if Replace_Null then
+            return Replacement;
+         else
+            raise DB.Errors.COLUMN_IS_NULL;
+         end if;
+      end if;
    end Get_Data_Boolean;
 
    ----------------------
@@ -163,18 +281,24 @@ package body DB.Driver.MySQL is
 
    overriding function Get_Data_Integer
      (Result            : in Result_Type;
-      Tuple             : in Tuple_Index;
-      Column            : in Column_Index;
+      Row             : in Tuple_Index;
+      Field            : in Column_Index;
       Replace_Null      : in Boolean := False;
       Replacement       : in DB.Types.DB_Integer := 0)
       return DB.Types.DB_Integer
    is
+      S : constant String :=
+        Get_Data_String (Result, Row, Field, True, "");
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Data_Integer unimplemented");
-      raise Program_Error with "Unimplemented function Get_Data_Integer";
-      return Get_Data_Integer (Result, Tuple, Column, Replace_Null,
-         Replacement);
+      if S /= "" then
+         return DB.Types.DB_Integer'Value (S);
+      else
+         if Replace_Null then
+            return Replacement;
+         else
+            raise DB.Errors.COLUMN_IS_NULL;
+         end if;
+      end if;
    end Get_Data_Integer;
 
    ----------------------
@@ -183,15 +307,15 @@ package body DB.Driver.MySQL is
 
    overriding function Get_Data_Is_Null
      (Result            : in Result_Type;
-      Tuple             : in Tuple_Index;
-      Column            : in Column_Index)
+      Row             : in Tuple_Index;
+      Field            : in Column_Index)
       return Boolean
    is
    begin
       --  Generated stub: replace with real body!
       pragma Compile_Time_Warning (True, "Get_Data_Is_Null unimplemented");
       raise Program_Error with "Unimplemented function Get_Data_Is_Null";
-      return Get_Data_Is_Null (Result, Tuple, Column);
+      return Get_Data_Is_Null (Result, Row, Field);
    end Get_Data_Is_Null;
 
    ------------------------
@@ -200,18 +324,23 @@ package body DB.Driver.MySQL is
 
    overriding function Get_Data_Object_Id
      (Result            : in Result_Type;
-      Tuple             : in Tuple_Index;
-      Column            : in Column_Index;
+      Row             : in Tuple_Index;
+      Field            : in Column_Index;
       Replace_Null      : in Boolean := False;
       Replacement       : in DB.Types.Object_Id := 0)
       return DB.Types.Object_Id
    is
+      S	: constant String := Get_Data_String (Result, Row, Field);
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Data_Object_Id unimplemented");
-      raise Program_Error with "Unimplemented function Get_Data_Object_Id";
-      return Get_Data_Object_Id (Result, Tuple, Column, Replace_Null,
-         Replacement);
+      if S /= "" then
+         return DB.Types.Object_Id'Value (S);
+      else
+         if Replace_Null then
+            return Replacement;
+         else
+            raise DB.Errors.Column_IS_NULL;
+         end if;
+      end if;
    end Get_Data_Object_Id;
 
    -----------------------
@@ -220,18 +349,23 @@ package body DB.Driver.MySQL is
 
    overriding function Get_Data_Smallint
      (Result            : in Result_Type;
-      Tuple             : in Tuple_Index;
-      Column            : in Column_Index;
+      Row             : in Tuple_Index;
+      Field            : in Column_Index;
       Replace_Null      : in Boolean := False;
       Replacement       : in DB.Types.DB_Smallint := 0)
       return DB.Types.DB_Smallint
    is
+      S	: constant String := Get_Data_String (Result, Row, Field);
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Data_Smallint unimplemented");
-      raise Program_Error with "Unimplemented function Get_Data_Smallint";
-      return Get_Data_Smallint (Result, Tuple, Column, Replace_Null,
-         Replacement);
+      if S /= "" then
+         return DB.Types.DB_Smallint'Value (S);
+      else
+         if Replace_Null then
+            return Replacement;
+         else
+            raise DB.Errors.COLUMN_IS_NULL;
+         end if;
+      end if;
    end Get_Data_Smallint;
 
    ---------------------
@@ -240,17 +374,46 @@ package body DB.Driver.MySQL is
 
    overriding function Get_Data_String
      (Result            : in Result_Type;
-      Tuple             : in Tuple_Index;
-      Column            : in Column_Index;
+      Row               : in Tuple_Index;
+      Field             : in Column_Index;
       Replace_Null      : in Boolean := False;
       Replacement       : in String := "")
       return String
    is
+       use Unsigned_Long_Array_Ptr;
+       subtype Lenghts_Type is Unsigned_Long_Array_Ptr.Pointer;
+
+       function mysql_fetch_row(Result : Mysql_Result_Access) return MySQL_Row;
+           pragma Import (C, mysql_fetch_row,"mysql_fetch_row");
+       function mysql_fetch_Field(Result : Mysql_Result_Access) return MySQL_Field;
+           pragma Import (C, mysql_fetch_field,"mysql_fetch_field");
+       function mysql_fetch_lengths(Result : Mysql_Result_Access ) return Lenghts_Type;
+           pragma Import (C,mysql_fetch_lengths,"mysql_fetch_lengths");
+       Current_Row      : MySQL_Row;
+       Current_Field    : MySQL_Field;
+       Lengths     : Lenghts_Type;
+
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Data_String unimplemented");
-      raise Program_Error with "Unimplemented function Get_Data_String";
-      return Get_Data_String (Result, Tuple, Column, Replace_Null, Replacement);
+       if Row = 0  or else Row > Tuple_Index(Result.Row_Count) then
+           raise DB.Errors.TUPLE_NOT_FOUND;
+       elsif Field = 0 or else Field > Column_Index (Result.Field_Count) then
+           raise DB.Errors.COLUMN_NOT_FOUND;
+       end if;
+       for Tmp1 in 1..Row loop
+           Current_Row := MySQL_Fetch_Row(Result.Results);
+           exit when Current_Row = Null;
+           Lengths     := mysql_fetch_lengths(Result.Results);
+           MySQL_Row_Type.Increment(Current_Row);
+       end loop;
+       for Tmp1 in 1..Field loop
+           Current_Field := MySQL_Fetch_Field(Result.Results);
+           Unsigned_Long_Array_Ptr.Increment(Lengths);
+       end loop;
+       declare
+       res_text    : constant String       := Interfaces.C.Strings.Value (Current_Row.all);
+       begin
+           return res_text;
+       end;
    end Get_Data_String;
 
    -------------------------
@@ -261,11 +424,9 @@ package body DB.Driver.MySQL is
      (This : in Driver_Type)
       return DB.Types.SQL_String
    is
+      pragma Unreferenced (This);
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Foreign_Key_SQL unimplemented");
-      raise Program_Error with "Unimplemented function Get_Foreign_Key_SQL";
-      return Get_Foreign_Key_SQL (This);
+      return "BIGINT";
    end Get_Foreign_Key_SQL;
 
    ----------------
@@ -276,11 +437,9 @@ package body DB.Driver.MySQL is
      (This : in Driver_Type)
       return DB.Types.SQL_String
    is
+      pragma Unreferenced (This);
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Id_SQL unimplemented");
-      raise Program_Error with "Unimplemented function Get_Id_SQL";
-      return Get_Id_SQL (This);
+      return "BIGINT AUTO_INCREMENT";
    end Get_Id_SQL;
 
    -------------------------
@@ -292,10 +451,10 @@ package body DB.Driver.MySQL is
       return DB.Types.Object_Id
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Inserted_Row_id unimplemented");
-      raise Program_Error with "Unimplemented function Get_Inserted_Row_id";
-      return Get_Inserted_Row_id (Result);
+      -- FIXME Check it
+      raise DB.Errors.NOT_SUPPORTED with
+        "MySQL doesn't do this -- use a RETURNING clause in your query";
+      return 0;
    end Get_Inserted_Row_id;
 
    ------------------------
@@ -306,26 +465,47 @@ package body DB.Driver.MySQL is
      (This : in Driver_Type)
       return String
    is
+      Version_Result	: Result_Handle;
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Server_Version unimplemented");
-      raise Program_Error with "Unimplemented function Get_Server_Version";
-      return Get_Server_Version (This);
+      Execute_SQL (This, Version_Result, "SELECT version()");
+      declare
+         Version_String	: constant String :=
+           Get_Data_String
+             (Result       => Result_Type (Version_Result.all),
+              Row        => 1,
+              Field       => 1,
+              Replace_Null => True,
+              Replacement  => "");
+      begin
+         Free_Result (This, Version_Result);
+         return Version_String;
+      end;
    end Get_Server_Version;
 
-   ---------------------
+   -------------------
+   -- Get_Text_Type --
+   -------------------
+
+   function Get_Text_Type
+     (This              : in Driver_Type;
+      Maximum_Size      : in Natural)
+      return DB.Types.SQL_String
+   is
+      pragma Unreferenced (Maximum_Size);
+      pragma Unreferenced (This);
+   begin
+       return "Text";
+   end Get_Text_Type;
+
+   -------------------
    -- Get_Tuple_Count --
-   ---------------------
+   -------------------
 
    overriding function Get_Tuple_Count
-     (Result            : in Result_Type)
-      return Natural
+     (Result            : in Result_Type) return Natural
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Tuple_Count unimplemented");
-      raise Program_Error with "Unimplemented function Get_Tuple_Count";
-      return Get_Tuple_Count (Result);
+      return Result.Row_Count;
    end Get_Tuple_Count;
 
    ------------------
@@ -336,11 +516,17 @@ package body DB.Driver.MySQL is
      (Driver            : in Driver_Type)
       return Boolean
    is
+       function MySQL_Stat(MySQL : MySQL_Access)  return C.Strings.Chars_Ptr;
+       pragma Import(C,MySQL_Stat,"mysql_stat");
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Is_Connected unimplemented");
-      raise Program_Error with "Unimplemented function Is_Connected";
-      return Is_Connected (Driver);
+       if Driver.Connection /= Null
+       then
+           if MySQL_Stat(Driver.Connection) = C.Strings.Null_Ptr
+           then
+               return True;
+           end if;
+       end if;
+       return False;
    end Is_Connected;
 
    ----------------------
@@ -348,14 +534,12 @@ package body DB.Driver.MySQL is
    ----------------------
 
    overriding function Is_Random_Access
-     (Result            : in Result_Type)
-      return Boolean
+       (Result            : in Result_Type)
+       return Boolean
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Is_Random_Access unimplemented");
-      raise Program_Error with "Unimplemented function Is_Random_Access";
-      return Is_Random_Access (Result);
+       pragma Unreferenced (Result);
+       return True;
    end Is_Random_Access;
 
    ----------------------
@@ -367,11 +551,11 @@ package body DB.Driver.MySQL is
       Identifier        : in String)
       return DB.Types.SQL_String
    is
+      Temp		: DB.Types.SQL_String := Quote_Value (Driver, Identifier);
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Quote_Identifier unimplemented");
-      raise Program_Error with "Unimplemented function Quote_Identifier";
-      return Quote_Identifier (Driver, Identifier);
+      Temp (Temp'First) := '"';
+      Temp (Temp'Last) := '"';
+      return Temp;
    end Quote_Identifier;
 
    -----------------
@@ -383,39 +567,48 @@ package body DB.Driver.MySQL is
       Value             : in String)
       return DB.Types.SQL_String
    is
+       procedure Free is new Ada.Unchecked_Deallocation (C.char_array, C.Strings.char_array_access);
+       -- FIXME Deallocation here
+       -- Data       : constant Object_Data_Access := Instance (Obj, "escape");
+       -- allocating buffer for encoding the buffer
+       Buffer : C.Strings.char_array_access := new C.char_array (1 .. Value'Length * 2 + 1);
+       function MySQL_Real_Escape_String
+           (
+               MySQL    : MySQL_Access;
+               To       : C.Strings.Chars_ptr;
+               From     : C.Strings.Chars_ptr;
+               Length   : C.Unsigned_Long
+           ) return C.Unsigned;
+           pragma Import(C,MySQL_Real_Escape_String,"mysql_real_escape_string");
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Quote_Value unimplemented");
-      raise Program_Error with "Unimplemented function Quote_Value";
-      return Quote_Value (Driver, Value);
+      declare
+          Buffer_Ptr : constant C.Strings.chars_ptr := C.Strings.To_Chars_Ptr (Buffer);
+          Escape     : C.unsigned  := MYSQL_Real_Escape_String
+              (Driver.Connection,
+              Buffer_Ptr,
+             New_Char_Array(C.To_C(Value)),
+              C.unsigned_long (Value'Length));
+          pragma Unreferenced (Escape);
+          S : constant Unbounded_String := To_Unbounded_String (Strings.Value (Buffer_Ptr));
+      begin
+          Free (Buffer);
+          return "'" & SQL_String(To_String(S)) & "'";
+      end;
    end Quote_Value;
-
-   -------------------
-   -- Get_Text_Type --
-   -------------------
-
-   function Get_Text_Type
-     (This              : in Driver_Type;
-      Maximum_Size      : in Natural)
-      return DB.Types.SQL_String
-   is
-   begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Text_Type unimplemented");
-      raise Program_Error with "Unimplemented function Get_Text_Type";
-      return Get_Text_Type (This, Maximum_Size);
-   end Get_Text_Type;
 
    ----------------
    -- Last_Error --
    ----------------
 
    function Last_Error (Driver : in Driver_Type) return String is
+       function MySQL_Error
+           (
+               Connection : MySQL_Access
+           ) return C.Strings.Chars_Ptr;
+           pragma Import (C,MySQL_Error,"mysql_error");
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Last_Error unimplemented");
-      raise Program_Error with "Unimplemented function Last_Error";
-      return Last_Error (Driver);
+      return C.Strings.Value(MySQL_Error(Driver.Connection));
    end Last_Error;
-
+begin
+       DB.Driver_Manager.Register_Driver ("mysql", Alloc'Access);
 end DB.Driver.MySQL;
