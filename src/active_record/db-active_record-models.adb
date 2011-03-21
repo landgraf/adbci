@@ -629,12 +629,15 @@ package body DB.Active_Record.Models is
          else
               Id_Inserted := Conn_Driver.Get_Inserted_Row_id;
               Put_Line("Inserted ID:" & Integer(Id_Inserted)'Img);
-              Set_Unbounded_String (Insert_SQL, "INSERT INTO ");
+              Set_Unbounded_String (Insert_SQL, "SELECT * FROM ");
               Append(Insert_SQL, This.Model_Name);
-              Append(Insert_SQL, "WHERE ");
+              Append(Insert_SQL, " WHERE ");
               Append(Insert_SQL, This.Get_Id_Name);
-              Append(Insert_SQL, "=" & Id_Inserted'Img);
+              Append(Insert_SQL, "="); 
+              Append(Insert_SQL, Trim(Id_Inserted'Img,Both));
               declare 
+                  SQL_Command    : constant DB.Types.SQL_String :=
+                      DB.Types.SQL_String (To_String (Insert_SQL));
                   Results        : constant DB.Connector.Result_Set :=
                       Connection.Execute (SQL_Command);
               begin
