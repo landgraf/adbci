@@ -1,4 +1,5 @@
 with DB.Driver_Manager; use DB.Driver_Manager;
+with Ada.Text_IO; use Ada.Text_IO;
 pragma Elaborate_All (DB.Driver_Manager);
 package body DB.Driver.MySQL is
 
@@ -164,6 +165,7 @@ package body DB.Driver.MySQL is
       return Column_Index
    is
    begin
+      put_line("Fuck" & Name);
       --  Generated stub: replace with real body!
       pragma Compile_Time_Warning (True, "Find_Column_By_Name unimplemented");
       raise Program_Error with "Unimplemented function Find_Column_By_Name";
