@@ -23,6 +23,7 @@ with Ada.Tags;
 with DB.Active_Record.Fields.Model_Operations;
 with DB.Driver;
 with DB.Errors;
+with Ada.Text_IO; use Ada.Text_IO;
 
 package body DB.Active_Record.Models is
 
@@ -589,6 +590,7 @@ package body DB.Active_Record.Models is
       Field_List        : Unbounded_String;
       Field_Values      : Unbounded_String;
       Total_Fields      : constant Positive := This.Field_Count;
+      Id_Inserted       : DB_Bigserial;
 
       procedure Handle_Field (F : in out DB.Active_Record.Fields.Field'Class) is
          Field_SQL      : constant DB.Types.SQL_String := F.To_SQL (Connection);
@@ -622,7 +624,23 @@ package body DB.Active_Record.Models is
            Connection.Execute (SQL_Command);
       begin
          This.Store := STORE_UPDATE;
-         This.Id.Load_From (Connection, Results);
+         if Driver_Caps.Returning_Clause then
+             This.Id.Load_From (Connection, Results);
+         else
+              Id_Inserted := Conn_Driver.Get_Inserted_Row_id;
+              Put_Line("Inserted ID:" & Integer(Id_Inserted)'Img);
+              Set_Unbounded_String (Insert_SQL, "INSERT INTO ");
+              Append(Insert_SQL, This.Model_Name);
+              Append(Insert_SQL, "WHERE ");
+              Append(Insert_SQL, This.Get_Id_Name);
+              Append(Insert_SQL, "=" & Id_Inserted'Img);
+              declare 
+                  Results        : constant DB.Connector.Result_Set :=
+                      Connection.Execute (SQL_Command);
+              begin
+               This.Id.Load_From (Connection, Results);
+              end;
+         end if;
          --  XXX FIXME: this only works for RETURNING clauses... XXX
       end;
    end Save_Insert;

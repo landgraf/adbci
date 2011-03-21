@@ -19,7 +19,6 @@
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 with DB.Errors;
-
 package body DB.Active_Record.Fields.Generic_Integer is
 
    type Field_Size_Type is (BITS_16, BITS_32, BITS_64);
