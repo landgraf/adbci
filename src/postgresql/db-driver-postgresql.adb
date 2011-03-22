@@ -24,6 +24,7 @@ with DB.Errors;
 with DB.Types;				use DB.Types;
 with Interfaces.C;			use Interfaces.C;
 with Interfaces.C.Strings;		use Interfaces.C.Strings;
+with ada.text_io; use ada.text_io;
 
 pragma Elaborate_All (DB.Driver_Manager);
 
@@ -216,6 +217,7 @@ package body DB.Driver.PostgreSQL is
          Free_Result (Driver, Result);
       end if;
       Result := null;
+      put_line(string(query));
 
       Query_Result := PQ_Exec (Driver.Connection, To_C (String (Query)));
       if Query_Result = Null_Result then
