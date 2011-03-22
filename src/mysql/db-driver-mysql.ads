@@ -174,6 +174,7 @@ private
             Element             => C.Unsigned_long,
             Element_Array       => Unsigned_Long_Array,
             Default_Terminator  => Unsigned_Long_Null);
+    subtype Lenghts_Type is Unsigned_Long_Array_Ptr.Pointer;
     package Char_Ptrs is
         new C.Pointers
             (
@@ -347,5 +348,12 @@ private
     type MYSQL_Field is access all St_Mysql_Field;
 
    function Get_Field_Direct(Result : MySQL_Result_Access; Field_Index : Integer) return MySQL_Field; 
+   function Get_Data_Length(Result : in MySQL_Result_Access; Field : in Column_Index) return Integer;
+   procedure mysql_data_seek(Result : Mysql_Result_Access; Offset : Integer);
+           pragma Import (C,mysql_data_seek,"mysql_data_seek");
+   function mysql_fetch_row(Result : Mysql_Result_Access) return MySQL_Row;
+       pragma Import (C, mysql_fetch_row,"mysql_fetch_row");
+   function mysql_fetch_lengths(Result : Mysql_Result_Access ) return Lenghts_Type;
+       pragma Import (C,mysql_fetch_lengths,"mysql_fetch_lengths");
 
 end DB.Driver.MySQL;

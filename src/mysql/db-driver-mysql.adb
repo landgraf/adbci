@@ -116,8 +116,8 @@ package body DB.Driver.MySQL is
             q_c      : C.char_array;
             length_C : C.Unsigned_long) return C.Unsigned_Long;
             pragma Import (C, mysql_real_query, "mysql_real_query");
-        function mysql_use_result(Mysql : Mysql_Access) return Mysql_Result_Access;
-            pragma Import (C,mysql_use_result,"mysql_use_result");
+        function mysql_store_result(Mysql : Mysql_Access) return Mysql_Result_Access;
+            pragma Import (C,mysql_store_result,"mysql_store_result");
         function mysql_num_fields (Result : Mysql_Result_Access) return Natural;
             pragma Import (C,mysql_num_fields,"mysql_num_fields");
         function mysql_num_rows (Result : Mysql_Result_Access) return Natural;
@@ -144,7 +144,7 @@ package body DB.Driver.MySQL is
           declare
               R : constant Result_Access := new Result_Type;
           begin
-              Query_Result := MySQL_Use_Result(Driver.Connection);
+              Query_Result := MySQL_Store_Result(Driver.Connection);
               R.all.Results := Query_Result;
               R.all.Field_Count := mysql_num_fields(Query_Result);
               R.all.Row_Count    := mysql_num_rows(Query_Result);
@@ -319,9 +319,15 @@ package body DB.Driver.MySQL is
       return Boolean
    is
    begin
-       -- XXX FIXME 
-       return True;
+       Mysql_Data_Seek(Result.Results,Integer(Row-1));
+       if Get_Data_Length(Result.Results, Field) = 0 then
+            put_line("Is Null");
+            return True;
+       else
+           return False;
+       end if;
    end Get_Data_Is_Null;
+
 
    ------------------------
    -- Get_Data_Object_Id --
@@ -385,40 +391,27 @@ package body DB.Driver.MySQL is
       Replacement       : in String := "")
       return String
    is
-       use Unsigned_Long_Array_Ptr;
-       subtype Lenghts_Type is Unsigned_Long_Array_Ptr.Pointer;
-
-       function mysql_fetch_row(Result : Mysql_Result_Access) return MySQL_Row;
-           pragma Import (C, mysql_fetch_row,"mysql_fetch_row");
        function mysql_fetch_Field(Result : Mysql_Result_Access) return MySQL_Field;
            pragma Import (C, mysql_fetch_field,"mysql_fetch_field");
-       function mysql_fetch_lengths(Result : Mysql_Result_Access ) return Lenghts_Type;
-           pragma Import (C,mysql_fetch_lengths,"mysql_fetch_lengths");
+       Lnt              : Integer;
+       Lenghts          : Lenghts_Type;
        Current_Row      : MySQL_Row;
-       Current_Field    : MySQL_Field;
-       Lengths     : Lenghts_Type;
+       res_text         : Unbounded_String;
 
    begin
-       if Row = 0  or else Row > Tuple_Index(Result.Row_Count) then
-           raise DB.Errors.TUPLE_NOT_FOUND;
-       elsif Field = 0 or else Field > Column_Index (Result.Field_Count) then
-           raise DB.Errors.COLUMN_NOT_FOUND;
-       end if;
-       for Tmp1 in 1..Row loop
-           Current_Row := MySQL_Fetch_Row(Result.Results);
-           exit when Current_Row = Null;
-           Lengths     := mysql_fetch_lengths(Result.Results);
+       put_line("Row: " & Row'Img & "   Field:" & Field'Img);
+       put_line("Row_Count: " & Result.Row_Count'Img & "   Field_Count:" & Result.Field_Count'Img);
+       Mysql_Data_Seek(Result.Results,Integer(Row-1));
+       Current_Row := MySQL_Fetch_Row(Result.Results);
+       Lenghts      := MySQL_Fetch_Lengths(Result.Results);
+       for I in 0..Field loop
+           if Lenghts.all /= 0 then
+               res_text :=  To_Unbounded_String(Interfaces.C.Strings.Value (Current_Row.all));
+           end if;
            MySQL_Row_Type.Increment(Current_Row);
+           Unsigned_Long_Array_Ptr.Increment(Lenghts);
        end loop;
-       for Tmp1 in 1..Field loop
-           Current_Field := MySQL_Fetch_Field(Result.Results);
-           Unsigned_Long_Array_Ptr.Increment(Lengths);
-       end loop;
-       declare
-       res_text    : constant String       := Interfaces.C.Strings.Value (Current_Row.all);
-       begin
-           return res_text;
-       end;
+       return To_String(res_text);
    end Get_Data_String;
 
    -------------------------
@@ -621,13 +614,28 @@ package body DB.Driver.MySQL is
    function Get_Field_Direct(Result : MySQL_Result_Access; Field_Index : Integer) return MySQL_Field 
    is
        Field : MySQL_Field;
-       -- MyResult : MySQL_Result_Access;
        function MySQL_Fetch_Field_Direct(Result: MySQL_Result_Access; Index : Integer) return MySQL_Field;
            pragma Import (C,MySQL_Fetch_Field_Direct,"mysql_fetch_field_direct");
    begin
        return MySQL_Fetch_Field_Direct(Result, Field_Index);
    end Get_Field_Direct;
 
+   function Get_Data_Length
+          (Result             : in MySQL_Result_Access;
+          Field            : in Column_Index)
+          return Integer
+   is
+            Lengths : Lenghts_Type;
+            Lnt     : C.Unsigned_long;
+            Current_Row : constant MySQL_Row := MySQL_Fetch_Row(Result);
+   begin
+       Lengths      := MySQL_Fetch_Lengths(Result);
+       for J in 0..Field loop
+           Lnt := Lengths.all;
+           Unsigned_Long_Array_Ptr.Increment(Lengths);
+       end loop;
+       return Integer(Lnt);
+   end Get_Data_Length;
 
 begin
        DB.Driver_Manager.Register_Driver ("mysql", Alloc'Access);
