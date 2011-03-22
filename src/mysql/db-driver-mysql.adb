@@ -164,12 +164,20 @@ package body DB.Driver.MySQL is
       Name              : in String)
       return Column_Index
    is
+       Field : MySQL_Field;
+       MyResult : MySQL_Result_Access;
+       function MySQL_Fetch_Field_Direct(Result: MySQL_Result_Access; Index : Integer) return MySQL_Field;
+       pragma Import (C,MySQL_Fetch_Field_Direct,"mysql_fetch_field_direct");
    begin
-      put_line("Fuck" & Name);
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Find_Column_By_Name unimplemented");
-      raise Program_Error with "Unimplemented function Find_Column_By_Name";
-      return Find_Column_By_Name (Result, Name);
+      MyResult := Result.Results;
+      for Tmp in 0..Result.Field_count-1 loop
+          Field := MySQL_Fetch_Field_Direct(MyResult,Tmp);
+          if Value(Field.Name) = Name then
+              return Column_Index(Tmp);
+          end if;
+      end loop;
+      --  FIXME RAISE here
+      return 100;
    end Find_Column_By_Name;
 
    -----------------
@@ -315,10 +323,8 @@ package body DB.Driver.MySQL is
       return Boolean
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (True, "Get_Data_Is_Null unimplemented");
-      raise Program_Error with "Unimplemented function Get_Data_Is_Null";
-      return Get_Data_Is_Null (Result, Row, Field);
+       -- XXX FIXME 
+       return True;
    end Get_Data_Is_Null;
 
    ------------------------
