@@ -346,5 +346,6 @@ private
     pragma Convention (C, St_Mysql_Field);
     type MYSQL_Field is access all St_Mysql_Field;
 
+   function Get_Field_Direct(Result : MySQL_Result_Access; Field_Index : Integer) return MySQL_Field; 
 
 end DB.Driver.MySQL;

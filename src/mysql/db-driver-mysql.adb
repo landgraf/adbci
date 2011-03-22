@@ -165,13 +165,9 @@ package body DB.Driver.MySQL is
       return Column_Index
    is
        Field : MySQL_Field;
-       MyResult : MySQL_Result_Access;
-       function MySQL_Fetch_Field_Direct(Result: MySQL_Result_Access; Index : Integer) return MySQL_Field;
-       pragma Import (C,MySQL_Fetch_Field_Direct,"mysql_fetch_field_direct");
    begin
-      MyResult := Result.Results;
       for Tmp in 0..Result.Field_count-1 loop
-          Field := MySQL_Fetch_Field_Direct(MyResult,Tmp);
+          Field := Get_Field_Direct(Result.Results,Tmp);
           if Value(Field.Name) = Name then
               return Column_Index(Tmp);
           end if;
@@ -619,6 +615,20 @@ package body DB.Driver.MySQL is
    begin
       return C.Strings.Value(MySQL_Error(Driver.Connection));
    end Last_Error;
+   ----------------------
+   -- Get_Field_Direct --
+   ----------------------
+   function Get_Field_Direct(Result : MySQL_Result_Access; Field_Index : Integer) return MySQL_Field 
+   is
+       Field : MySQL_Field;
+       -- MyResult : MySQL_Result_Access;
+       function MySQL_Fetch_Field_Direct(Result: MySQL_Result_Access; Index : Integer) return MySQL_Field;
+           pragma Import (C,MySQL_Fetch_Field_Direct,"mysql_fetch_field_direct");
+   begin
+       return MySQL_Fetch_Field_Direct(Result, Field_Index);
+   end Get_Field_Direct;
+
+
 begin
        DB.Driver_Manager.Register_Driver ("mysql", Alloc'Access);
 end DB.Driver.MySQL;
