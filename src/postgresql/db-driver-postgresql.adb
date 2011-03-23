@@ -312,7 +312,8 @@ package body DB.Driver.PostgreSQL is
       return (
          Insert_Id_Func    => False,
          Random_Access     => True,
-         Returning_Clause  => True
+         Returning_Clause  => True,
+         Has_Ilike         => True
       );
    end Get_Capabilities;
 

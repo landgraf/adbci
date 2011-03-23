@@ -599,27 +599,35 @@ package body DB.Active_Record.Fields is
       Database          : in DB.Connector.Connection) return String
    is
       Value             : Unbounded_String;
+      Conn_Driver       : constant DB.Driver.Driver_Handle :=
+          Database.Get_Driver;
+      Driver_Caps       : constant DB.Driver.Driver_Capabilities :=
+          Conn_Driver.all.Get_Capabilities;
    begin
       Value := This.Data.all.Model_Name;
       Append (Value, '.');
       Append (Value, This.Data.all.Field_Name);
 
       case This.Data.all.Operator is
-         when EQUAL =>
-            Append (Value, " = ");
-         when NOT_EQUAL =>
-            Append (Value, " <> ");
-         when LESS_THAN =>
-            Append (Value, " < ");
-         when LESS_THAN_OR_EQUAL =>
-            Append (Value, " <= ");
-         when GREATER_THAN =>
-            Append (Value, " > ");
-         when GREATER_THAN_OR_EQUAL =>
-            Append (Value, " >= ");
-         when ILIKE =>
-            Append (Value, " ILIKE ");
-         when LIKE =>
+          when EQUAL =>
+              Append (Value, " = ");
+          when NOT_EQUAL =>
+              Append (Value, " <> ");
+          when LESS_THAN =>
+              Append (Value, " < ");
+          when LESS_THAN_OR_EQUAL =>
+              Append (Value, " <= ");
+          when GREATER_THAN =>
+              Append (Value, " > ");
+          when GREATER_THAN_OR_EQUAL =>
+              Append (Value, " >= ");
+          when ILIKE =>
+              if Driver_Caps.Has_Ilike then
+                  Append (Value, " ILIKE ");
+              else
+                  Append (Value, " LIKE ");
+              end if;
+          when LIKE =>
             Append (Value, " LIKE ");
          when IS_OPERATOR =>
             Append (Value, " IS ");

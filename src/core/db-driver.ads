@@ -34,6 +34,7 @@ package DB.Driver is
       Insert_Id_Func    : Boolean := False;  --  can get inserted id using func
       Random_Access     : Boolean := False;  --  result sets are random access
       Returning_Clause  : Boolean := False;  --  supports SQL RETURNING clauses
+      Has_Ilike         : Boolean := False;  --  supports SQL ILIKE operator
    end record;
 
    procedure Connect

@@ -211,9 +211,10 @@ package body DB.Driver.MySQL is
    begin
        -- FIXME Check this shit
       return (
-         Insert_Id_Func    => False,
+         Insert_Id_Func    => True,
          Random_Access     => False,
-         Returning_Clause  => False
+         Returning_Clause  => False,
+         Has_ilike         => False
       );
    end Get_Capabilities;
 
