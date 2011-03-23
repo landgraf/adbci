@@ -35,6 +35,7 @@ package DB.Driver is
       Random_Access     : Boolean := False;  --  result sets are random access
       Returning_Clause  : Boolean := False;  --  supports SQL RETURNING clauses
       Has_Ilike         : Boolean := False;  --  supports SQL ILIKE operator
+      Count_Name        : Boolean := False;  --  Count column in result have has name count (not count*)
    end record;
 
    procedure Connect

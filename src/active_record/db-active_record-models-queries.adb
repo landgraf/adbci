@@ -18,7 +18,7 @@
 
 with DB.Connector;                     use DB.Connector;
 with DB.Errors;
-
+with ada.text_io; use ada.text_io;
 package body DB.Active_Record.Models.Queries is
 
    -----------
@@ -56,6 +56,7 @@ package body DB.Active_Record.Models.Queries is
             R           : DB.Connector.Result_Set;
          begin
             R := Connection.Execute (Query);
+            put_line("GETING" & R.Get_Bigint ("count")'Img);
             return Natural (R.Get_Bigint ("count"));
          end;
       end if;

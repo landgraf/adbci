@@ -1,5 +1,6 @@
 with DB.Driver_Manager; use DB.Driver_Manager;
 with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Strings.Maps.Constants;
 pragma Elaborate_All (DB.Driver_Manager);
 package body DB.Driver.MySQL is
 
@@ -131,7 +132,7 @@ package body DB.Driver.MySQL is
    begin
       if Result /= Null
       then
-          Free_Result(Driver,Result);
+         Free_Result(Driver,Result);
       end if;
       Result := Null;
       put_line("Execute: " &  String(Query));
@@ -158,24 +159,23 @@ package body DB.Driver.MySQL is
    ------------------------
    -- Find_Column_By_Name --
    ------------------------
-
    overriding function Find_Column_By_Name
-     (Result            : in Result_Type;
-      Name              : in String)
-      return Column_Index
+       (Result          : in Result_Type;
+        Name            : in String) return Column_Index
    is
        Field : MySQL_Field;
+       IName : constant String  := Translate(Name, Ada.Strings.Maps.Constants.Upper_Case_Map);
    begin
+      put_line("Result.Field_Count" & Result.Field_count'Img & "Find for count " & IName);
       for Tmp in 0..Result.Field_count-1 loop
           Field := Get_Field_Direct(Result.Results,Tmp);
-          if Value(Field.Name) = Name then
+          put_line("Field name is:  " & Value(Field.Name));
+          if Index(Translate(Value(Field.Name),Ada.Strings.Maps.Constants.Upper_Case_Map) ,IName) = 1 then
               return Column_Index(Tmp);
           end if;
       end loop;
-      --  FIXME RAISE here
-      return 100;
+     raise DB.Errors.COLUMN_NOT_FOUND;
    end Find_Column_By_Name;
-
    -----------------
    -- Free_Result --
    -----------------
@@ -195,6 +195,7 @@ package body DB.Driver.MySQL is
                   MySQL_Free_Result(Result_Type (Result.all).Results);
                   Result_Type (Result.all).Results := Null_Result;
               end if;
+              put_line("Free result");
               Free_Storage (Result_Access (Result));
           end if;
    end Free_Result;
@@ -214,7 +215,8 @@ package body DB.Driver.MySQL is
          Insert_Id_Func    => True,
          Random_Access     => False,
          Returning_Clause  => False,
-         Has_ilike         => False
+         Has_ilike         => False,
+         Count_Name        => False
       );
    end Get_Capabilities;
 
@@ -408,9 +410,12 @@ package body DB.Driver.MySQL is
        for I in 0..Field loop
            if Lenghts.all /= 0 then
                res_text :=  To_Unbounded_String(Interfaces.C.Strings.Value (Current_Row.all));
+               put_line(to_string(res_text));
            end if;
-           MySQL_Row_Type.Increment(Current_Row);
-           Unsigned_Long_Array_Ptr.Increment(Lenghts);
+           if Field /= 0 then
+               MySQL_Row_Type.Increment(Current_Row);
+               Unsigned_Long_Array_Ptr.Increment(Lenghts);
+           end if;
        end loop;
        return To_String(res_text);
    end Get_Data_String;

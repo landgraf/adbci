@@ -1,4 +1,5 @@
 with System;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Interfaces.C; use Interfaces.C;
 with Interfaces.C.Pointers;
 with Ada.Text_io; use Ada.Text_IO;
