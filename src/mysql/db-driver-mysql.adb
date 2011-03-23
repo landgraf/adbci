@@ -1,4 +1,5 @@
 with DB.Driver_Manager; use DB.Driver_Manager;
+with ada.text_io; use ada.text_io;
 
 with Ada.Strings.Maps.Constants;
 pragma Elaborate_All (DB.Driver_Manager);
@@ -322,7 +323,9 @@ package body DB.Driver.MySQL is
       return Boolean
    is
    begin
+       put_line("before seeking=" & mysql_row_tell(result.results)'Img);
        Mysql_Data_Seek(Result.Results,Integer(Row-1));
+       put_line("after seeking=" & mysql_row_tell(result.results)'Img);
        if Get_Data_Length(Result.Results, Field) = 0 then
 
             return True;

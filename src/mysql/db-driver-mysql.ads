@@ -167,7 +167,7 @@ private
         );
     type Unsigned_Long_Array is array (Natural range <>)
         of aliased C.unsigned_long;
-        Unsigned_Long_Null : aliased constant C.unsigned_long := 0;
+    Unsigned_Long_Null : aliased constant C.unsigned_long := C.Unsigned_Long(0);
     package Unsigned_Long_Array_Ptr is
             new  C.Pointers
         (
@@ -356,5 +356,7 @@ private
        pragma Import (C, mysql_fetch_row,"mysql_fetch_row");
    function mysql_fetch_lengths(Result : Mysql_Result_Access ) return Lenghts_Type;
        pragma Import (C,mysql_fetch_lengths,"mysql_fetch_lengths");
+   function mysql_row_tell(Result : Mysql_Result_Access) return Integer;
+       pragma Import (C, mysql_row_tell,"mysql_row_tell");
 
 end DB.Driver.MySQL;
