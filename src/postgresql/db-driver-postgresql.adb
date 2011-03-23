@@ -24,7 +24,7 @@ with DB.Errors;
 with DB.Types;				use DB.Types;
 with Interfaces.C;			use Interfaces.C;
 with Interfaces.C.Strings;		use Interfaces.C.Strings;
-with ada.text_io; use ada.text_io;
+
 
 pragma Elaborate_All (DB.Driver_Manager);
 
@@ -217,7 +217,7 @@ package body DB.Driver.PostgreSQL is
          Free_Result (Driver, Result);
       end if;
       Result := null;
-      put_line(string(query));
+
 
       Query_Result := PQ_Exec (Driver.Connection, To_C (String (Query)));
       if Query_Result = Null_Result then
@@ -239,7 +239,7 @@ package body DB.Driver.PostgreSQL is
                R.all.Results := Query_Result;
                R.all.Column_Count := Natural (PQ_N_Fields (Query_Result));
                R.all.Tuple_Count := Natural (PQ_N_Tuples (Query_Result));
-               put_line("Column_Count=" & R.all.Column_Count'Img & ";  Tuple_Count=" & R.all.Tuple_Count'Img);
+
                Result := Result_Handle (R);
             end;
          when PGRES_COPY_OUT | PGRES_COPY_IN =>
@@ -496,7 +496,7 @@ package body DB.Driver.PostgreSQL is
          Column		: in Column_Index) return Interfaces.C.Strings.Chars_Ptr;
       pragma Import (C, PQ_Get_Value, "PQgetvalue");
    begin
-       put_line("Requested Row=" & Tuple'Img & ";  Field=" & Column'Img);
+
       if Tuple = 0 or else Tuple > Tuple_Index (Result.Tuple_Count) then
          raise DB.Errors.TUPLE_NOT_FOUND;
       elsif Column = 0 or else Column > Column_Index (Result.Column_Count) then

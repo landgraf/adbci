@@ -1,5 +1,5 @@
 with DB.Driver_Manager; use DB.Driver_Manager;
-with Ada.Text_IO; use Ada.Text_IO;
+
 with Ada.Strings.Maps.Constants;
 pragma Elaborate_All (DB.Driver_Manager);
 package body DB.Driver.MySQL is
@@ -135,7 +135,7 @@ package body DB.Driver.MySQL is
          Free_Result(Driver,Result);
       end if;
       Result := Null;
-      put_line("Execute: " &  String(Query));
+
       Result_Code   := MySQL_Real_Query(Driver.Connection, C.To_C(String(Query)) , Length);
       if Integer(Result_Code) /= 0
       then
@@ -166,10 +166,10 @@ package body DB.Driver.MySQL is
        Field : MySQL_Field;
        IName : constant String  := Translate(Name, Ada.Strings.Maps.Constants.Upper_Case_Map);
    begin
-      put_line("Result.Field_Count" & Result.Field_count'Img & "Find for count " & IName);
+
       for Tmp in 0..Result.Field_count-1 loop
           Field := Get_Field_Direct(Result.Results,Tmp);
-          put_line("Field name is:  " & Value(Field.Name));
+
           if Index(Translate(Value(Field.Name),Ada.Strings.Maps.Constants.Upper_Case_Map) ,IName) = 1 then
               return Column_Index(Tmp);
           end if;
@@ -195,7 +195,7 @@ package body DB.Driver.MySQL is
                   MySQL_Free_Result(Result_Type (Result.all).Results);
                   Result_Type (Result.all).Results := Null_Result;
               end if;
-              put_line("Free result");
+
               Free_Storage (Result_Access (Result));
           end if;
    end Free_Result;
@@ -324,7 +324,7 @@ package body DB.Driver.MySQL is
    begin
        Mysql_Data_Seek(Result.Results,Integer(Row-1));
        if Get_Data_Length(Result.Results, Field) = 0 then
-            put_line("Is Null");
+
             return True;
        else
            return False;
@@ -402,15 +402,15 @@ package body DB.Driver.MySQL is
        res_text         : Unbounded_String;
 
    begin
-       put_line("Row: " & Row'Img & "   Field:" & Field'Img);
-       put_line("Row_Count: " & Result.Row_Count'Img & "   Field_Count:" & Result.Field_Count'Img);
+
+
        Mysql_Data_Seek(Result.Results,Integer(Row-1));
        Current_Row := MySQL_Fetch_Row(Result.Results);
        Lenghts      := MySQL_Fetch_Lengths(Result.Results);
        for I in 0..Field loop
            if Lenghts.all /= 0 then
                res_text :=  To_Unbounded_String(Interfaces.C.Strings.Value (Current_Row.all));
-               put_line(to_string(res_text));
+
            end if;
            if Field /= 0 then
                MySQL_Row_Type.Increment(Current_Row);

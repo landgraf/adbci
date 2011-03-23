@@ -2,7 +2,7 @@ with System;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Interfaces.C; use Interfaces.C;
 with Interfaces.C.Pointers;
-with Ada.Text_io; use Ada.Text_IO;
+
 with Interfaces.C.Strings;use Interfaces.C.Strings;
 with DB.Errors;
 with DB.Driver_Manager; use DB.Driver_Manager;

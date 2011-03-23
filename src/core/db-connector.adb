@@ -20,7 +20,7 @@ with Ada.Unchecked_Deallocation;
 with DB.Driver_Manager;
 with DB.Errors;
 with GNAT.IO;
-with ada.text_io; use ada.text_io;
+
 package body DB.Connector is
 
    use type DB.Driver.Driver_Handle;
@@ -183,7 +183,7 @@ package body DB.Connector is
      return DB.Types.DB_Bigint
    is
    begin
-       put_line(Column'Img);
+
       if This.Results /= null and then This.Results.all.Data /= null then
          return This.Results.all.Data.all.Get_Data_Bigint
            (This.Tuple, Column, Replace_Null, Replacement);
@@ -205,7 +205,7 @@ package body DB.Connector is
             Reqd_Column : constant Column_Index :=
               This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
-            put_line("Found="& Reqd_Column'Img);
+
             return This.Results.all.Data.all.Get_Data_Bigint
               (This.Tuple, Reqd_Column, Replace_Null, Replacement);
          end;

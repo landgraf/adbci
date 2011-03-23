@@ -23,7 +23,7 @@ with Ada.Tags;
 with DB.Active_Record.Fields.Model_Operations;
 with DB.Driver;
 with DB.Errors;
-with Ada.Text_IO; use Ada.Text_IO;
+
 
 package body DB.Active_Record.Models is
 
@@ -628,7 +628,7 @@ package body DB.Active_Record.Models is
              This.Id.Load_From (Connection, Results);
          else
               Id_Inserted := Conn_Driver.Get_Inserted_Row_id;
-              Put_Line("Inserted ID:" & Integer(Id_Inserted)'Img);
+
               Set_Unbounded_String (Insert_SQL, "SELECT * FROM ");
               Append(Insert_SQL, This.Model_Name);
               Append(Insert_SQL, " WHERE ");
