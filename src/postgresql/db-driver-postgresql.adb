@@ -311,13 +311,12 @@ package body DB.Driver.PostgreSQL is
    is
       pragma Unreferenced (This);
    begin
-      return (
-         Insert_Id_Func    => False,
+      return
+        (Insert_Id_Func    => False,
          Random_Access     => True,
          Returning_Clause  => True,
          Has_Ilike         => True,
-         Count_Name        => True
-      );
+         Count_Name        => True);
    end Get_Capabilities;
 
    ----------------------
