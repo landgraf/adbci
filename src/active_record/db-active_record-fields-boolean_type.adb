@@ -165,6 +165,7 @@ package body DB.Active_Record.Fields.Boolean_Type is
                  or else Up_Value = "true"
                  or else Up_Value = "t"
                  or else Up_Value = "1"
+                 or else Up_Value = "on"
                  or else Up_Value = "set"
                then
                   This.Value := True;
@@ -174,6 +175,7 @@ package body DB.Active_Record.Fields.Boolean_Type is
                  or else Up_Value = "false"
                  or else Up_Value = "f"
                  or else Up_Value = "0"
+                 or else Up_Value = ""
                  or else Up_Value = "unset"
                then
                   This.Value := False;
