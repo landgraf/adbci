@@ -176,7 +176,7 @@ package body DB.Driver.MySQL is
          raise DB.Errors.CONNECT_ERROR with Last_Error (Driver);
       end if;
 
-      if MySQL_Affected_Rows (Driver.Connection) = -1 then
+      if MySQL_Affected_Rows (Driver.Connection) /= -1 then
          declare
             R : constant Result_Access := new Result_Type;
          begin
