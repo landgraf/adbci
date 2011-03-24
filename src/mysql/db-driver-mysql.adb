@@ -251,10 +251,9 @@ package body DB.Driver.MySQL is
    is
       pragma Unreferenced (This);
    begin
-       -- FIXME Check this shit
       return
         (Insert_Id_Func   => True,
-         Random_Access    => False,
+         Random_Access    => True,
          Returning_Clause => False,
          Has_ilike        => False,
          Count_Name       => False);
