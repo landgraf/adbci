@@ -25,6 +25,7 @@ with DB.Types;				use DB.Types;
 with Interfaces.C;			use Interfaces.C;
 with Interfaces.C.Strings;		use Interfaces.C.Strings;
 
+
 pragma Elaborate_All (DB.Driver_Manager);
 
 package body DB.Driver.PostgreSQL is
@@ -217,6 +218,7 @@ package body DB.Driver.PostgreSQL is
       end if;
       Result := null;
 
+
       Query_Result := PQ_Exec (Driver.Connection, To_C (String (Query)));
       if Query_Result = Null_Result then
          raise DB.Errors.SQL_Error with Last_Error (Driver);
@@ -237,6 +239,7 @@ package body DB.Driver.PostgreSQL is
                R.all.Results := Query_Result;
                R.all.Column_Count := Natural (PQ_N_Fields (Query_Result));
                R.all.Tuple_Count := Natural (PQ_N_Tuples (Query_Result));
+
                Result := Result_Handle (R);
             end;
          when PGRES_COPY_OUT | PGRES_COPY_IN =>
@@ -272,6 +275,7 @@ package body DB.Driver.PostgreSQL is
       end if;
       raise DB.Errors.COLUMN_NOT_FOUND with "column '" & Name & "' not found";
    end Find_Column_By_Name;
+
 
    -----------------
    -- Free_Result --
@@ -310,7 +314,9 @@ package body DB.Driver.PostgreSQL is
       return (
          Insert_Id_Func    => False,
          Random_Access     => True,
-         Returning_Clause  => True
+         Returning_Clause  => True,
+         Has_Ilike         => True,
+         Count_Name        => True
       );
    end Get_Capabilities;
 
@@ -490,6 +496,7 @@ package body DB.Driver.PostgreSQL is
          Column		: in Column_Index) return Interfaces.C.Strings.Chars_Ptr;
       pragma Import (C, PQ_Get_Value, "PQgetvalue");
    begin
+
       if Tuple = 0 or else Tuple > Tuple_Index (Result.Tuple_Count) then
          raise DB.Errors.TUPLE_NOT_FOUND;
       elsif Column = 0 or else Column > Column_Index (Result.Column_Count) then
@@ -549,7 +556,7 @@ package body DB.Driver.PostgreSQL is
    -------------------------
 
    function Get_Inserted_Row_id
-     (Result            : in Result_Type) return DB.Types.Object_Id
+     (Driver            : in Driver_Type) return DB.Types.Object_Id
    is
    begin
       raise DB.Errors.NOT_SUPPORTED with

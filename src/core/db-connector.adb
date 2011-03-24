@@ -183,6 +183,7 @@ package body DB.Connector is
      return DB.Types.DB_Bigint
    is
    begin
+
       if This.Results /= null and then This.Results.all.Data /= null then
          return This.Results.all.Data.all.Get_Data_Bigint
            (This.Tuple, Column, Replace_Null, Replacement);
@@ -204,6 +205,7 @@ package body DB.Connector is
             Reqd_Column : constant Column_Index :=
               This.Results.all.Data.all.Find_Column_By_Name (Column);
          begin
+
             return This.Results.all.Data.all.Get_Data_Bigint
               (This.Tuple, Reqd_Column, Replace_Null, Replacement);
          end;

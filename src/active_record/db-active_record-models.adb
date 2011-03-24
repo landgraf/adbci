@@ -24,6 +24,7 @@ with DB.Active_Record.Fields.Model_Operations;
 with DB.Driver;
 with DB.Errors;
 
+
 package body DB.Active_Record.Models is
 
    type ACS is access constant String;
@@ -600,6 +601,7 @@ package body DB.Active_Record.Models is
       Field_List        : Unbounded_String;
       Field_Values      : Unbounded_String;
       Total_Fields      : constant Positive := This.Field_Count;
+      Id_Inserted       : DB_Bigserial;
 
       procedure Handle_Field (F : in out DB.Active_Record.Fields.Field'Class) is
          Field_SQL      : constant DB.Types.SQL_String := F.To_SQL (Connection);
@@ -633,7 +635,26 @@ package body DB.Active_Record.Models is
            Connection.Execute (SQL_Command);
       begin
          This.Store := STORE_UPDATE;
-         This.Id.Load_From (Connection, Results);
+         if Driver_Caps.Returning_Clause then
+             This.Id.Load_From (Connection, Results);
+         else
+              Id_Inserted := Conn_Driver.Get_Inserted_Row_id;
+
+              Set_Unbounded_String (Insert_SQL, "SELECT * FROM ");
+              Append(Insert_SQL, This.Model_Name);
+              Append(Insert_SQL, " WHERE ");
+              Append(Insert_SQL, This.Get_Id_Name);
+              Append(Insert_SQL, "="); 
+              Append(Insert_SQL, Trim(Id_Inserted'Img,Both));
+              declare 
+                  SQL_Command    : constant DB.Types.SQL_String :=
+                      DB.Types.SQL_String (To_String (Insert_SQL));
+                  Results        : constant DB.Connector.Result_Set :=
+                      Connection.Execute (SQL_Command);
+              begin
+               This.Id.Load_From (Connection, Results);
+              end;
+         end if;
          --  XXX FIXME: this only works for RETURNING clauses... XXX
       end;
    end Save_Insert;

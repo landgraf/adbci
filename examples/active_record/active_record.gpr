@@ -6,7 +6,7 @@ project Active_Record is
    for Main use ("active_record.adb");
 
    package Compiler is
-      for Default_Switches ("ada") use ("-gnat05");
+      for Default_Switches ("ada") use ("-gnat05", "-g");
    end Compiler;
 
 end Active_Record;

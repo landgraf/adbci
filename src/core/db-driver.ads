@@ -34,6 +34,8 @@ package DB.Driver is
       Insert_Id_Func    : Boolean := False;  --  can get inserted id using func
       Random_Access     : Boolean := False;  --  result sets are random access
       Returning_Clause  : Boolean := False;  --  supports SQL RETURNING clauses
+      Has_Ilike         : Boolean := False;  --  supports SQL ILIKE operator
+      Count_Name        : Boolean := False;  --  Count column in result have has name count (not count*)
    end record;
 
    procedure Connect
@@ -157,7 +159,7 @@ package DB.Driver is
    --  Returns the SQL Data type used to identify objects.
 
    function Get_Inserted_Row_id
-     (Result            : in Abstract_Result_Type)
+     (Driver            : in Abstract_Driver_Type)
    return DB.Types.Object_Id is abstract;
    --  For databases which support getting the inserted row id via a function,
    --  returns the inserted row id.

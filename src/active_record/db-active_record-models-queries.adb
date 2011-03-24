@@ -43,7 +43,7 @@ package body DB.Active_Record.Models.Queries is
       if First > Last then
          return 0;
       else
-         Set_Unbounded_String (Query_SQL, "SELECT COUNT (");
+         Set_Unbounded_String (Query_SQL, "SELECT COUNT(");
          Append (Query_SQL, Object.Get_Name & '.' & Object.Get_Id_Name);
          Append (Query_SQL, ')');
          Append (Query_SQL, String
@@ -56,6 +56,7 @@ package body DB.Active_Record.Models.Queries is
             R           : DB.Connector.Result_Set;
          begin
             R := Connection.Execute (Query);
+
             return Natural (R.Get_Bigint ("count"));
          end;
       end if;
