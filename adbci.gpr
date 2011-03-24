@@ -6,7 +6,7 @@ project ADBCI is
    for Library_Dir use "lib";
    for Library_Kind use "dynamic";
    for Library_Name use "adbci";
-   for Library_Version use "libadbci.so.1";
+   for Library_Version use "libadbci.so.2";
 
    package Compiler is
       for Default_Switches ("ada") use ("-gnatwa", "-gnat05", "-gnatf", "-g");
