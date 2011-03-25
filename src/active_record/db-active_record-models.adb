@@ -503,6 +503,24 @@ package body DB.Active_Record.Models is
       Iterate_Fields (This, Count_and_Clear'Access);
    end Prepare_Fields;
 
+   ------------
+   -- Reload --
+   ------------
+
+   procedure Reload
+     (This              : in out Model'Class;
+      Connection        : in     DB.Connector.Connection;
+      For_Update        : in     Boolean := False;
+      Load_Foreign_Keys : in     Boolean := True)
+   is
+   begin
+      Get (This              => This,
+           Connection        => Connection,
+           Id                => This.Id.Get,
+           For_Update        => For_Update,
+           Load_Foreign_Keys => Load_Foreign_Keys);
+   end Reload;
+
    ----------
    -- Save --
    ----------

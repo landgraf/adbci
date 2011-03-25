@@ -153,6 +153,13 @@ package DB.Active_Record.Models is
       Connection        : in out DB.Connector.Connection);
    --  Called before model instance is saved.
 
+   procedure Reload
+     (This              : in out Model'Class;
+      Connection        : in     DB.Connector.Connection;
+      For_Update        : in     Boolean := False;
+      Load_Foreign_Keys : in     Boolean := True);
+   --  Reloads the model.
+
    procedure Save
      (This              : in out Model'Class;
       Connection        : in out DB.Connector.Connection;
