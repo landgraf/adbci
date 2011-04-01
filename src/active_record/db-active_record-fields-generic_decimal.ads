@@ -13,7 +13,7 @@
 --  You should have received a copy of the GNU Lesser General Public License
 --  along with this library; if not, see <http://www.gnu.org/licenses/>
 --
---    db-active_record-fields-generic_fixed.ads   jvinters   21-January-2011
+--    db-active_record-fields-generic_decimal.ads   jvinters   21-January-2011
 --
 
 with DB.Active_Record.Fields;
@@ -23,7 +23,7 @@ generic
    type Fixed_Type is delta <> digits <>;
    Initialization_Value : Fixed_Type := 0.0;
 
-package DB.Active_Record.Fields.Generic_Fixed is
+package DB.Active_Record.Fields.Generic_Decimal is
 
    type Field is new DB.Active_Record.Fields.Field with private;
 
@@ -113,4 +113,4 @@ private
       Value             : Fixed_Type := Initialization_Value;
    end record;
 
-end DB.Active_Record.Fields.Generic_Fixed;
+end DB.Active_Record.Fields.Generic_Decimal;

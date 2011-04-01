@@ -13,14 +13,14 @@
 --  You should have received a copy of the GNU Lesser General Public License
 --  along with this library; if not, see <http://www.gnu.org/licenses/>
 --
---    db-active_record-fields-generic_fixed.ads   jvinters   21-January-2011
+--    db-active_record-fields-generic_decimal.ads   jvinters   21-January-2011
 --
 
 with Ada.Strings;                      use Ada.Strings;
 with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 with DB.Errors;
 
-package body DB.Active_Record.Fields.Generic_Fixed is
+package body DB.Active_Record.Fields.Generic_Decimal is
 
    ---------
    -- "=" --
@@ -343,4 +343,4 @@ package body DB.Active_Record.Fields.Generic_Fixed is
       end if;
    end To_String;
 
-end DB.Active_Record.Fields.Generic_Fixed;
+end DB.Active_Record.Fields.Generic_Decimal;
