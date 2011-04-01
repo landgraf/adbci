@@ -157,8 +157,8 @@ package body DB.Active_Record.Fields.Foreign_Keys is
         Connection.Get_Driver.all.Get_Foreign_Key_SQL;
       Result            : constant DB.Types.SQL_String :=
         DB.Types.SQL_String (Field_Name & ' ') &
-        Id_SQL & " REFERENCES " & Foreign_Model & "(" &
-        DB.Types.SQL_String (This.FK.Get_Id_Name) & ")" & Constraints;
+        Id_SQL & Constraints & " REFERENCES " & Foreign_Model & "(" &
+        DB.Types.SQL_String (This.FK.Get_Id_Name) & ")";
    begin
       if This.FK_Options.Cascade_Delete then
          return Result & " ON DELETE CASCADE";
