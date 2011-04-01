@@ -23,6 +23,7 @@ with Ada.Strings.Fixed;                use Ada.Strings.Fixed;
 with Ada.Strings.Unbounded.Hash;
 with Ada.Unchecked_Deallocation;
 with DB.Errors;
+with DB.Driver;                        use DB.Driver;
 
 package body DB.Active_Record.Fields is
 

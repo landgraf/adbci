@@ -20,7 +20,6 @@ with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
 with Ada.Finalization;
 with DB.Connector;                     use DB.Connector;
 with DB.Types;                         use DB.Types;
-with DB.Driver;                         use DB.Driver;
 
 package DB.Active_Record.Fields is
 
