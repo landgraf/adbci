@@ -67,7 +67,8 @@ package DB.Active_Record.Fields.Generic_Decimal is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in Fixed_Type := Initialization_Value) return Field;
+      Default_Value     : in Fixed_Type := Initialization_Value;
+      Indexed           : in Boolean := False) return Field;
 
    overriding function Field_SQL
      (This              : in Field;

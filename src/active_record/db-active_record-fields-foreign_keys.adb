@@ -115,7 +115,8 @@ package body DB.Active_Record.Fields.Foreign_Keys is
       Display_Name      : in String := "";
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
-      Cascade_Delete    : in Boolean := False) return Field
+      Cascade_Delete    : in Boolean := False;
+      Indexed           : in Boolean := False) return Field
    is
       Lower_Name        : constant String := To_Lower (Name);
    begin
@@ -135,6 +136,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
             Temp.Has_Default := False;
             Temp.FK.Clear;
             Temp.FK_Options.Cascade_Delete := Cascade_Delete;
+            Temp.Indexed := Indexed;
          end if;
       end return;
    end Configure;

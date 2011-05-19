@@ -71,7 +71,8 @@ package DB.Active_Record.Fields.Date_Time_Types is
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
          Has_Default    : in Boolean := True;
-         Default_Value  : in DB.Types.DB_Date := Null_Date) return Field;
+         Default_Value  : in DB.Types.DB_Date := Null_Date;
+         Indexed        : in Boolean := False) return Field;
 
       function Date_Image (This : in DB.Types.DB_Date) return String;
       --  Converts Date to ISO formatted date string.
@@ -179,7 +180,8 @@ package DB.Active_Record.Fields.Date_Time_Types is
          Not_Null          : in Boolean := False;
          Unique            : in Boolean := False;
          Has_Default       : in Boolean := True;
-         Default_Value     : in DB.Types.DB_Timestamp := Null_Timestamp)
+         Default_Value     : in DB.Types.DB_Timestamp := Null_Timestamp;
+         Indexed           : in Boolean := False)
         return Field;
 
       overriding function Field_SQL

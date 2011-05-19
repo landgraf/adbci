@@ -63,7 +63,8 @@ package DB.Active_Record.Fields.Foreign_Keys is
       Display_Name      : in String := "";
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
-      Cascade_Delete    : in Boolean := False) return Field;
+      Cascade_Delete    : in Boolean := False;
+      Indexed           : in Boolean := False) return Field;
 
    overriding function Field_SQL
      (This              : in Field;

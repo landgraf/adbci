@@ -47,7 +47,8 @@ package DB.Active_Record.Fields.Boolean_Type is
          Display_Name      : in String := "";
          Not_Null          : in Boolean := False;
          Has_Default       : in Boolean := True;
-         Default_Value     : in Boolean := False) return Field;
+         Default_Value     : in Boolean := False;
+         Indexed           : in Boolean := False) return Field;
 
       overriding function Field_SQL
         (This              : in Field;

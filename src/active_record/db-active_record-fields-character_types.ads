@@ -71,7 +71,8 @@ package DB.Active_Record.Fields.Character_Types is
          Unique            : in Boolean := False;
          Allow_Blank       : in Boolean := True;
          Has_Default       : in Boolean := True;
-         Default_Value     : in String := "") return Field;
+         Default_Value     : in String := "";
+         Indexed           : in Boolean := False) return Field;
 
       overriding function Field_SQL
         (This              : in Field;
@@ -178,7 +179,8 @@ package DB.Active_Record.Fields.Character_Types is
          Unique            : in Boolean := False;
          Allow_Blank       : in Boolean := True;
          Has_Default       : in Boolean := True;
-         Default_Value     : in String := "") return Field;
+         Default_Value     : in String := "";
+         Indexed           : in Boolean := False) return Field;
 
       overriding function Field_SQL
         (This              : in Field;

@@ -179,7 +179,8 @@ package body DB.Active_Record.Fields.Character_Types is
          Unique         : in Boolean := False;
          Allow_Blank    : in Boolean := True;
          Has_Default    : in Boolean := True;
-         Default_Value  : in String := "") return Field
+         Default_Value  : in String := "";
+         Indexed        : in Boolean := False) return Field
       is
       begin
          return Temp : Field do
@@ -190,6 +191,7 @@ package body DB.Active_Record.Fields.Character_Types is
             Temp.Has_Default := Has_Default;
             Temp.Maximum_Length := Maximum_Length;
             Set_Unbounded_String (Temp.Default_Value, Default_Value);
+            Temp.Indexed := Indexed;
          end return;
       end Configure;
 
@@ -551,7 +553,8 @@ package body DB.Active_Record.Fields.Character_Types is
          Unique         : in Boolean := False;
          Allow_Blank    : in Boolean := True;
          Has_Default    : in Boolean := True;
-         Default_Value  : in String := "") return Field
+         Default_Value  : in String := "";
+         Indexed        : in Boolean := False) return Field
       is
       begin
          return Temp : Field do
@@ -562,6 +565,7 @@ package body DB.Active_Record.Fields.Character_Types is
             Temp.Has_Default := Has_Default;
             Temp.Maximum_Length := Maximum_Length;
             Set_Unbounded_String (Temp.Default_Value, Default_Value);
+            Temp.Indexed := Indexed;
          end return;
       end Configure;
 

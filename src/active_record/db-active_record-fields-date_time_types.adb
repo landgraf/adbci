@@ -160,7 +160,8 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
          Has_Default    : in Boolean := True;
-         Default_Value  : in DB.Types.DB_Date := Null_Date) return Field
+         Default_Value  : in DB.Types.DB_Date := Null_Date;
+         Indexed        : in Boolean := False) return Field
       is
       begin
          return Temp : Field do
@@ -171,6 +172,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
             Temp.Auto_Now := Auto_Now;
             Temp.Auto_Now_Add := Auto_Now_Add;
             Temp.Default_Value := Default_Value;
+            Temp.Indexed := Indexed;
          end return;
       end Configure;
 
@@ -524,7 +526,8 @@ package body DB.Active_Record.Fields.Date_Time_Types is
          Not_Null       : in Boolean := False;
          Unique         : in Boolean := False;
          Has_Default    : in Boolean := True;
-         Default_Value  : in DB.Types.DB_Timestamp := Null_Timestamp)
+         Default_Value  : in DB.Types.DB_Timestamp := Null_Timestamp;
+         Indexed        : in Boolean := False)
         return Field
       is
       begin
@@ -536,6 +539,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
             Temp.Auto_Now := Auto_Now;
             Temp.Auto_Now_Add := Auto_Now_Add;
             Temp.Default_Value := Default_Value;
+            Temp.Indexed := Indexed;
          end return;
       end Configure;
 

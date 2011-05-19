@@ -159,7 +159,8 @@ package body DB.Active_Record.Fields.Generic_Integer is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in Integer_Type := Initialization_Value)
+      Default_Value     : in Integer_Type := Initialization_Value;
+      Indexed           : in Boolean := False)
      return Field
    is
    begin
@@ -169,6 +170,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
          Temp.Unique := Unique;
          Temp.Has_Default := Has_Default;
          Temp.Default_Value := Default_Value;
+         Temp.Indexed := Indexed;
       end return;
    end Configure;
 

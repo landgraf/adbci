@@ -82,6 +82,10 @@ package DB.Active_Record.Fields is
    function Get_Full_Name (This : in Field'Class) return String;
    --  Returns the field's full name (<model_name>.<field_name>).
 
+   function Get_Index_Name (This : in Field'Class) return String;
+   --  Returns the name of Index for this field.
+   --  (idx_<model_name>_<field_name>).
+
    function Get_Model_Name (This : in Field'Class) return String;
    --  Returns the name of the field's parent model.
 
@@ -103,6 +107,9 @@ package DB.Active_Record.Fields is
    function Is_Foreign_Key (This : in Field) return Boolean;
    --  Returns true if the field is a foreign key field.
 
+   function Is_Indexed (This : in Field'Class) return Boolean;
+   --  Returns true if the field has an index defined.
+
    function Is_Loaded (This : in Field'Class) return Boolean;
    --  Returns true if the field has been loaded/is available, false
    --  if the field has not been loaded from the database.
@@ -115,6 +122,9 @@ package DB.Active_Record.Fields is
 
    function Is_Null (This : in Field) return Boolean;
    --  Returns true if field is NULL.
+
+   function Is_Primary_Key (This : in Field'Class) return Boolean;
+   --  Returns true if the field is a PRIMARY KEY field.
 
    function Is_Unique (This : in Field'Class) return Boolean;
    --  Returns true if the field has a UNIQUE constraint.
@@ -272,6 +282,7 @@ private
       Display_Name      : Unbounded_String;     --  Human readable name
       Field_Name        : Unbounded_String;     --  Db table column name
       Has_Default       : Boolean := False;     --  Does field have a default?
+      Indexed		: Boolean := False;	--  Does field have an Index?
       Is_Null           : Boolean := True;      --  Is field currently NULL?
       Model_Name        : Unbounded_String;     --  Parent model name
       Not_Null          : Boolean := False;     --  Is field NOT NULL?

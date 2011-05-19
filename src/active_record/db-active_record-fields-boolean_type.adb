@@ -108,7 +108,8 @@ package body DB.Active_Record.Fields.Boolean_Type is
          Display_Name   : in String := "";
          Not_Null       : in Boolean := False;
          Has_Default    : in Boolean := True;
-         Default_Value  : in Boolean := False) return Field
+         Default_Value  : in Boolean := False;
+         Indexed        : in Boolean := False) return Field
       is
       begin
          return Temp : Field do
@@ -117,6 +118,7 @@ package body DB.Active_Record.Fields.Boolean_Type is
             Temp.Unique := False;
             Temp.Has_Default := Has_Default;
             Temp.Default_Value := Default_Value;
+            Temp.Indexed := Indexed;
          end return;
       end Configure;
 

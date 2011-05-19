@@ -67,7 +67,8 @@ package DB.Active_Record.Fields.Generic_Integer is
       Not_Null          : in Boolean := False;
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
-      Default_Value     : in Integer_Type := Initialization_Value)
+      Default_Value     : in Integer_Type := Initialization_Value;
+      Indexed           : in Boolean := False)
      return Field;
 
    overriding function Field_SQL

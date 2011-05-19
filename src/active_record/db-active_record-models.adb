@@ -133,6 +133,7 @@ package body DB.Active_Record.Models is
       Current_Field     : Natural := 0;
       Field_Count       : constant Natural := This.all.Field_Count;
       Generated_SQL     : Unbounded_String;
+      Has_Indices	: Boolean := False;
 
       procedure Generate_Field (F : in out DB.Active_Record.Fields.Field'Class)
       is
@@ -145,13 +146,37 @@ package body DB.Active_Record.Models is
          else
             Append (Generated_SQL, ASCII.LF);
          end if;
+         if not F.Is_Unique and not F.Is_Primary_Key and F.Is_Indexed then
+            --  most databases auto-create indices for UNIQUE and PRIMARY KEY
+            --  columns, so skip index creation for these types of columns.
+            Has_Indices := True;
+         end if;
       end Generate_Field;
+
+      procedure Generate_Field_Index (F : in out DB.Active_Record.Fields.Field'Class)
+      is
+      begin
+         if not F.Is_Unique and not F.Is_Primary_Key and F.Is_Indexed then
+            Append (Generated_SQL, "CREATE INDEX ");
+            Append (Generated_SQL, F.Get_Index_Name);
+            Append (Generated_SQL, " ON ");
+            Append (Generated_SQL, This.all.Model_Name);
+            Append (Generated_SQL, " (");
+            Append (Generated_SQL, F.Get_Name);
+            Append (Generated_SQL, ");" & ASCII.LF);
+         end if;
+      end Generate_Field_Index;
    begin
       Set_Unbounded_String (Generated_SQL, "CREATE TABLE ");
       Append (Generated_SQL, This.all.Model_Name);
       Append (Generated_SQL, " (" & ASCII.LF);
       This.all.Iterate_Fields (Generate_Field'Access);
       Append (Generated_SQL, ");");
+
+      if Has_Indices then
+         This.all.Iterate_Fields (Generate_Field_Index'Access);
+      end if;
+
       return DB.Types.SQL_String (To_String (Generated_SQL));
    end Create_SQL;
 

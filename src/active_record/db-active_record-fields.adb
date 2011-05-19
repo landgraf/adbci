@@ -225,6 +225,7 @@ package body DB.Active_Record.Fields is
    begin
       return Temp : Id_Field do
          Config_Name (Temp, Name, Display_Name);
+         Temp.Indexed := True;
          Temp.Not_Null := Not_Null;
          Temp.Unique := Unique;
          Temp.Has_Default := Has_Default;
@@ -345,6 +346,15 @@ package body DB.Active_Record.Fields is
    end Get_Full_Name;
 
    --------------------
+   -- Get_Index_Name --
+   --------------------
+
+   function Get_Index_Name (This : in Field'Class) return String is
+   begin
+      return "idx_" & To_String (This.Model_Name) & "_" & To_String (This.Field_Name);
+   end Get_Index_Name;
+
+   --------------------
    -- Get_Model_Name --
    --------------------
 
@@ -409,6 +419,15 @@ package body DB.Active_Record.Fields is
       return False;
    end Is_Foreign_Key;
 
+   ----------------
+   -- Is_Indexed --
+   ----------------
+
+   function Is_Indexed (This : in Field'Class) return Boolean is
+   begin
+      return This.Indexed;
+   end Is_Indexed;
+
    ---------------
    -- Is_Loaded --
    ---------------
@@ -448,6 +467,15 @@ package body DB.Active_Record.Fields is
          raise DB.Errors.NOT_LOADED;
       end if;
    end Is_Null;
+
+   --------------------
+   -- Is_Primary_Key --
+   --------------------
+
+   function Is_Primary_Key (This : in Field'Class) return Boolean is
+   begin
+      return This.Primary_Key;
+   end Is_Primary_Key;
 
    ---------------
    -- Is_Unique --
