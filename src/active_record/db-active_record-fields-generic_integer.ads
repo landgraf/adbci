@@ -68,7 +68,9 @@ package DB.Active_Record.Fields.Generic_Integer is
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
       Default_Value     : in Integer_Type := Initialization_Value;
-      Indexed           : in Boolean := False)
+      Indexed           : in Boolean := False;
+      Minimum_Value	: in Integer_Type := Integer_Type'First;
+      Maximum_Value	: in Integer_Type := Integer_Type'Last)
      return Field;
 
    overriding function Field_SQL
@@ -108,10 +110,14 @@ package DB.Active_Record.Fields.Generic_Integer is
 
    overriding function To_String (This : in Field) return String;
 
+   overriding procedure Validate_Field (This : in out Field);
+
 private
 
    type Field is new DB.Active_Record.Fields.Field with record
       Default_Value     : Integer_Type := Initialization_Value;
+      Maximum_Value	: Integer_Type := Integer_Type'Last;
+      Minimum_Value	: Integer_Type := Integer_Type'First;
       Value             : Integer_Type := Initialization_Value;
    end record;
 

@@ -22,6 +22,8 @@ generic
 
    type Fixed_Type is delta <> digits <>;
    Initialization_Value : Fixed_Type := 0.0;
+   Range_Minimum	: Fixed_Type := Fixed_Type'First;
+   Range_Maximum	: Fixed_Type := Fixed_Type'Last;
 
 package DB.Active_Record.Fields.Generic_Decimal is
 
@@ -68,7 +70,9 @@ package DB.Active_Record.Fields.Generic_Decimal is
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
       Default_Value     : in Fixed_Type := Initialization_Value;
-      Indexed           : in Boolean := False) return Field;
+      Indexed           : in Boolean := False;
+      Minimum_Value	: in Fixed_Type := 0.0;
+      Maximum_Value	: in Fixed_Type := Fixed_Type'Last) return Field;
 
    overriding function Field_SQL
      (This              : in Field;
@@ -107,10 +111,14 @@ package DB.Active_Record.Fields.Generic_Decimal is
 
    overriding function To_String (This : in Field) return String;
 
+   overriding procedure Validate_Field (This : in out Field);
+
 private
 
    type Field is new DB.Active_Record.Fields.Field with record
       Default_Value     : Fixed_Type := Initialization_Value;
+      Maximum_Value	: Fixed_Type := Fixed_Type'Last;
+      Minimum_Value	: Fixed_Type := 0.0;
       Value             : Fixed_Type := Initialization_Value;
    end record;
 

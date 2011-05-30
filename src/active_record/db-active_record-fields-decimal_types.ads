@@ -31,6 +31,8 @@ package DB.Active_Record.Fields.Decimal_Types is
 
    package Percentage is new DB.Active_Record.Fields.Generic_Decimal
      (Fixed_Type           => Percentage_Type,
-      Initialization_Value => 0.0);
+      Initialization_Value => 0.0,
+      Range_Minimum        => 0.0,
+      Range_Maximum        => 100.0);
 
 end DB.Active_Record.Fields.Decimal_Types;

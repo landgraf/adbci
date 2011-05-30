@@ -176,6 +176,9 @@ package DB.Active_Record.Fields is
    function To_String
      (This              : in Order_Criteria) return String;
 
+   procedure Validate_Field (This : in out Field);
+   --  Performs any custom field validation.
+
    function Validation_Error
      (This              : in Field'Class) return String;
    --  Returns the validation error message.

@@ -160,7 +160,9 @@ package body DB.Active_Record.Fields.Generic_Integer is
       Unique            : in Boolean := False;
       Has_Default       : in Boolean := True;
       Default_Value     : in Integer_Type := Initialization_Value;
-      Indexed           : in Boolean := False)
+      Indexed           : in Boolean := False;
+      Minimum_Value	: in Integer_Type := Integer_Type'First;
+      Maximum_Value	: in Integer_Type := Integer_Type'Last)
      return Field
    is
    begin
@@ -171,6 +173,8 @@ package body DB.Active_Record.Fields.Generic_Integer is
          Temp.Has_Default := Has_Default;
          Temp.Default_Value := Default_Value;
          Temp.Indexed := Indexed;
+         Temp.Maximum_Value := Maximum_Value;
+         Temp.Minimum_Value := Minimum_Value;
       end return;
    end Configure;
 
@@ -350,6 +354,18 @@ package body DB.Active_Record.Fields.Generic_Integer is
          return Trim (Integer_Type'Image (This.Value), Both);
       end if;
    end To_String;
+
+   --------------------
+   -- Validate_Field --
+   --------------------
+
+   procedure Validate_Field (This : in out Field) is
+   begin
+      if This.Value < This.Minimum_Value or else
+        This.Value > This.Maximum_Value then
+         Set_Validation_Failed (This, "Value out of range");
+      end if;
+   end Validate_Field;
 
 begin
    --  Pick the smallest integer type that will hold the entire range.

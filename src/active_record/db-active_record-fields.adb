@@ -813,6 +813,16 @@ package body DB.Active_Record.Fields is
       end if;
    end Validation_Error;
 
+   --------------------
+   -- Validate_Field --
+   --------------------
+
+   procedure Validate_Field (This : in out Field) is
+   begin
+      --  by default doesn't do anything, but can be overridden
+      null;
+   end Validate_Field;
+
    -----------------------
    -- Validation_Failed --
    -----------------------

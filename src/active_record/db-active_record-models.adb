@@ -830,6 +830,9 @@ package body DB.Active_Record.Models is
          elsif F.Is_Blank and then not F.Is_Allow_Blank then
             F.Set_Validation_Failed (F.Get_Display_Name & " can't be empty");
          end if;
+         if not F.Validation_Failed then
+            F.Validate_Field;
+         end if;
       end Detect_Validation_Errors;
    begin
       This.Iterate_Custom_Fields (Detect_Validation_Errors'Access);
