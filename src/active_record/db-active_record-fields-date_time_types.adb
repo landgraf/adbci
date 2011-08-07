@@ -227,6 +227,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
             This.Value := Ada.Calendar.Formatting.Value (Value & " 12:00:00");
             This.Is_Null := False;
          end if;
+         This.Changed := True;
       exception
          when CONSTRAINT_ERROR =>
             Set_Validation_Failed (This, "Invalid Date");
@@ -583,6 +584,7 @@ package body DB.Active_Record.Fields.Date_Time_Types is
             This.Value := Ada.Calendar.Formatting.Value (Value);
             This.Is_Null := False;
          end if;
+         This.Changed := True;
       exception
          when CONSTRAINT_ERROR =>
             Set_Validation_Failed (This, "Invalid Timestamp");

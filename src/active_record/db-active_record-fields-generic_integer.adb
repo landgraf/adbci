@@ -225,6 +225,7 @@ package body DB.Active_Record.Fields.Generic_Integer is
          This.Value := Integer_Type'Value (Value);
          This.Is_Null := False;
       end if;
+      This.Changed := True;
    exception
       when CONSTRAINT_ERROR =>
          Set_Validation_Failed (This, "Invalid Integer");

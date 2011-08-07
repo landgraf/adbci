@@ -162,6 +162,7 @@ package body DB.Active_Record.Fields.Boolean_Type is
                Up_Value	: constant String := To_Lower (Value);
             begin
                This.Is_Null := True;
+               This.Changed := True;
                if Up_Value = "yes"
                  or else Up_Value = "y"
                  or else Up_Value = "true"

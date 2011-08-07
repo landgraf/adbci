@@ -221,6 +221,7 @@ package body DB.Active_Record.Fields.Generic_Decimal is
          This.Value := Fixed_Type'Value (Value);
          This.Is_Null := False;
       end if;
+      This.Changed := True;
    exception
       when CONSTRAINT_ERROR =>
          Set_Validation_Failed (This, "Invalid Fixed Point");
@@ -356,7 +357,7 @@ package body DB.Active_Record.Fields.Generic_Decimal is
    procedure Validate_Field (This : in out Field) is
    begin
       if This.Value < This.Minimum_Value or else
-        This.Value < Range_Minimum or else 
+        This.Value < Range_Minimum or else
         This.Value > This.Maximum_Value or else
         This.Value > Range_Maximum then
          Set_Validation_Failed (This, "Value out of range");

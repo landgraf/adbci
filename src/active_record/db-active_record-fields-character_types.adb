@@ -227,6 +227,7 @@ package body DB.Active_Record.Fields.Character_Types is
          This.Is_Null := True;
          Set_Unbounded_String (This.Value, Value);
          This.Is_Null := False;
+         This.Changed := True;
       end From_String;
 
       ---------
@@ -603,6 +604,7 @@ package body DB.Active_Record.Fields.Character_Types is
          This.Is_Null := True;
          Set_Unbounded_String (This.Value, Value);
          This.Is_Null := False;
+         This.Changed := True;
       end From_String;
 
       ---------

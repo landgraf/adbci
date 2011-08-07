@@ -192,6 +192,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
          This.FK.Set_Id (DB.Types.Object_Id'Value (Value));
          This.Is_Null := False;
       end if;
+      This.Changed := True;
    exception
       when CONSTRAINT_ERROR =>
          Set_Validation_Failed (This, "Invalid Object id");
