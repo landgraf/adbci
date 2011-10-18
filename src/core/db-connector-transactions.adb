@@ -60,6 +60,17 @@ package body DB.Connector.Transactions is
    end Commit_Transaction;
 
    --------------------
+   -- Error_Rollback --
+   --------------------
+
+   procedure Error_Rollback (This : in out Connection'Class) is
+   begin
+      if This.Data.all.In_Transaction then
+         Rollback_Transaction (This);
+      end if;
+   end Error_Rollback;
+
+   --------------------
    -- In_Transaction --
    --------------------
 
