@@ -17,7 +17,9 @@ Known working with GCC-GNAT 4.5.1 or later.
 DATABASE SUPPORT
 ----------------
 
-Currently only supports PostgreSQL 8.0 or later (including 9.x series).
+Supports PostgreSQL 8.0 or later (including 9.x series), and has some
+support for recent versions of MySQL (not as well tested as PostgreSQL
+support at this moment).
 
 CAVEATS
 -------
