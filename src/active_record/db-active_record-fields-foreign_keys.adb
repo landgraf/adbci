@@ -285,6 +285,9 @@ package body DB.Active_Record.Fields.Foreign_Keys is
                This.FK.Set_Id (Item_FK);
                This.Is_Null := False;
             end;
+         else
+            This.Loaded := True;
+            This.Is_Null := True;
          end if;
       end if;
    end Load_From;
