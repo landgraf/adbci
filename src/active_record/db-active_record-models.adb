@@ -185,7 +185,7 @@ package body DB.Active_Record.Models is
    ------------
 
    procedure Delete
-     (This              : in out Model'Class;
+     (This              : in out Model;
       Connection        : in out DB.Connector.Connection)
    is
    begin
@@ -687,9 +687,9 @@ package body DB.Active_Record.Models is
               Append(Insert_SQL, This.Model_Name);
               Append(Insert_SQL, " WHERE ");
               Append(Insert_SQL, This.Get_Id_Name);
-              Append(Insert_SQL, "="); 
+              Append(Insert_SQL, "=");
               Append(Insert_SQL, Trim(Id_Inserted'Img,Both));
-              declare 
+              declare
                   SQL_Command    : constant DB.Types.SQL_String :=
                       DB.Types.SQL_String (To_String (Insert_SQL));
                   Results        : constant DB.Connector.Result_Set :=
