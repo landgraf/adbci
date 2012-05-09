@@ -176,18 +176,20 @@ package body DB.Driver.MySQL is
          raise DB.Errors.CONNECT_ERROR with Last_Error (Driver);
       end if;
 
+              Query_Result := MySQL_Store_Result (Driver.Connection);
       if MySQL_Affected_Rows (Driver.Connection) /= -1 then
-         declare
-            R : constant Result_Access := new Result_Type;
-         begin
-            Query_Result := MySQL_Store_Result (Driver.Connection);
-            R.all.Results := Query_Result;
-            R.all.Field_Count := MySQL_Num_Fields (Query_Result);
-            R.all.Row_Count := MySQL_Num_Rows (Query_Result);
-            Result := Result_Handle (R);
-         end;
+          declare
+              R : constant Result_Access := new Result_Type;
+          begin
+              if Query_Result /= Null then
+                  R.all.Results := Query_Result;
+                  R.all.Field_Count := MySQL_Num_Fields (Query_Result);
+                  R.all.Row_Count := MySQL_Num_Rows (Query_Result);
+                  Result := Result_Handle (R);
+              end if;
+          end;
       else
-         Result := null;
+          Result := null;
       end if;
    end Execute_SQL;
 
