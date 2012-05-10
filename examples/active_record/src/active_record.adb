@@ -26,11 +26,11 @@ with DB.Active_Record.Models.Queries;
 with DB.Connector;
 with DB.Driver;
 --with DB.Driver.PostgreSQL;		--  Uncomment the desired driver,
- with DB.Driver.MySQL;		--  and set Default_Driver below...
+with DB.Driver.MySQL;			--  and set Default_Driver below...
 with Slice_Test;
 
 procedure Active_Record is
-   Default_Driver	: constant String := "mysql";	--  or "mysql"
+   Default_Driver	: constant String := "mysql";	--  or "postgresql"
    Database             : DB.Connector.Connection :=
      DB.Connector.Connect (Default_Driver, "localhost", "test", "test", "test");
    Customer_1           : Customer.Customer_Model;
