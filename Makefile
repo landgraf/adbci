@@ -1,11 +1,10 @@
-DESTDIR	?= /usr/local
+DESTDIR ?= /usr/local
 LIBDIR ?= ${DESTDIR}/lib/adbci
+GNATOPTFLAGS ?=
 # Default destination directory
 
-all: default 
-
 default: directories examples 
-	@gnatmake -P adbci.gpr
+	@gnatmake -P adbci.gpr ${GNATOPTFLAGS}
 
 clean:
 	@rm -f lib/* bld/*
@@ -28,4 +27,5 @@ install:
 	@cp src/core/*.ad? ${LIBDIR}
 	@cp src/active_record/*.ad? ${LIBDIR}
 	@cp src/postgresql/*.ad? ${LIBDIR}
+
 
