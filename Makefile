@@ -1,5 +1,8 @@
-DESTDIR	?= /usr/local/lib/adbci
+DESTDIR	?= /usr/local
+LIBDIR ?= ${DESTDIR}/lib/adbci
 # Default destination directory
+
+all: default 
 
 default: directories examples 
 	@gnatmake -P adbci.gpr
@@ -21,8 +24,8 @@ example_active_record:
 examples: example_active_record
 
 install:
-	@mkdir -p ${DESTDIR}
-	@cp src/core/*.ad? ${DESTDIR}
-	@cp src/active_record/*.ad? ${DESTDIR}
-	@cp src/postgresql/*.ad? ${DESTDIR}
+	@mkdir -p ${LIBDIR}
+	@cp src/core/*.ad? ${LIBDIR}
+	@cp src/active_record/*.ad? ${LIBDIR}
+	@cp src/postgresql/*.ad? ${LIBDIR}
 
