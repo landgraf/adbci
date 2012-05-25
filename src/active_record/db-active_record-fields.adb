@@ -122,12 +122,18 @@ package body DB.Active_Record.Fields is
       Right             : in Field_Criteria) return Field_Criteria
    is
    begin
-      return New_Tree : Field_Criteria do
-         Alloc (New_Tree);
-         New_Tree.Data.all.Operator := SQL_AND;
-         New_Tree.Data.all.Left_Subtree := Left;
-         New_Tree.Data.all.Right_Subtree := Right;
-      end return;
+      if Left.Data = null then
+         return Right;
+      elsif Right.Data = null then
+         return Left;
+      else
+         return New_Tree : Field_Criteria do
+            Alloc (New_Tree);
+            New_Tree.Data.all.Operator := SQL_AND;
+            New_Tree.Data.all.Left_Subtree := Left;
+            New_Tree.Data.all.Right_Subtree := Right;
+         end return;
+      end if;
    end "and";
 
    ----------
@@ -139,12 +145,18 @@ package body DB.Active_Record.Fields is
       Right             : in Field_Criteria) return Field_Criteria
    is
    begin
-      return New_Tree : Field_Criteria do
-         Alloc (New_Tree);
-         New_Tree.Data.all.Operator := SQL_OR;
-         New_Tree.Data.all.Left_Subtree := Left;
-         New_Tree.Data.all.Right_Subtree := Right;
-      end return;
+      if Left.Data = null then
+         return Right;
+      elsif Right.Data = null then
+         return Left;
+      else
+         return New_Tree : Field_Criteria do
+            Alloc (New_Tree);
+            New_Tree.Data.all.Operator := SQL_OR;
+            New_Tree.Data.all.Left_Subtree := Left;
+            New_Tree.Data.all.Right_Subtree := Right;
+         end return;
+      end if;
    end "or";
 
    ------------
