@@ -1,13 +1,13 @@
 --
 --  (c) Copyright 2011, John Vinters
 --
---  ADBCI is free software; you can redistribute it and/or 
---  modify it under the terms of the GNU Lesser General Public License 
---  as published by the Free Software Foundation; either version 3, or 
---  (at your option) any later version.  
+--  ADBCI is free software; you can redistribute it and/or
+--  modify it under the terms of the GNU Lesser General Public License
+--  as published by the Free Software Foundation; either version 3, or
+--  (at your option) any later version.
 --
---  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY 
---  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+--  ADBCI is distributed in the hope that it will be useful, but WITHOUT ANY
+--  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 --  FOR A PARTICULAR PURPOSE.
 --
 --  You should have received a copy of the GNU Lesser General Public License
@@ -25,6 +25,7 @@ package DB.Connector is
    type Connection is new Ada.Finalization.Controlled with private;
    type Result_Set is new Ada.Finalization.Controlled with private;
 
+   Null_Connection	: constant Connection;
    Null_Result_Set      : constant Result_Set;
 
    function Connect
@@ -87,7 +88,7 @@ package DB.Connector is
      (This              : in Result_Set;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.DB_Integer := 0) 
+      Replacement       : in DB.Types.DB_Integer := 0)
      return DB.Types.DB_Integer;
    --  Gets INTEGER data at specified column, optionally replacing null values.
 
@@ -113,7 +114,7 @@ package DB.Connector is
      (This              : in Result_Set;
       Column            : in Column_Index;
       Replace_Null      : in Boolean := False;
-      Replacement       : in DB.Types.Object_Id := 0) 
+      Replacement       : in DB.Types.Object_Id := 0)
      return DB.Types.Object_Id;
    --  Gets Id data at specified column, optionally replacing null values.
 
@@ -244,8 +245,12 @@ private
 
    overriding procedure Finalize (This : in out Result_Set);
 
-   Null_Result_Set      : constant Result_Set := 
-     (Ada.Finalization.Controlled with 
+   Null_Connection	: constant Connection :=
+     (Ada.Finalization.Controlled with
+      Data => null, Debug => False);
+
+   Null_Result_Set      : constant Result_Set :=
+     (Ada.Finalization.Controlled with
         Results => null, Tuple => INVALID_TUPLE);
 
 end DB.Connector;
