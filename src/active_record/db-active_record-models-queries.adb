@@ -167,7 +167,7 @@ package body DB.Active_Record.Models.Queries is
                True,
                0);
             if Id /= 0 then
-               Temp.Get (Connection, Id, Load_Foreign_Keys);
+               Temp.Get (Connection, Id, Load_Foreign_Keys => Load_Foreign_Keys);
             else
                null;    --  return an empty object if column is NULL
             end if;
@@ -287,7 +287,7 @@ package body DB.Active_Record.Models.Queries is
                Row_Count   : constant DB.Types.Object_Id := (Last - First) + 1;
             begin
                Append (Query_SQL, " LIMIT" &
-                                  DB.Types.Object_Id'IMage (Row_Count));
+                                  DB.Types.Object_Id'Image (Row_Count));
             end;
          end if;
 
