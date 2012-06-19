@@ -269,7 +269,7 @@ package body DB.Active_Record.Fields.Foreign_Keys is
               Results.Get_Object_Id (Field_Name);
          begin
             This.FK_Options.Results := DB.Connector.Null_Result_Set;
-            This.FK.Get (Connection, Item_FK, Load_Foreign_Keys);
+            This.FK.Get (Connection, Item_FK, False, Load_Foreign_Keys);
             This.Loaded := True;
             This.Is_Null := False;
          end;
